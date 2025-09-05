@@ -3,14 +3,32 @@ something interesting i guess
 [SMALLtestURL](https://github.com/Kymiira/game-dev-caleb-2025/new/main) 
 https://github.com/Kymiira/game-dev-caleb-2025/new/main
 __MARKDOWNTESTBLOW__
-``a`` (CODESTRUCTURE)
-~~a~~ (MARKTHROUGH)
-***a*** (ITALIZED BOLD)
-# a (BIG)
--# a (SMALL)
-*a* (ITALICS)
+
+ ``a``
+
+^ (CODESTRUCTURE)
+
+ ~~a~~ 
+
+^(MARKTHROUGH)
+
+ ***a*** 
+
+^(ITALIZED BOLD)
+
+# a 
+^(BIG)
+
+ *a* 
+
+^(ITALICS)
+
 [SMALLURL](https://github.com/Kymiira/game-dev-caleb-2025/new/main)
-> a (QUOTE)
-<img width="938" height="275" alt="image" src="https://github.com/user-attachments/assets/08402a84-997e-4717-b243-6a4b3efdddfc" />
+
+> a 
+
+^(QUOTE)
+<img width="1823" height="741" alt="image" src="https://github.com/user-attachments/assets/7bfb503d-b4aa-4a62-836a-2762fc5d48f3" />
+
 ^^^
 IMAGE WITH IMFORMATION
