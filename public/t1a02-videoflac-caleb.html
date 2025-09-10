@@ -1,17 +1,17 @@
+// main idea is to have a button that randomly generates an array of numbers and does the math to sum it into a single number, guesses this number, asks if it is the number, then if yes input does something, if no input reruns the script until the correct number is guessed
 <script>
-  function mySquareFunction(){
-    let myIn01 = parseFloat(document.getElementById('myNum01').value)
-    let myAnswer = myIn01 * myIn01
-    document.getElementById('mySpan01').innerHTML = '  ' + myIn01 + ' squared = ' + myAnswer
+  function myRandomNumArray (){
+    const randomNumbers = [];
+    for (let i = 0; < 5; i++) {
+      const randomNumber = Math.floor(Math.random() * 100) + 1;
+      randomNumbers.push(randomNumber);
+    }
+    arrayOutput.textContent = JSON.stringify(randomNumbers);
+    displayElement.textContent = randomNumbers;
   }
-</script>
+  
+</script> 
 
-<h2 align=center>t1a02-videoflac-caleb.html</h2>
-
-Input: <input id="myNum01" type=number value="4" ><br>
-
-Event:<input type=button value="myEvent squares" onclick="{
-        mySquareFunction()
-        }"><br>
-
-        Output:<span id="mySpan01">...</span>
+Event:<input type=button value"" onclick="
+myRandomNumArray()
+"><br>
