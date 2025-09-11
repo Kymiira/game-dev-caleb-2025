@@ -1,18 +1,55 @@
-<!-- main idea is to have a button that randomly generates an array of numbers and does the math to sum it into a single number, guesses this number, asks if it is the number, then if yes input does something, if no input reruns the script until the correct number is guessed-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIDEOFLAC ASSIGNMENT</title>
+  <style>
+    body {font-family: 'Inter', comic sans MS;}
+  </style>
+</head>
+<body>
+  <button id="generateBtn">Generate Numbers</button>
+  <h1>Array of Random Numbers</h1>
+  <p id="randomNumbers"></p> 
+  <h1>Sum of Array</h1>
+ <!-- <p id="ArraySum"></p> -->
+  <p id="computerGuess"></p>
 
-<script>
-  function myRandomNumArray (){
-    const randomNumbers = [];
-    for (let i = 0; < 5; i++) {
-      const randomNumber = Math.floor(Math.random() * 100) + 1;
-      randomNumbers.push(randomNumber);
+  <div>
+    <input type="letter"
+      id="userYesNoInput"
+      placeholder="Did I Guess Your Number? (Yes/No)"
+      
+  </div>
+
+
+  <script>
+    const generateBtn = document.getElementById('generateBtn');
+    const randomNumbersEl = document.getElementById('randomNumbers');
+    const arraySumEl = document.getElementById('ArraySum');
+    function myRandomNumArray () {
+    
+      const randomNumbers = [];
+    
+      for (let i = 0; i < 5; i++) {
+      
+        const randomNumber = Math.floor(Math.random() * 10) + 0;
+      
+        randomNumbers.push(randomNumber);
+      }
+      randomNumbersEl.textContent = randomNumbers.join(', ');
+
+      const sum = randomNumbers.reduce((accumulator, currentValue) => {
+        return accumulator + currentValue;
+      }, 0);
+
+      arraySumEl.textContent = sum;
     }
-    arrayOutput.textContent = JSON.stringify(randomNumbers);
-    displayElement.textContent = randomNumbers;
-  }
-  
-</script> 
 
-Event:<input type=button value"" onclick="
-myRandomNumArray()
-"><br>
+    generateBtn.addEventListener('click', myRandomNumArray);
+
+    window.onload = myRandomNumArray;
+  </script> 
+</body>
+</html>
