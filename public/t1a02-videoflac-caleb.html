@@ -6,50 +6,76 @@
   <title>VIDEOFLAC ASSIGNMENT</title>
   <style>
     body {font-family: 'Inter', comic sans MS;}
+    #randomNumbersSection, #arraySumSection, #yesNoInputSection{
+      display: none;
+    }
   </style>
 </head>
 <body>
+  <h1>Guessing Game: Select a number 0-100, Generate a number.</h1>
+  <h2>If I Guessed Your Number, Select Yes. If No, Select No.</h2>
   <button id="generateBtn">Generate Numbers</button>
-  <h1>Array of Random Numbers</h1>
-  <p id="randomNumbers"></p> 
-  <h1>Sum of Array</h1>
- <!-- <p id="ArraySum"></p> -->
-  <p id="computerGuess"></p>
-
-  <div>
-    <input type="letter"
-      id="userYesNoInput"
-      placeholder="Did I Guess Your Number? (Yes/No)"
-      
+  
+  <div id="randomNumbersSection">
+    <h3>10 random numbers that sum to the guess</h3>
+    <p id="randomNumbers"></p>
   </div>
+  
+  <div id="arraySumSection">
+    <h3>Here's My Guess:</h3>
+    <p id="ArraySum"></p>
+  </div>
+
+  <div id="yesNoInputSection">
+  <h3>Did I Guess Correctly?</h3>
+  <button id="yes">Yes</button>  <button id="no">No</button>
 
 
   <script>
+    // pile of constants (variables, output)
     const generateBtn = document.getElementById('generateBtn');
     const randomNumbersEl = document.getElementById('randomNumbers');
     const arraySumEl = document.getElementById('ArraySum');
+    const yesBtn =document.getElementById('yes');
+    const noBtn =document.getElementById('no');
+    const randomNumbersSection = document.getElementById('randomNumbersSection');
+    const arraySumSection = document.getElementById('arraySumSection');
+    const yesNoInputSection = document.getElementById('yesNoInputSection');
+    // function that generates 10 random numbers and then adds them to a singular number (array, loop, decisions, functions, etc.)
     function myRandomNumArray () {
-    
-      const randomNumbers = [];
-    
-      for (let i = 0; i < 5; i++) {
-      
-        const randomNumber = Math.floor(Math.random() * 10) + 0;
-      
+      const randomNumbers = [];    
+      for (let i = 0; i < 10; i++) {      
+        const randomNumber = Math.floor(Math.random() * 10) + 0;      
         randomNumbers.push(randomNumber);
       }
       randomNumbersEl.textContent = randomNumbers.join(', ');
-
       const sum = randomNumbers.reduce((accumulator, currentValue) => {
         return accumulator + currentValue;
       }, 0);
-
       arraySumEl.textContent = sum;
+
+      randomNumbersSection.style.display = 'block';
+      arraySumSection.style.display = 'block';
+      yesNoInputSection.style.display = 'block';
     }
+    // function for the yes button
+    function myYes () { 
+      alert("YOU WON!!!... or maybe the machine won? I can't say.");
+      clearPageInformation();
+    }
+    // function to clear the page of any information from the myRandomNumArray function
+    function clearPageInformation() {
+      randomNumbersEl.textContent = " ";
+      arraySumEl.textContent = " ";
 
+      randomNumbersSection.style.display = 'none';
+      arraySumSection.style.display = 'none';
+      yesNoInputSection.style.display = 'none';
+    }
+    // buttons (input)
     generateBtn.addEventListener('click', myRandomNumArray);
-
-    window.onload = myRandomNumArray;
+    noBtn.addEventListener('click', myRandomNumArray);
+    yesBtn.addEventListener('click', myYes);
   </script> 
 </body>
 </html>
