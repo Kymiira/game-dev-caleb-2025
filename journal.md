@@ -31,3 +31,4 @@
 - created a working product of the VIDEOFLAC assignment (random number generating guessing game covering variables, input/outputs, decisions, events, objects, functions, loops, arrays and classes.) (got 2/9 on this)
 # September 15th
 - worked on journal, created entries for each day on what was done that day. will update daily based on what has been worked on and done that day.
+- added journal.md to index.html
