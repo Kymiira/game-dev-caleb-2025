@@ -35,3 +35,4 @@
 - created tag guide.md
 # September 16th
 - Videoflac test (easy)
+- T1a03 - Tables and Lists creation
