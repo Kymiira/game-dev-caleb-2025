@@ -10,7 +10,7 @@
  - set up README.md as a tutorial for the basics of markdown
  - deleted "/PUBLIC" dir, remade to "public" dir.
  - added github repo link to index.html
- - added minor visual detail changes to index.html (seperated sections with <hr>, added section for .md files)
+ - added minor visual detail changes to index.html (seperated sections with ``<hr>``, added section for .md files)
 # September 9th
  - created first assignment (t1a01-proper-webpage)
  - added link to index.html in the main readme.md on the repo (outside of /public)
@@ -24,7 +24,7 @@
 - added t1a02 to index.html
 - started working on t1a02 (base code covering functions, objects, variables, classes, input, events, loops, arrays)
 - figured out what I wanted to do for the assignment, commented it [here](https://github.com/Kymiira/game-dev-caleb-2025/commit/2b629d6b1a00b97656a55d65d526ac4657c80c63)
-- fixed comment from js to html comment variation (// to <!--, -- >)
+- fixed comment from js to html comment variation ``(// to <!-- + -- >)``
 # September 11th
 - changed the proper webpage assignment (t1a01) to be completely displayed in comic sans MS font
 # September 12th
