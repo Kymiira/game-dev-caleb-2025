@@ -73,7 +73,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 ### Title
 1. VIDEOFLAC EASY TEST
 1. STARTED WORKING ON T1a03 (Tables and Lists)
-1.
+1. FINISHED WORKING ON t1a03 (Tables and Lists)
 
 </details>
 
