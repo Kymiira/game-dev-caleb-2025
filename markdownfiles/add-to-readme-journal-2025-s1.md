@@ -1,4 +1,4 @@
-# School Course GameDev 11-12, Learning Journal for _________________, Semester 1 2025
+# School Course GameDev 11-12, Learning Journal for Caleb, Semester 1 2025
 
 
 Note: If you have a link to an assignment that has not been marked, put "open" after the word details inside the tag.
@@ -59,20 +59,20 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 
 ---     
 
-<details ><summary>Monday Sept 15th, 2025</summary>
+<details open><summary>Monday Sept 15th, 2025</summary>
 
 ### Title
-1.
-1.
-1.
+1. worked on [Journal.md](https://github.com/Kymiira/game-dev-caleb-2025/blob/main/markdownfiles/journal.md)
+1. added [Journal.md](https://github.com/Kymiira/game-dev-caleb-2025/blob/main/markdownfiles/journal.md) to [Index.html](https://kymiira.github.io/game-dev-caleb-2025/public/index.html)
+1. created [html tag guide.md](https://github.com/Kymiira/game-dev-caleb-2025/blob/main/markdownfiles/html%20tag%20guide.md)
 
 </details>
 
-<details><summary>Tuesday Sept 16th, 2025</summary>
+<details open><summary>Tuesday Sept 16th, 2025</summary>
 
 ### Title
-1.
-1.
+1. VIDEOFLAC EASY TEST
+1. STARTED WORKING ON T1a03 (Tables and Lists)
 1.
 
 </details>
