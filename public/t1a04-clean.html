@@ -1,1 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Converter</title>
+</head>
+<body>
+    <h1>Unit Converter</h1>
 
+
+    <input id="myInputValue" type="number" value="1" placeholder="Enter value" oninput="myConvertUnits()" />
+
+
+    <select id="myFromUnit" onchange="myConvertUnits()">
+        <option value="meters">Meters (m)</option>
+        <option value="kilometers">Kilometers (km)</option>
+        <option value="centimeters">Centimeters (cm)</option>
+        <option value="inches">Inches (in)</option>
+        <option value="feet">Feet (ft)</option>
+        <option value="yards">Yards (yd)</option>
+        <option value="miles">Miles (mi)</option>
+    </select>
+
+
+    <button id="mySwapButton" onclick="mySwapAndConvert()">Swap</button>
+
+
+    <input id="myOutputValue" type="text" readonly />
+
+
+    <select id="myToUnit" onchange="myConvertUnits()">
+        <option value="meters">Meters (m)</option>
+        <option value="kilometers">Kilometers (km)</option>
+        <option value="centimeters">Centimeters (cm)</option>
+        <option value="inches" selected>Inches (in)</option>
+        <option value="feet">Feet (ft)</option>
+        <option value="yards">Yards (yd)</option>
+        <option value="miles">Miles (mi)</option>
+    </select>
+
+
+    <script>
+        const myInputValue = document.getElementById('myInputValue');
+        const myOutputValue = document.getElementById('myOutputValue');
+        const myFromUnitSelect = document.getElementById('myFromUnit');
+        const myToUnitSelect = document.getElementById('myToUnit');
+        const mySwapButton = document.getElementById('mySwapButton');
+
+
+        let myConversions = {};
+
+
+        function myConvertUnits() {
+            if (Object.keys(myConversions).length === 0) {
+                myOutputValue.value = "Loading...";
+                return;
+            }
+
+            const myValue = parseFloat(myInputValue.value);
+            const myFromUnit = myFromUnitSelect.value;
+            const myToUnit = myToUnitSelect.value;
+
+
+            if (isNaN(myValue)) {
+                myOutputValue.value = "Invalid input";
+                return;
+            }
+
+
+            const myValueInMeters = myValue / myConversions[myFromUnit];
+            const myResult = myValueInMeters * myConversions[myToUnit];
+            
+
+            myOutputValue.value = myResult.toFixed(6);
+        }
+
+
+        async function myFetchConversionRates() {
+            await new Promise(myResolvePromise => setTimeout(myResolvePromise, 1000));
+
+
+            myConversions = {
+                meters: 1,
+                kilometers: 0.001,
+                centimeters: 100,
+                inches: 39.3701,
+                feet: 3.28084,
+                yards: 1.09361,
+                miles: 0.000621371,
+            };
+        }
+
+
+        function mySwapAndConvert() {
+            const myTempFrom = myFromUnitSelect.value;
+            const myTempTo = myToUnitSelect.value;
+            myFromUnitSelect.value = myTempTo;
+            myToUnitSelect.value = myTempFrom;
+            myConvertUnits();
+        }
+
+
+        window.onload = async () => {
+            await myFetchConversionRates();
+            myConvertUnits();
+        };
+    </script>
+</body>
+</html>
