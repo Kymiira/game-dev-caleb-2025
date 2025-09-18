@@ -80,18 +80,17 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details><summary>Wed Sept 17th, 2025</summary>
 
 ### Title
-1.
-1.
-1.
+1. started working on t1a04 (vibecleaning)
 
 </details>
 
 <details><summary>Thursday Sept 18th, 2025</summary>
 
 ### Title
-1.
-1.
-1.
+1. fixed t1a04
+1. started working on t1a05 (forms)
+1. created t1a04-clean.html
+2. created t1a04-vibe.html
 
 </details>
 
