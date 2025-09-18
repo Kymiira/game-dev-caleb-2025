@@ -1,1 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Converter</title>
+    <!-- Use the Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Load Tailwind CSS from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .container {
+            max-width: 500px;
+        }
+    </style>
+</head>
+<body class="bg-gray-950 text-white min-h-screen flex items-center justify-center p-4">
+    <div class="container bg-gray-800 rounded-2xl shadow-2xl p-6 md:p-8 space-y-6">
+        <h1 class="text-3xl font-bold text-center text-teal-300">
+            <span class="text-white">Cool</span> Unit Converter
+        </h1>
+        <p class="text-center text-gray-400">Convert units of length easily and accurately.</p>
+        
+        <!-- Input and Select fields container -->
+        <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+            <!-- From Unit Input -->
+            <div class="flex-1 w-full relative">
+                <input
+                    id="inputValue"
+                    type="number"
+                    value="1"
+                    class="w-full bg-gray-700 text-white border-none rounded-xl py-3 px-4 text-lg font-medium focus:ring-2 focus:ring-teal-500 focus:outline-none transition-shadow"
+                    placeholder="Enter value"
+                />
+            </div>
+            
+            <!-- From Unit Dropdown -->
+            <div class="flex-1 w-full relative">
+                <select id="fromUnit" class="w-full bg-gray-700 text-white rounded-xl py-3 px-4 text-lg font-medium appearance-none focus:ring-2 focus:ring-teal-500 focus:outline-none transition-shadow cursor-pointer">
+                    <option value="meters">Meters (m)</option>
+                    <option value="kilometers">Kilometers (km)</option>
+                    <option value="centimeters">Centimeters (cm)</option>
+                    <option value="inches">Inches (in)</option>
+                    <option value="feet">Feet (ft)</option>
+                    <option value="yards">Yards (yd)</option>
+                    <option value="miles">Miles (mi)</option>
+                </select>
+                <!-- Custom arrow for the dropdown -->
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Swap Button -->
+        <div class="flex justify-center my-4">
+            <button
+                id="swapButton"
+                class="bg-gray-700 text-gray-300 rounded-full p-3 hover:bg-teal-500 hover:text-white transition-colors duration-300 transform rotate-90 md:rotate-0"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <polyline points="19 12 12 19 5 12"></polyline>
+                </svg>
+            </button>
+        </div>
+
+        <!-- To Unit Dropdown -->
+        <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+            <div class="flex-1 w-full relative">
+                <input
+                    id="outputValue"
+                    type="text"
+                    readonly
+                    class="w-full bg-gray-700 text-white border-none rounded-xl py-3 px-4 text-lg font-medium focus:ring-2 focus:ring-teal-500 focus:outline-none transition-shadow cursor-default"
+                />
+            </div>
+            <div class="flex-1 w-full relative">
+                <select id="toUnit" class="w-full bg-gray-700 text-white rounded-xl py-3 px-4 text-lg font-medium appearance-none focus:ring-2 focus:ring-teal-500 focus:outline-none transition-shadow cursor-pointer">
+                    <option value="meters">Meters (m)</option>
+                    <option value="kilometers">Kilometers (km)</option>
+                    <option value="centimeters">Centimeters (cm)</option>
+                    <option value="inches" selected>Inches (in)</option>
+                    <option value="feet">Feet (ft)</option>
+                    <option value="yards">Yards (yd)</option>
+                    <option value="miles">Miles (mi)</option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get references to all necessary DOM elements
+        const inputValue = document.getElementById('inputValue');
+        const outputValue = document.getElementById('outputValue');
+        const fromUnitSelect = document.getElementById('fromUnit');
+        const toUnitSelect = document.getElementById('toUnit');
+        const swapButton = document.getElementById('swapButton');
+
+        // Conversion factors relative to meters (the base unit)
+        const conversions = {
+            meters: 1,
+            kilometers: 0.001,
+            centimeters: 100,
+            inches: 39.3701,
+            feet: 3.28084,
+            yards: 1.09361,
+            miles: 0.000621371,
+        };
+
+        // Function to perform the conversion
+        function convertUnits() {
+            const value = parseFloat(inputValue.value);
+            const fromUnit = fromUnitSelect.value;
+            const toUnit = toUnitSelect.value;
+
+            // Handle invalid input
+            if (isNaN(value)) {
+                outputValue.value = "Invalid input";
+                return;
+            }
+
+            // Convert the value to the base unit (meters)
+            const valueInMeters = value / conversions[fromUnit];
+            // Convert from the base unit to the target unit
+            const result = valueInMeters * conversions[toUnit];
+            
+            // Display the result, formatted to 6 decimal places
+            outputValue.value = result.toFixed(6);
+        }
+
+        // Add event listeners to trigger conversion on input or unit change
+        inputValue.addEventListener('input', convertUnits);
+        fromUnitSelect.addEventListener('change', convertUnits);
+        toUnitSelect.addEventListener('change', convertUnits);
+
+        // Add event listener for the swap button
+        swapButton.addEventListener('click', () => {
+            const tempFrom = fromUnitSelect.value;
+            const tempTo = toUnitSelect.value;
+            fromUnitSelect.value = tempTo;
+            toUnitSelect.value = tempFrom;
+            convertUnits();
+        });
+
+        // Perform an initial conversion on page load
+        window.onload = convertUnits;
+    </script>
+</body>
+</html>
 
