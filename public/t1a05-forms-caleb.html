@@ -221,57 +221,33 @@ Use an LLM like <a href="https://copilot.microsoft.com">copilot</a> and ask it t
   });
 </script>
 
-
 <h1>File Upload Tester</h1>
 <p>Select an image or video file to see an instant preview.</p>
 
-<br><br>
-
-<form>
-  <div>
-    <label for="userFile">Upload a File:</label><br>
-    <input type="file" id="userFile" name="userFile">
-  </div>
-
-  <br><br><br>
-
-  <h2>File Preview</h2>
-  <div id="previewContainer">
-    <p>Your file preview will appear here.</p>
-  </div>
-</form>
+<input type="file" id="userFileDisplay">
+<div id="previewContainer"></div>
 
 <script>
-  const fileInput = document.getElementById('userFile');
+  const fileInput = document.getElementById('userFileDisplay');
   const previewContainer = document.getElementById('previewContainer');
 
-  fileInput.addEventListener('change' function() {
-    const file = fileInput.files[0];
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      previewContainer.innerHTML = '';
 
-    previewContainer.innerHTML = '';
-
-    if (file) {
-      if (file.type.startsWith('image/')) {
-        const img = document.createElement('img');
-        img.src URL.createObjectURL(file);
-        img.style.maxWidth = '100%';
-        img.style.height = 'auto';
-        img.style.display = 'block';
-
-        previewContainer.appendChild(img);
-      } else if (file.type.startsWith('video/')) {
-        const video = document.createElement('video');
-        video.controls = true;
-        video.src = URL.createObjectURL(file);
-        video.style.maxWidth = '100%';
-        video.style.height = 'auto';
-        video.style.display = 'block';
-        previewContainer.appendChild(video);
-      } else {
-        const message = document.createElement('p');
-        message.textContent = 'Please select an image or video file to preview.';
-        previewContainer.appendChild(message);
+      if (file) {
+        if (file.type.startsWith('image/')) {
+          const img = document.createElement('img');
+          img.src = URL.createObjectURL(file);
+          img.style.maxWidth = '100%';
+          previewContainer.appendChild(img);
+        } else if (file.type.startsWith('video/')) {
+          const video = document.createElement('video');
+          video.controls = true;
+          video.src = URL.createObjectURL(file);
+          video.style.maxWidth = '100%';
+          previewContainer.appendChild(video);
+        }
       }
-    }
-  });
+    });
 </script>
