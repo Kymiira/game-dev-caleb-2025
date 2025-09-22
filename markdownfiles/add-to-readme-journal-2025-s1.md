@@ -104,8 +104,8 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 
 ### Title
 1. finished t1a04 - vibecode
-1.
-1.
+1. finished t1a05 - tables
+1. added cool file image/video previewer to the end of t1a05 - tables
 
 </details>
 
