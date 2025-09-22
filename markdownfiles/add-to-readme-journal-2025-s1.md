@@ -59,7 +59,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 
 ---     
 
-<details open><summary>Monday Sept 15th, 2025</summary>
+<details><summary>Monday Sept 15th, 2025</summary>
 
 ### Title
 1. worked on [Journal.md](https://github.com/Kymiira/game-dev-caleb-2025/blob/main/markdownfiles/journal.md)
@@ -68,7 +68,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 
 </details>
 
-<details open><summary>Tuesday Sept 16th, 2025</summary>
+<details><summary>Tuesday Sept 16th, 2025</summary>
 
 ### Title
 1. VIDEOFLAC EASY TEST
@@ -100,7 +100,16 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 
 ---   
 
-<details ><summary>Monday Sept 22nd, 2025</summary>
+<details open><summary>Monday Sept 22nd, 2025</summary>
+
+### Title
+1. finished t1a04 - vibecode
+1.
+1.
+
+</details>
+
+<details open><summary>Tuesday Sept 23rd, 2025</summary>
 
 ### Title
 1.
@@ -109,7 +118,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 
 </details>
 
-<details><summary>Tuesday Sept 23rd, 2025</summary>
+<details open><summary>Wed Sept 24th, 2025</summary>
 
 ### Title
 1.
@@ -118,7 +127,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 
 </details>
 
-<details><summary>Wed Sept 24th, 2025</summary>
+<details open><summary>Thursday Sept 25th, 2025</summary>
 
 ### Title
 1.
@@ -127,16 +136,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 
 </details>
 
-<details><summary>Thursday Sept 25th, 2025</summary>
-
-### Title
-1.
-1.
-1.
-
-</details>
-
-<details><summary>Friday Sept 26th, 2025</summary>
+<details open><summary>Friday Sept 26th, 2025</summary>
 
 ### Title
 1.
