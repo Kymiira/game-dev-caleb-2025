@@ -112,7 +112,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details open><summary>Tuesday Sept 23rd, 2025</summary>
 
 ### Title
-1.
+1. added links to index.html for CSS, HTML and JS guides.
 1.
 1.
 
