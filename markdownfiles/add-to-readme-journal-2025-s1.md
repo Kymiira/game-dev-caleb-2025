@@ -114,7 +114,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 ### Title
 1. added links to index.html for CSS, HTML and JS guides.
 1. started working on t1a06 - css
-1.
+1. added cool opacity changer to t1a06
 
 </details>
 
@@ -130,8 +130,8 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details open><summary>Thursday Sept 25th, 2025</summary>
 
 ### Title
-1.
-1.
+1. finished (?) t1a06 - css
+1. started working on t1a07 - easyEDA
 1.
 
 </details>
