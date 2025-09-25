@@ -6,4 +6,34 @@ This is <b>bold</b> True?<br>
 This is <b style="color:red; background-color:yellow;">cool</b> Yes!<br>
 <br>
 
-This is <i style="border-style:groove;">italic with a border</i>
+This is <i style="border-style:groove; border-bottom-right-radius:10px 10px; border-bottom-left-radius:10px 10px; border-top-right-radius:10px 10px; border-top-left-radius:10px 10px; border:black 10px double; width:100px; height:250px; background-color: grey;">ugly</i><br>
+<br>
+
+<b style="border: solid 2.5px black; width: 25px; height: 25px; background-color: lightblue; border-radius: 80px 80px;">Why am i <i>rounded</i> and <span style="color:blue;">blue</span></b><br>
+<br>
+
+<p style="font-family:fantasy;">fonts!</p><br>
+<p style="font-size: 12px;">TWELVE PIXELS</p><br>
+<p style="font-kerning: normal">this style is KERNED.</p><br>
+
+<p style="text-aligh: center; color: black;"> the magic opacity box<p>
+
+<div id="box" style="width: 200px; height: 200px; background-color: lightblue; opacity: 1; transition: opacity 0.2s ease-in-out; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2em; border: 2px solid black; border-radius: 8px;">
+	THE BOX OF OPACITY SHIFTING
+</div>
+
+<input type="range" id="opacity-slider" min="0" max="100" valie="100" oninput="updateOpacity()" style="margin-top: 20px; width: 200px;">
+
+    <script>
+        function updateOpacity() {
+
+          
+            const box = document.getElementById('box');
+            const slider = document.getElementById('opacity-slider');
+            const sliderValue = slider.value;
+            const newOpacity = sliderValue / 100;
+
+          
+            box.style.opacity = newOpacity;
+        }
+    </script>
