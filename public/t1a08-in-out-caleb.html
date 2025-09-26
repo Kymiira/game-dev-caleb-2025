@@ -6,21 +6,17 @@
   <title>t1a08</title>
   <style>
     body {font-family: 'Comic Sans MS', 'Inter', sans-serif;}
+    .center-iframe {
+  display: block;
+  width: 80%;
+  margin-left: auto;
+  marign-right: auto;
+    }
   </style>
 </head>
 <body>
   <h1 align=center>t1a08-in-out-caleb</h1>
 
-  <input type=text id="myText01" value="Caleb"/>
-  <button id="myInputSwap01" onclick="mySwap01()">Swap</button><br>
-  <span id="mySpan01">...</span>
- 
-  <script>
-    function mySwap01() {
-      let myInput01 = document.getElementById('myText01')
-      let myOutput01 = document.getElementById('mySpan01')
-      myOut01.innerHTML = myIn01.value
-    }
-  </script>
-  
+  <iframe class="center-iframe" id="mySwapDisplay" src="t1a08-buttonswapiframe.html" width="600" height="300"></iframe><br><br>
+  <iframe class="center-iframe" id="mySwapDisplay" src="" width="600" height="300"></iframe><br><br>
 </body>
