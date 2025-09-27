@@ -6,20 +6,63 @@
   <title>t1a08</title>
   <style>
     body {font-family: "Century Gothic", CenturyGothic, Geneva, AppleGothic, sans-serif;}
-    .center-iframe {
-  display: block;
-  width: 80%;  
-  margin-left: auto;  
-  margin-right: auto; 
- 
-}
-  </style>
-
-}
+    .bordered-span {
+  border: 0.5px solid rgb(0, 0, 0);
+  }
+</style>
 </head>
 <body>
   <h1 align=center>t1a08-in-out-caleb</h1>
 
-  <iframe class="center-iframe" id="mySwapDisplay" src="t1a08-buttonswapiframe.html" width="600" height="300"></iframe><br><br>
-  <iframe class="center-iframe" id="mySwapDisplay" src="" width="600" height="300"></iframe><br><br>
+  <hr>
+  <h2 align=center>button swap</h2>
+   <h3 align=center>this input/output takes the value from the input and inserts it into the text of a span tag</h3>
+
+  <input type=text id="myText01" value="Caleb"/>
+  <button id="myInputSwap01" onclick="mySwap01()">Swap</button><br>
+  <br><br>
+  <span class="bordered-span" id="mySpan01">...</span>
+ 
+  <script>
+    function mySwap01() {
+      let myInput01 = document.getElementById('myText01')
+      let myOutput01 = document.getElementById('mySpan01')
+      myOutput01.innerHTML = myInput01.value
+    }
+  </script>
+  
+  <h2 align=center>calculator</h2>
+
+  <table border=->
+    <tr><td><button id="myOne">1</button></td><td><button id="myTwo">2</button></td><td><button id="myThree">3</button></td><td><button id="myPlus">+</button></td></tr>
+    <tr><td><button id="myFour">4</button></td><td><button id="myFive">5</button></td><td><button id="mySix">6</button></td><td><button id="myMinus">-</button></td></tr>
+    <tr><td><button id="mySeven">7</button></td><td><button id="myEight">8</button></td><td><button id="myNine">9</button></td><td><button id="myMultiply">*</button></td></tr>
+    <tr><td><button id="myDecimal">.</button></td><td><button id="myZero">0</button></td><td><button id="myEquals">=</button></td><td><button id="myDivide">/</button></td></tr>
+  </table>
+    <br>
+    <span class="bordered-span" id="myCalculator">0</span><br>
+    <br>
+    <button id="myClear" onclick="document.getElementById('myCalculator').innerHTML = '0'; calcValue = '';">Clear</button>
+    <br><br>
+    <script>
+        let myCalc = document.getElementById('myCalculator')
+        let calcValue = ''
+        document.getElementById('myOne').onclick = function() {calcValue += '1'; myCalc.innerHTML = calcValue;}
+        document.getElementById('myTwo').onclick = function() {calcValue += '2'; myCalc.innerHTML = calcValue;}
+        document.getElementById('myThree').onclick = function() {calcValue += '3'; myCalc.innerHTML = calcValue;}
+        document.getElementById('myFour').onclick = function() {calcValue += '4'; myCalc.innerHTML = calcValue;}
+        document.getElementById('myFive').onclick = function() {calcValue += '5'; myCalc.innerHTML = calcValue;}
+        document.getElementById('mySix').onclick = function() {calcValue += '6'; myCalc.innerHTML = calcValue;}
+        document.getElementById('mySeven').onclick = function() {calcValue += '7'; myCalc.innerHTML = calcValue;}
+        document.getElementById('myEight').onclick = function() {calcValue += '8'; myCalc.innerHTML = calcValue;}
+        document.getElementById('myNine').onclick = function() {calcValue += '9'; myCalc.innerHTML = calcValue;}
+        document.getElementById('myZero').onclick = function() {calcValue += '0'; myCalc.innerHTML = calcValue;}
+        document.getElementById('myDecimal').onclick = function() {calcValue += '.'; myCalc.innerHTML = calcValue;}
+        document.getElementById('myPlus').onclick = function() {calcValue += '+'; myCalc.innerHTML = calcValue;}
+        document.getElementById('myMinus').onclick = function() {calcValue += '-'; myCalc.innerHTML = calcValue;}
+        document.getElementById('myMultiply').onclick = function() {calcValue += '*'; myCalc.innerHTML = calcValue;}
+        document.getElementById('myDivide').onclick = function() {calcValue += '/'; myCalc.innerHTML = calcValue;}
+        document.getElementById('myEquals').onclick = function() {calcValue = eval(calcValue); myCalc.innerHTML = calcValue;}
+
+    </script>
 </body>
