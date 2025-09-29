@@ -139,8 +139,8 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details open><summary>Friday Sept 26th, 2025</summary>
 
 ### Title
-1.
-1.
+1. started working on t1a08 - in-out
+1. finished basic of t1a08 - in-out
 1.
 
 </details>
@@ -150,9 +150,10 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details ><summary>Monday Sept 29th, 2025</summary>
 
 ### Title
+1. attempted to add sqr func to calc in t1a08 - in-out, realized it was too complex for my current skill level and did not want to be accused of using ChatGPT or other Generative AI Models to create work for me, so ended up ending proj.
+1. started t1a09 - variables
 1.
-1.
-1.
+
 
 </details>
 
