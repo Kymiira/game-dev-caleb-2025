@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>t1a10-forloops-caleb.html</title>
+	<style>
+	    body {font-family: 'Inter', comic sans MS;}
+		#randomNumbersSection, #arraySumSection, #yesNoInputSection{
+			display: none;
+    }
+	</style>
+<head>
+<body>
+	<section>
+		<!-- header area -->
+		<h1 align=center>t1a10-forloops-caleb</h1>
+		<h2 align=center>"Write a short bit of code to loop from 0 to 10 and if the number is 3 then write (third)"</h2>
+	</section>
+	<section>
+		<!-- main area -->
+		<div id="myDiv02">"run" counter</div>
+		<input type=button value="run" onclick="{
+			let myTemp = ' '
+			document.getElementById('myDiv01').innerHTML = ' '
+			for (x=0; x<10000; x++){
+				if (x == 3){
+					myTemp += x + ' third <br>'
+				} else {
+					myTemp += x + '<br>'
+				}
+			}
+			document.getElementById('myDiv01').innerHTML = myTemp
+		}"><br>
+		<input type=button value="clear" onclick="{
+			document.getElementById('myDiv01').innerHTML = ' '
+		}"><br>
+		<div id="myDiv01">...</div>
+	</section>
