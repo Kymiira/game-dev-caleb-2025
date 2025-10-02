@@ -10,6 +10,124 @@
 </head>
 <body>
   <h1 align=center>t1a09-variables-caleb</h1>
-  <span align=center>Show correct use of const, var, let and integer, character, boolean, loat, and string.</span><br>
+  <span align=center>Show correct use of const, var, let and integer, character, boolean, float, and string.</span><br>
+  <br><br><hr>
+  <h1>examples of ints, chars, bools, floats, and strings</h1>
   <br><br>
+  <section>
+   <h2>Adds two integers together via parseInt()</h2>
+   <input type="number" id="myFirstInt01" value="0"/><br>
+    <input type="number" id="mySecondInt01" value="0"/><br>
+   <button id="myCalculate01" onclick="myIntAdd()">Calculate</button><br>
+   <br><br>
+   <span id="mySum01">...</span>
+   <script>
+     function myIntAdd() {
+       let myAdd01 = document.getElementById('myFirstInt01');
+       let myAdd02 = document.getElementById('mySecondInt01');
+       let mySum = document.getElementById('mySum01');
+       mySum.innerHTML = parseInt(myAdd01.value) + parseInt(myAdd02.value);
+       }
+   </script>
+  </section>
+  <br><br><hr>
+
+
+  <section>
+    <h2>Will display the last character typed into this text box</h2>
+    <input type="text" id="myCharTextbox01" placeholder="Enter Text Here"/><br>
+    Last Character Typed: <span id="myLastChar01">...</span> and the total number of characters is: <span id="myTotalChars01">0</span>
+    <br><span style="font-size: x-small;"> the script for this character box display uses slice to get the last character of the string, its usually used with arrays but strings are treated like arrays of characters... </span><br>
+    <script>
+      var myCharBox01 = document.getElementById('myCharTextbox01');
+      myCharBox01.addEventListener('input', function() {
+        var lastChar = myCharBox01.value.slice(-1); // -1 gets the last character of the string (array of characters)
+        document.getElementById('myLastChar01').innerText = lastChar;
+        document.getElementById('myTotalChars01').innerText = myCharBox01.value.length;
+        if (myCharBox01.value === "") {
+          document.getElementById('myLastChar01').innerText = "...";
+        }
+      });
+   </script>
+  </section>
+  <br><br><hr>
+
+
+  <section>
+   <h2>This button toggles the light</h2>
+   <span style="font-size: x-small;">Console shows bool state</span><br>
+   <button id="myLightOnOff01" onclick="myLight()">Light Switch</button><br>
+   <br><span id="myLightStatus01">The light is off</span><br>
+   <script>
+     let LightStatus = false;
+     function myLight() {
+       LightStatus = !LightStatus;
+       if (LightStatus) {
+         document.getElementById('myLightStatus01').innerText = "The light is on";
+         console.log(true);
+       } else {
+         document.getElementById('myLightStatus01').innerText = "The light is off";
+         console.log(false);
+       }
+     }
+   </script>
+  </section>
+  <br><br><hr>
+
+
+  <section>
+    <h2>Adds two floats together via parseFloat()</h2>
+    <input type="number" value="0" id="myFloatVal01"/><br>
+    <input type="number" value="0" id="myFloatVal02"/><br>
+    <button id="myFloatCalc01" onclick="myFloatAdd()">Calculate</button><br>
+    <br><br>
+    <span id="myFloatSum01">...</span>
+   <script>
+     function myFloatAdd() {
+        let myFloat01 = document.getElementById('myFloatVal01');
+        let myFloat02 = document.getElementById('myFloatVal02');
+        let myFloatSum = document.getElementById('myFloatSum01');
+        myFloatSum.innerHTML = parseFloat(myFloat01.value) + parseFloat(myFloat02.value);
+        }
+    </script>
+  </section>
+  <br><br><hr>
+
+
+  <section>
+   <h2>String Methods</h2>
+   <input type="text" id="myStringInput01" placeholder="Enter Text Here"/><br>
+   <button id="myStringReverse01" onclick="myStringReverse()">Reverse String</button><br>
+   <button id="myStringCorrector01" onclick="myStringCorrector()">Proper Sentence</button><br>
+   <button id="myStringCounter01" onclick="myStringCounter()">Count Characters</button><br>
+   <br>
+   <span id="myStringOutput01">...</span>
+   <script>
+     function myStringReverse() {
+       const myStringInput02 = document.getElementById('myStringInput01').value;
+       const myStringOutput02 = document.getElementById('myStringOutput01');
+       myStringOutput02.innerText = myStringInput02.split('').reverse().join('');
+      }
+     function myStringCorrector() {
+       const myStringInput03 = document.getElementById('myStringInput01').value;
+       const myStringOutput03 = document.getElementById('myStringOutput01');
+       if (myStringInput03.length === 0) {
+         myStringOutput03.innerText = "...";
+         return;
+       } else {
+         let correctedString = myStringInput03.charAt(0).toUpperCase() + myStringInput03.slice(1);
+         if (!correctedString.endsWith('.')) {
+           correctedString += '.';
+         }
+         myStringOutput03.innerText = correctedString;
+       }
+     }
+     function myStringCounter() {
+        const myStringInput04 = document.getElementById('myStringInput01').value;
+        const myStringOutput04 = document.getElementById('myStringOutput01');
+        myStringOutput04.innerText = `Character Count: ${myStringInput04.length}`;
+      }
+    </script>
+  </section>
 </body>
+</html>
