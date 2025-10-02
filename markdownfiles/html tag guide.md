@@ -1,3 +1,0 @@
-# TAGS GUIDE
-> - ``<!DOCTYPE html>``
-  
