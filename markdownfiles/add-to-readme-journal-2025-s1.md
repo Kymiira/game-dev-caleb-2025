@@ -175,9 +175,9 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details open><summary>Wednesday Oct 1st, 2025</summary>
 
 ### Title
-1.
-1.
-1.
+1. finished t1a09 - variables
+1. added x assignment area to main readme.md
+1. started salary calculator x assignment
 
 </details>
 
