@@ -10,30 +10,123 @@
 			display: none;
     }
 	</style>
-<head>
+</head>
 <body>
+	<!-- header area -->
 	<section>
-		<!-- header area -->
 		<h1 align=center>t1a10-forloops-caleb</h1>
 		<h2 align=center>"Write a short bit of code to loop from 0 to 10 and if the number is 3 then write (third)"</h2>
 	</section>
+	<!-- 100 for-loop -->
 	<section>
-		<!-- main area -->
-		<div id="myDiv02">"run" counter</div>
+		<div id="myCounter01">"run" counter</div>
 		<input type=button value="run" onclick="{
 			let myTemp = ' '
-			document.getElementById('myDiv01').innerHTML = ' '
-			for (x=0; x<10000; x++){
+			document.getElementById('my100Loop01').innerHTML = ' '
+			for (x=0; x<100; x++){
 				if (x == 3){
 					myTemp += x + ' third <br>'
 				} else {
 					myTemp += x + '<br>'
 				}
 			}
-			document.getElementById('myDiv01').innerHTML = myTemp
+			document.getElementById('my100Loop01').innerHTML = myTemp
 		}"><br>
 		<input type=button value="clear" onclick="{
-			document.getElementById('myDiv01').innerHTML = ' '
+			document.getElementById('my100Loop01').innerHTML = ' '
 		}"><br>
-		<div id="myDiv01">...</div>
+		<div id="my100Loop01">...</div>
 	</section>
+	<!-- Shopping List -->
+	<section>
+		<div >
+			<input type="text" placeholder="Enter List Item" id="myInput01">
+			<button onclick="updateList()">Add Item</button>
+			<button onclick="clearList()">Clear List</button>
+		</div><br>
+		<script>
+			let myList = [];
+			
+			function updateList () {
+				const stringToAdd = document.getElementById('myInput01').value.trim();
+				if (stringToAdd !== '') {
+					myList.push(stringToAdd);
+					
+					document.getElementById('myInput01').value = '';
+				} else {
+					console.log("Empty Input");
+				}
+				
+				let myTemp = '<h3>My Shopping List:</h3>';
+				for (let i = 0; i < myList.length; i++) {
+					myTemp += myList[i] + '<br>';
+				}
+				document.getElementById('myList01').innerHTML = myTemp;
+			}
+			function clearList() {
+				myList = [];
+				document.getElementById('myList01').innerHTML = '';
+			}
+		</script>
+		<div id="myList01">...</div>
+	</section>
+	<!-- grade checker (pass, fail, HR) -->
+	<section>
+	
+	</section>
+</body>
+<!-- For-Loop and Array Example Ideas -->
+<section>
+	<details value=IDEAS>
+		Calculate Total Price:<br>
+<br>
+				Concept: Use a for loop to iterate over an array of numbers (prices like $1.50, $4.99, $2.00).<br>
+				Action: The loop will add each number to a running total variable.<br>
+				Output: The final sum (the total price) displayed in a paragraph or heading. 💰<br><br>
+			Display Student Grades (with Pass/Fail):<br>
+			<br>
+				Concept: Use a for loop and an if/else statement inside the loop to check an array of numbers (grades).<br>
+				Action: Iterate through the grades. If a grade is 70 or higher, display it as "Pass"; otherwise, display it as "Fail."<br>
+				Output: A list showing each grade's outcome (e.g., "85: Pass," "62: Fail"). 📝<br><br>
+			Reverse a List of Names:<br>
+			<br>
+				Concept: Use a for loop that iterates backward over an array of strings (names).<br>
+				Action: The loop starts at the last index of the array and decrements, adding the names to a new array or directly to the HTML in reverse order.<br>
+				Output: A list of names displayed from last to first. 🔄<br><br>
+			Filter Even Numbers:<br>
+			<br>
+				Concept: Use a for loop with a modulo operator (%) to check an array of integers.<br>
+				Action: The loop checks if the number divided by 2 has a remainder of 0. If it does, the number is added to a new array or displayed.<br>
+				Output: A list containing only the even numbers from the original array.<br><br>
+			Create a Simple Multiplication Table:<br>
+			<br>
+				Concept: Use a for loop to iterate from 1 to 10.<br>
+				Action: Inside the loop, calculate and display the product of the loop counter and a chosen number (e.g., 7).<br>
+				Output: A list like: "1 x 7 = 7," "2 x 7 = 14," etc. 🔢<br><br>
+			Count Vowels in a Sentence Array:<br>
+			<br>
+				Concept: Use a nested loop—an outer for loop for an array of strings (sentences) and an inner loop for the characters in each string.<br>
+				Action: The inner loop checks if the character is a vowel (a, e, i, o, u) and increments a counter.<br>
+				Output: For each sentence, display the total count of vowels.<br><br>
+			Power Calculation Table:<br>
+			<br>
+				Concept: Use a for loop to calculate powers of a base number (e.g., 2).<br>
+				Action: Iterate from 1 to 5. Inside the loop, use Math.pow() or repeated multiplication to calculate 2 <br>
+				1<br>
+				, 2 <br>
+				2<br>
+				, 2 <br>
+				3<br>
+				, etc., and display the results.<br>
+				Output: A list showing the base number raised to increasing powers.<br><br>
+			Highlight Words Shorter Than 5 Letters:<br>
+			<br>
+				Concept: Use a for loop to iterate over an array of strings (words) and check the length property.<br>
+				Action: The loop checks if word.length < 5. If true, the word is displayed with an emphasis (e.g., wrapped in <b> tags); otherwise, it's displayed normally.			Output: A sentence or list where short words are visually emphasized.<br><br>
+			Populate an HTML select Dropdown:<br>
+			<br>
+				Concept: Use a for loop to iterate over an array of strings (e.g., years 2025 to 2035).<br>
+				Action: For each year in the array, the loop dynamically creates a new option element and appends it to a pre-existing select (dropdown) element on the page.<br>
+				Output: A fully functional dropdown menu populated with the array's values. 📅 --><br><br>
+	</details>
+</section>
