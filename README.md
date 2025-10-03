@@ -1,13 +1,25 @@
-# game-dev-caleb-2025
+<h2 align="center">Welcome, this is my Comp Prog. Course (2025) Repository!</h2>
 
-[main site](https://kymiira.github.io/game-dev-caleb-2025/public/index.html)<br>
-[Details Journal](https://github.com/Kymiira/game-dev-caleb-2025/blob/main/markdownfiles/add-to-readme-journal-2025-s1.md)<br>
-[SelfMade Journal](https://github.com/Kymiira/game-dev-caleb-2025/blob/main/markdownfiles/journal.md)<br>
+<table align="center">
+  <tr>
+    <td><div>
+      <img width="80%" src="https://img.icons8.com/?size=64&id=3tC9EQumUAuq&format=png">
+      <p><b><i>GitPage Links</i></b></p>
+    </div></td>
+    <td><div>
+      <img width="50%" src="https://img.icons8.com/?size=50&id=21812&format=png">
+      <p><b><i>Markdown Links</i></b></p>
+    </div></td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <a href="https://kymiira.github.io/game-dev-caleb-2025/public/index.html">📇 Assignment Index</a><br>
+    </td>
+    <td valign="top">
+      <a href="http://github.com/Kymiira/game-dev-caleb-2025/blob/main/markdownfiles/add-to-readme-journal-2025-s1.md"<br>🗒️ Details Journal</a><br>
+      <a href="https://github.com/Kymiira/game-dev-caleb-2025/blob/main/markdownfiles/journal.md">🗒️ <s>Self-Made Journal</s> <b>DEPRECATED</b></a><br>
+      <a href="https://github.com/Kymiira/game-dev-caleb-2025/blob/main/markdownfiles/videoflac-guide.md">🎥 VIDEOFLAC guide</a><br>
+      <a href="https://github.com/Kymiira/game-dev-caleb-2025/blob/main/markdownfiles/X-Assignment-Ideas.md">💡 X-Assignment Ideas</a><br>
+  </tr>
+</table>
 
-# X Assignment Ideas <hr>
-1. dice roller - website with interactive dice roller, comes with common d6, d4, d8, d10, d12, d20, probability counter, percentage die, etc.
-2. custom to-do list - fully modifiable to-do list with current number of tasks, task priority, categories, completed status, % done, customizable descriptions, etc.
-3. quiz - custom quiz with question x/y, % done, # of question sidebar, incorrect/correct check next to answered, hint button if needed, etc. 
-4. salary + tip calculator - able to calculate hourly, full-time, part-time, commission, freelance, investment and tips
-5. scientific graphing calculator ? - all functions of an electronic scientific calculator but graphing
-<iframe src="https://kymiira.github.io/game-dev-caleb-2025/public/index.html" > </iframe>
