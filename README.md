@@ -1,4 +1,4 @@
-<h2 align="center">Welcome, this is my Comp Prog. Course (2025) Repository!</h2>
+<h2 align="center">Welcome, this is my "Game Dev" Course (2025) Repository!</h2>
 
 <table align="center">
   <tr>
