@@ -10,4 +10,4 @@
 3. quiz - custom quiz with question x/y, % done, # of question sidebar, incorrect/correct check next to answered, hint button if needed, etc. 
 4. salary + tip calculator - able to calculate hourly, full-time, part-time, commission, freelance, investment and tips
 5. scientific graphing calculator ? - all functions of an electronic scientific calculator but graphing
-<iframe src="https://kymiira.github.io/game-dev-caleb-2025/public/index.html"> </iframe>
+<iframe src="https://kymiira.github.io/game-dev-caleb-2025/public/index.html" > </iframe>
