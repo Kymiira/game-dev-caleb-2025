@@ -1,7 +1,4 @@
-# School Course GameDev 11-12, Learning Journal for Caleb, Semester 1 2025
-
-
-Note: If you have a link to an assignment that has not been marked, put "open" after the word details inside the tag.
+# School Course Game Dev Learning Journal for Caleb, Semester 1 2025
 
 ---
 
