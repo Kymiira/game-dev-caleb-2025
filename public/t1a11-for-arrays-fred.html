@@ -1,1 +1,77 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>T1a11</title>
+	<style>
+		{font-family: "Century Gothic", CenturyGothic, Geneva, AppleGothic, sans-serif;}
+	</style>
+</head>
+<body>
+	<!-- header -->
+	<section>
+	<h1 align=center>t1a11-for-arrays-caleb</h1>
+	<ul>
+		<li><p>I'm going to try to do this assignment in a different format, using &lt;section&gt; and &lt;details&gt; tags to...</p> 
+		<li><p>... seperate the different examples in both the source and the webpage itself
+		<li><p> P.S: you can use 'at l t semicolon' and 'at g t semicolon' to utilize closed and open tags due to them being an accessible HTML entity code, pretty cool huh?</p>
+	</ul>
+	</section>
+	<!-- given example -->
+	<section>
+		<details>
+			<summary>Example Array</summary>
+			<script>
+				let myExample01 = new Array()
+				myExample01[0] = 'Fred'
+				myExample01[1] = 'Mary'
+				myExample01[2] = 'Zizzy'
+			</script>
+			Max Array Entry: <input type=text id="myExText01" value="3"><br>
+			<input type=button value="Example onClick" onClick="{
+				let myMax = document.getElementById('myExText01').value
+				let mySum = ''
+				document.getElementById('myExDiv01').innerHTML = ' '
+				
+				for (let myLoop=0;  myLoop < myMax; myLoop++){
+					mySum += 'Loop #:' + myLoop + ' array entry: ' + myExample01[myLoop] + ' <br>'
+				}
+				document.getElementById('myExDiv01').innerHTML = mySum
+				console.log('printed' + ' ' + myExample01[0])
+				console.log('printed' + ' ' + myExample01[1])
+				console.log('printed' + ' ' + myExample01[2])
+			}">
+			
+			<div id="myExDiv01">...</div>
+			
+			
+			<br>
+		</details><br>
+	</section>
+	<!-- my stuff -->
+	<section>
+		<details>
+			<summary>Expense Calculator</summary>
+			<h2 align=center>This calculator will serve multiple functions, it will help you calculate your income, your expenses, and the difference between your income and expenses.</h2>
+			<br><br>
+			<div 
+			id="myOutput01"
+			>
+				Output: 
+			</div><br>
+			<div
+			id="myInputCollection01
+			>
+				<input type=text id="myText01" value="stuff"><br>
+				<input id="myButton01" type=button value="Calculate"><br>
+			</div>
+		</details><br>
+			
+			
+		<details>
+			<summary>Ex2</summary>
+		</details><br>
+		<details>
+			<summary>Ex3</summary>
+		</details><br>
