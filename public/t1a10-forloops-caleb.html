@@ -23,7 +23,7 @@
 		<input type=button value="run" onclick="{
 			let myTemp = ' '
 			document.getElementById('my100Loop01').innerHTML = ' '
-			for (x=0; x<100; x++){
+			for (let x=0; x<100; x++){
 				if (x == 3){
 					myTemp += x + ' third <br>'
 				} else {
@@ -113,11 +113,7 @@
 			<br>
 				Concept: Use a for loop to calculate powers of a base number (e.g., 2).<br>
 				Action: Iterate from 1 to 5. Inside the loop, use Math.pow() or repeated multiplication to calculate 2 <br>
-				1<br>
-				, 2 <br>
-				2<br>
-				, 2 <br>
-				3<br>
+				2<sup>1</sup>, 2<sup>2</sup>, 2<sup>3</sup>.<br>
 				, etc., and display the results.<br>
 				Output: A list showing the base number raised to increasing powers.<br><br>
 			Highlight Words Shorter Than 5 Letters:<br>
@@ -128,6 +124,6 @@
 			<br>
 				Concept: Use a for loop to iterate over an array of strings (e.g., years 2025 to 2035).<br>
 				Action: For each year in the array, the loop dynamically creates a new option element and appends it to a pre-existing select (dropdown) element on the page.<br>
-				Output: A fully functional dropdown menu populated with the array's values. 📅 --><br><br>
+				Output: A fully functional dropdown menu populated with the array's values. 📅<br><br>
 	</details>
 </section>
