@@ -60,14 +60,15 @@
 			>
 				<p>Output:</p>
 				<output id="myMoneyCalcOutput01"></output>
+				<input id="myClearButton01" type=button value="Clear" onclick="Clear()"><br>
 			</div><br>
 			<div
 			id="myMoneyCalculatorInputDiv01"
 			>
 				<p><!--PLACEHOLDER PARA, ENTER INPUT PARAMETERS HERE-->test</p>
-				<input type=numbers id="myIncome01" placeholder="Income input"> 
+				<input type=numbers id="myIncome01" placeholder="Seperate Values Via Space or Comma (ex: 1,2 | ex: 1 2)"> 
 				<input id="mySubmitButton01" type=button value="Income calc" onclick="Income()"><br><br>
-				<input type=numbers id="myExpense01" placeholder="Expense input"> 
+				<input type=numbers id="myExpense01" placeholder="Insert Values Via Space or Comma (ex: -1,-2 | ex: -1 -2)"> 
 				<input id="mySubmitButton02" type=button value="Expenses calc" onclick="Expenses()"><br><br>
 				<input type=numbers id="myDifference01" placeholder="Difference input"> 
 				<input id="mySubmitButton03" type=button value="Difference calc" onclick="Difference()"><br><br>
@@ -76,47 +77,62 @@
 
 			</div>
 			<script>
-				let myIncomeInput = document.getElementById('myIncome01')
-				let myExpenseInput = document.getElementById('myExpense01')
-				let myDifferenceInput = document.getElementById('myDifference01')
-				let myIncome = document.getElementById('mySubmitButton01')
-				let myExpenses = document.getElementById('mySubmitButton02')
-				let myDifference = document.getElementById('mySubmitButton03')
-				let myOutput = document.getElementById('myMoneyCalcOutput01')
-				let myCalc = new Array()
+				// The Inputs
+				let myIncomeInput = document.getElementById('myIncome01');
+				let myExpenseInput = document.getElementById('myExpense01');
+				let myDifferenceInput = document.getElementById('myDifference01');
+				// The Submits
+				let myIncome = document.getElementById('mySubmitButton01');
+				let myExpenses = document.getElementById('mySubmitButton02');
+				let myDifference = document.getElementById('mySubmitButton03');
+				// The Output
+				let myOutput = document.getElementById('myMoneyCalcOutput01');
+				// The Variables
+				let myCalc = new Array();
 				let myIncomeValue = 0;
 				let myExpenseValue = 0;
 				
-				function ProcessIncome() {
-					const IncomeValue = myIncomeInput.value;
-					const IncomeStrings = IncomeValue.split(',');
-					console.log('IncomeStrings =' + IncomeStrings);
-					myCalc = [];
-					for (let str of IncomeStrings) {
-						myCalc.push(parseFloat(str));
-					}
-				}
-				
 				function Income() {
-					ProcessIncome();
+					let incomeString = myIncomeInput.value;
 					
-					let currentTotal = 0;
+					myCalc = new Array();
+					myIncomevalue = 0;
 					
-					for (let num of myCalc) {
-						if (!isNaN(num)) {
-							currentTotal += num;
+					let incomeStringArray = incomeString.split(/[\s,]+/);
+					let totalEntries = 0;
+					
+					for (let i = 0; i < incomeStringArray.length; i++) {
+						let amount = parseFloat(incomeStringArray[i].trim());
+						
+						if (isNaN(amount) || amount <0) {
+							myOutput.textContent = `Invalid Entry Found: "${incomeStringArray[i].trim()}". Please use valid numbers separated by commas.`;
+							myCalc = new Array();
+							myincomeValue = 0;
+							return;
 						}
+						myIncomeValue += amount;
+						myCalc.push(amount);
+						totalEntries++;
 					}
-					myIncomeValue = currentTotal;
-					myOutput.innerHTML = `Output: Total Income Calculated: **$${myIncomeValue.toFixed(2)}**`;
+				
+				myOutput.textContent = `Total Income (from ${totalEntries} entries): $${myIncomeValue.toFixed(2)}`;
+				myIncomeInput.value = '';
 				}
 				
 				function Expenses() {
+					let expenseString = myExpenseInput.value;
 					
 				}
 				
-				function Difference() {
+				<!-- function Difference() { -->
 					
+				<!--}-->
+				function Clear() {
+					myOutput.textContent = '';
+					myCalc = new Array();
+					myIncomeValue = 0;
+					myExpenseValue = 0;
+					console.log("cleared");
 				}
 			</script>
 			
