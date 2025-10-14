@@ -253,8 +253,8 @@
 <details><summary>Tuesday Oct 14th, 2025</summary>
 
 ### Title
-1.
-1.
+1.created a .css class storage file
+1.created a .js class storage file
 1.
 
 </details>
