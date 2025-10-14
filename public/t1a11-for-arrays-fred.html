@@ -65,12 +65,12 @@
 			<div
 			id="myMoneyCalculatorInputDiv01"
 			>
-				<p><!--PLACEHOLDER PARA, ENTER INPUT PARAMETERS HERE-->test</p>
+				<p>please enter your income and expense values with no - or + signs, seperated by spaces, commas, or commas + spaces for each value. The difference calculation can ONLY be run once both income and expense have been ran.</p>
 				<input type=numbers id="myIncome01" placeholder="Seperate Values Via Space or Comma (ex: 1,2 | ex: 1 2)"> 
 				<input id="mySubmitButton01" type=button value="Income calc" onclick="Income()"><br><br>
 				<input type=numbers id="myExpense01" placeholder="Insert Values Via Space or Comma (ex: -1,-2 | ex: -1 -2)"> 
 				<input id="mySubmitButton02" type=button value="Expenses calc" onclick="Expenses()"><br><br>
-				<input type=numbers id="myDifference01" placeholder="Difference input"> 
+				<span id="myDifference01">Difference Input Display</span>
 				<input id="mySubmitButton03" type=button value="Difference calc" onclick="Difference()"><br><br>
 
 
@@ -80,7 +80,7 @@
 				// The Inputs
 				let myIncomeInput = document.getElementById('myIncome01');
 				let myExpenseInput = document.getElementById('myExpense01');
-				let myDifferenceInput = document.getElementById('myDifference01');
+				let myDifferenceDisplay = document.getElementById('myDifference01');
 				// The Submits
 				let myIncome = document.getElementById('mySubmitButton01');
 				let myExpenses = document.getElementById('mySubmitButton02');
@@ -92,11 +92,11 @@
 				let myIncomeValue = 0;
 				let myExpenseValue = 0;
 				
-				function Income() {
+				function Income() { // uses array as a storage to be able to add all values together
 					let incomeString = myIncomeInput.value;
 					
 					myCalc = new Array();
-					myIncomevalue = 0;
+					myIncomeValue = 0;
 					
 					let incomeStringArray = incomeString.split(/[\s,]+/);
 					let totalEntries = 0;
@@ -117,22 +117,82 @@
 				
 				myOutput.textContent = `Total Income (from ${totalEntries} entries): $${myIncomeValue.toFixed(2)}`;
 				myIncomeInput.value = '';
+				DifferenceDisplay(myIncomeValue, myExpenseValue);
+				console.log("Income Success")
 				}
 				
-				function Expenses() {
+				function Expenses() { // uses array as a storage to be able to add all values together
 					let expenseString = myExpenseInput.value;
 					
+					myCalc = new Array();
+					myExpenseValue = 0;
+					
+					let expenseStringArray = expenseString.split(/[\s,]+/).filter(Boolean);
+					
+					let totalEntries = 0;
+					
+					for (let i = 0; i < expenseStringArray.length; i++) {
+						let amount = parseFloat(expenseStringArray[i]);
+						if (isNaN(amount) || amount === 0) {
+							myOutput.textContent = `Invalid expense entry found: "${expenseStringArray[i]}". Please use valid numbers.`;
+							
+							myCalc = new Array();
+							myExpenseValue = 0;
+							return;
+						}
+						let negativeAmount = Math.abs(amount) * -1;
+						
+						myExpenseValue += negativeAmount;
+						myCalc.push(negativeAmount);
+						
+						totalEntries++;
+					}
+					myOutput.textContent = `Total Expenses (from ${totalEntries} entries) : $${myExpenseValue.toFixed(2)}`;
+					
+					myExpenseInput.value = '';
+					DifferenceDisplay(myIncomeValue, myExpenseValue);
+					console.log("Expense Success")
 				}
 				
-				<!-- function Difference() { -->
+				function Difference() { // does not use the array, instead just adds the values from both income and expense variables.
+					let IncomeNum = myIncomeValue;
+					let ExpenseNum = myExpenseValue;
 					
-				<!--}-->
-				function Clear() {
+					let DifferenceValue = IncomeNum + ExpenseNum;
+					
+					DifferenceDisplay(IncomeNum, ExpenseNum);
+					
+					if (IncomeNum === 0 && ExpenseNum === 0) {
+						myOutput.textContent = "Please submit income and/or expense values first.";
+					} else {
+						myOutput.textContent = `Final Balance: \$${DifferenceValue.toFixed(2)}`;
+					}
+					console.log("Difference Success")
+				}
+				
+				function Clear() { // literally just clears all areas via the "clear" button
 					myOutput.textContent = '';
 					myCalc = new Array();
 					myIncomeValue = 0;
 					myExpenseValue = 0;
-					console.log("cleared");
+					console.log("Clear Success");
+				}
+				
+				function DifferenceDisplay(income, expense) { // will set the difference display to display the string "'myIncomeValue' + 'myExpenseValue'"
+					let incomeStr = (income === 0 || isNaN(income))
+						? '---'
+						: `\$${income.toFixed(2)}`;
+					
+					let expenseAbsNum = Math.abs(expense);
+					let expenseStr = (expenseAbsNum === 0 || isNaN(expense))
+						? '___'
+						: `~\$${expenseAbsNum.toFixed(2)}`;
+					
+					let finalOperationOutput = `${incomeStr} + ${expenseStr}`;
+					console.log("final output calculated");
+					
+					myDifferenceDisplay.textContent = finalOperationOutput;
+					console.log("DifferenceDisplay Success");
 				}
 			</script>
 			
