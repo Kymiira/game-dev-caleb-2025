@@ -23,22 +23,35 @@
 	<section>
 		<details>
 			<summary>mouse-controlled events</summary>
-				<input type=button value="click" id="myButtonClick"> <br> <p ></p>
-				<input type=button value="double click" id="myButtonDblClick"> <br> <p ></p>
-				<input type=button value="press down" id="myButtonPressDown"> <br> <p ></p>
-				<input type=button value="release click" id="myButtonReleaseClick"> <br> <p ></p>
-				<input type=button value="move over" id="myButtonMoveOver"> <br> <p ></p>
-				<input type=button value="move onto" id="myButtonMoveOnto"> <br> <p ></p>
-				<input type=button value="move off of" id="myButtonMoveOff"> <br> <p ></p>
-				<input type=button value="right click on" id="myButtonRightClick"> <br> <p ></p>
-				<input type=button value="click mouse wheel on" id="myButtonMiddleClick"> <br> <p ></p>
-				<input type=button value="scroll down on" id="myButtonScroll"> <br> <p ></p>
+				<input type=button value="click" id="myButtonClick" onclick="ClickFunc()"> <br> <p id="myParaClick"></p><br>
+				<input type=button value="double click" id="myButtonDblClick" ondblclick="DblClickFunc()"> <br> <p id="myParaDblClick"></p><br>
+				<input type=button value="press down" id="myButtonPressDown" onmousedown="PressDownFunc()"> <br> <p id="myParaPressDown"></p><br>
+				<input type=button value="release click" id="myButtonReleaseClick" onmouseup="ReleaseFunc()"> <br> <p id="myParaRelease"></p><br>
+				<input type=button value="move over" id="myButtonMoveOver" onmousemove="MoveFunc()"> <br> <p id="myParaMoveOver"></p><br>
+				<input type=button value="move onto" id="myButtonMoveOnto" onmouseenter="EnterFunc()"> <br> <p id="myParaMoveOnto"></p><br>
+				<input type=button value="move off of" id="myButtonMoveOff" onmouseleave="LeaveFunc()"> <br> <p id="myParaMoveOff"></p><br>
+				<input type=button value="right click on" id="myButtonRightClick" oncontextmenu="RightClickFunc()"> <br> <p id="myParaRightClick"></p><br>
+				<input type=button value="click mouse wheel on" id="myButtonMiddleClick" onauxclick="MiddleClickFunc()"> <br> <p id="myParaMiddleClick"></p><br>
+				<input type=button value="reset" id="myReset" onclick=reset()";
 		</details>
 	</section>
 	<!-- script for all events -->
 	<section>
 		<script>
+			// paragraph variables
+			
+			let myClickOut = document.getElementById('myParaClick');
+			let myDblClickOut = document.getElementById('myParaDblClick');
+			let myPressDownOut = document.getElementById('myParaPressDown');
+			let myReleaseOut = document.getElementById('myParaRelease');
+			let myMoveOverOut = document.getElementById('myParaMoveOver');
+			let myMoveOntoOut = document.getElementById('myParaMoveOnto');
+			let myMoveOffOut = document.getElementById('myParaMoveOff');
+			let myRightClickOut = document.getElementById('myParaRightClick');
+			let myMiddleClickOut = document.getElementById('myParaMiddleClick');
+			
 			// mouse event variables
+			
 			const myClick = document.getElementById('myButtonClick');
 			const myDblClick = document.getElementById('myButtonDblClick');
 			const myPressDown = document.getElementById('myButtonPressDown');
@@ -48,10 +61,62 @@
 			const myMoveOff = document.getElementById('myButtonMoveOff');
 			const myRightClick = document.getElementById('myButtonRightClick');
 			const myMiddleClick = document.getElementById('myButtonMiddleClick');
-			const myScroll = document.getElementById('myButtonScroll');
+			
 			// keyboard event variables
 			
+			
+			
 			// functions
+			
+			function ClickFunc() {
+				myClickOut.textContent = 'Click!';
+			}
+			
+			function DblClickFunc() {
+				myDblClickOut.textContent = 'Thats a double click!';
+			}
+			
+			function PressDownFunc() {
+				myPressDownOut.textContent = 'You clicked... half.';
+			}
+			
+			function ReleaseFunc() {
+				myReleaseOut.textContent = 'You released your click here!';
+			}
+			
+			function MoveFunc() {
+				myMoveOverOut.textContent = 'You moved your mouse over this input!';
+			}
+			
+			function EnterFunc() {
+				myMoveOntoOut.textContent = 'You moved your mouse on this input!';
+			}
+			
+			function LeaveFunc() {
+				myMoveOffOut.textContent = 'You moved your mouse off :(';
+			}
+			
+			function RightClickFunc() {
+				myRightClickOut.textContent = 'You tried to right click...';
+			}
+			
+			function MiddleClickFunc() {
+				event.preventDefault();
+				myMiddleClickOut.textContent = 'Middle clicking brings you nowhere.';
+			}
+			
+			function ResetPage() {
+				myClickOut.textContent = '';
+				myDblClickOut.textContent = '';
+				myPressDownOut.textContent = '';
+				myReleaseOut.textContent = '';
+				myMoveOverOut.textContent = '';
+				myMoveOntoOut.textContent = '';
+				myMoveOffOut.textContent = '';
+				myRightClickOut.textContent = '';
+				myMiddleClickOut.textContent = '';
+				myScrollOut.textContent = '';
+			}
 		</script>
 	</section>
 </body>
