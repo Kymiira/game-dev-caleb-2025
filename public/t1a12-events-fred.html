@@ -1,5 +1,5 @@
-<!DOCTYPE html> <!-- i use Notepad++ as an editor so the section formatting is so useful, you can close tags in notepad++ (visually) which allows for easier access to certain sections -->
-<html lang="en"> <!-- also VSC is so much better than the built-in github editor -->
+<!DOCTYPE html> <!-- i use Notepad++ as an "IDE" (not really an IDE) so the section formatting is so useful, you can close tags in notepad++ (visually) which allows for easier access to certain sections -->
+<html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -168,45 +168,55 @@
 			// keyboard event variables
 
 
-            const myKeyInput = document.getElementById('myKeyInput');
+            const myKeyInput = document.getElementById('myKeyInput');			
+			
 			
 			// functions
 			
 			function ClickFunc() {
 				myClickOut.textContent = 'Click!';
+				console.log('Button clicked');
 			}
 			
 			function DblClickFunc() {
 				myDblClickOut.textContent = 'Thats a double click!';
+				console.log('Button double clicked');
 			}
 			
 			function PressDownFunc() {
 				myPressDownOut.textContent = 'You clicked... half.';
+				console.log('Button pressed down');
 			}
 			
 			function ReleaseFunc() {
 				myReleaseOut.textContent = 'You released your click here!';
+				console.log('Button released');
 			}
 			
 			function MoveFunc() {
 				myMoveOverOut.textContent = 'You moved your mouse over this input!';
+				console.log('Mouse moved over input');
 			}
 			
 			function EnterFunc() {
 				myMoveOntoOut.textContent = 'You moved your mouse on this input!';
+				console.log('Mouse moved onto input');
 			}
 			
 			function LeaveFunc() {
 				myMoveOffOut.textContent = 'You moved your mouse off :(';
+				console.log('Mouse moved off input');
 			}
 			
 			function RightClickFunc() {
 				myRightClickOut.textContent = 'You tried to right click...';
+				console.log('Right click attempted');
 			}
 			
 			function MiddleClickFunc() {
 				event.preventDefault();
 				myMiddleClickOut.textContent = 'Middle clicking brings you nowhere.';
+				console.log('Middle click attempted');
 			}
 			
 			function ResetPage() {
@@ -219,18 +229,26 @@
 				myMoveOffOut.textContent = '';
 				myRightClickOut.textContent = '';
 				myMiddleClickOut.textContent = '';
+				myKeyDownOut.textContent = '';
+				myKeyUpOut.textContent = '';
+				myKeyPressOut.textContent = '';
+				myKeyOutput.value = '';
+				console.log('Page reset');
 			}
 
 			function KeyDownFunc() {
 				myKeyDownOut.textContent = 'You pressed down the "' + event.key + '" key.';
+				console.log('Key down event ' + event.key);
 			}
 
 			function KeyUpFunc() {
 				myKeyUpOut.textContent = 'You released the "' + event.key + '" key.';
+				console.log('Key up event ' + event.key);
 			}
 
 			function KeyPressFunc() {
 				myKeyPressOut.textContent = 'You pressed the "' + event.key + '" key.';
+				console.log('Key press event ' + event.key);
 			}
 			
 			function TextRecord() {
@@ -239,6 +257,7 @@
 				} else if (event.key === 'Backspace') {
 					myKeyOutput.value = myKeyOutput.value.slice(0, -1);
 				}
+				console.log('Key input recorded: ' + myKeyOutput.value);
 			}
 		</script>
 	</section>
