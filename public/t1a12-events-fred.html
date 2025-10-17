@@ -1,11 +1,11 @@
-<!DOCTYPE html> <!-- i use Notepad++ as an "IDE" (not really an IDE) so the section formatting is so useful, you can close tags in notepad++ (visually) which allows for easier access to certain sections -->
-<html lang="en">
+<!DOCTYPE html> <!-- i use Notepad++ as an editor so the section formatting is so useful, you can close tags in notepad++ (visually) which allows for easier access to certain sections -->
+<html lang="en"> <!-- also VSC is so much better than the built-in github editor -->
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>T1a11</title>
 	<style>
-		{font-family: "Century Gothic", CenturyGothic, Geneva, AppleGothic, sans-serif;}
+		body { font-family: "Century Gothic", CenturyGothic, Geneva, AppleGothic, sans-serif; }
 	</style>
 </head>
 <body>
@@ -13,7 +13,7 @@
 	<section>
 		<h1 align=center>t1a12-events-caleb</h1>
 		<details>
-			<summary>Teacher's Ex:</summary>
+			<summary>teacher ex:</summary>
 	
 			<button onclick="{console.log('hi')}">ctrl-shift-i for console</button><br><br>
 			<input type=button value="mouseOver" onMouseOver="{this.style.backgroundColor='green'}"> <br>
@@ -21,19 +21,119 @@
     </section>
 	<!-- Student Examples -->
 	<section>
+		<h3>Student Examples</h3>
 		<details>
 			<summary>mouse-controlled events</summary>
-				<input type=button value="click" id="myButtonClick" onclick="ClickFunc()"> <br> <p id="myParaClick"></p><br>
-				<input type=button value="double click" id="myButtonDblClick" ondblclick="DblClickFunc()"> <br> <p id="myParaDblClick"></p><br>
-				<input type=button value="press down" id="myButtonPressDown" onmousedown="PressDownFunc()"> <br> <p id="myParaPressDown"></p><br>
-				<input type=button value="release click" id="myButtonReleaseClick" onmouseup="ReleaseFunc()"> <br> <p id="myParaRelease"></p><br>
-				<input type=button value="move over" id="myButtonMoveOver" onmousemove="MoveFunc()"> <br> <p id="myParaMoveOver"></p><br>
-				<input type=button value="move onto" id="myButtonMoveOnto" onmouseenter="EnterFunc()"> <br> <p id="myParaMoveOnto"></p><br>
-				<input type=button value="move off of" id="myButtonMoveOff" onmouseleave="LeaveFunc()"> <br> <p id="myParaMoveOff"></p><br>
-				<input type=button value="right click on" id="myButtonRightClick" oncontextmenu="RightClickFunc()"> <br> <p id="myParaRightClick"></p><br>
-				<input type=button value="click mouse wheel on" id="myButtonMiddleClick" onauxclick="MiddleClickFunc()"> <br> <p id="myParaMiddleClick"></p><br>
-				<input type=button value="reset" id="myReset" onclick=reset()";
+				<input
+				type=button
+				value="click"
+				id="myButtonClick"
+				onclick="ClickFunc()"
+				><br>
+
+				<p id="myParaClick"></p><br>
+
+				<input
+				type=button
+				value="double click"
+				id="myButtonDblClick"
+				ondblclick="DblClickFunc()"
+				><br>
+
+				<p id="myParaDblClick"></p><br>
+
+				<input
+				type=button
+				value="press down"
+				id="myButtonPressDown"
+				onmousedown="PressDownFunc()"
+				><br>
+
+				<p id="myParaPressDown"></p><br>
+
+				<input
+				type=button
+				value="release click"
+				id="myButtonReleaseClick"
+				onmouseup="ReleaseFunc()"
+				><br>
+
+				<p id="myParaRelease"></p><br>
+
+				<input
+				type=button
+				value="move over"
+				id="myButtonMoveOver"
+				onmousemove="MoveFunc()"
+				><br>
+
+				<p id="myParaMoveOver"></p><br>
+
+				<input
+				type=button
+				value="move onto"
+				id="myButtonMoveOnto"
+				onmouseenter="EnterFunc()"
+				><br>
+
+				<p id="myParaMoveOnto"></p><br>
+
+				<input
+				type=button
+				value="move off of"
+				id="myButtonMoveOff"
+				onmouseleave="LeaveFunc()"
+				><br>
+
+				<p id="myParaMoveOff"></p><br>
+
+				<input
+				type=button
+				value="right click on"
+				id="myButtonRightClick"
+				oncontextmenu="RightClickFunc()"
+				><br>
+
+				<p id="myParaRightClick"></p><br>
+
+				<input
+				type=button
+				value="click mouse wheel on"
+				id="myButtonMiddleClick"
+				onauxclick="MiddleClickFunc()"
+				><br>
+
+				<p id="myParaMiddleClick"></p><br>
+
+				<input
+				type=button
+				value="reset"
+				id="myReset"
+				onclick="ResetPage()"
+				><br>
 		</details>
+        <details>
+            <summary>keyboard-controlled events</summary> <!-- technically these are deprecated but whatever-->
+                <input
+				type=button
+				id="myKeyInput"
+				onkeydown="KeyDownFunc()"
+				onkeyup="KeyUpFunc(), TextRecord()"
+				onkeypress="KeyPressFunc()"
+				value="Click this and type!"
+				><br> 
+
+				<p id="myKeyDownOut"></p><br>
+				<p id="myKeyUpOut"></p><br>
+				<p id="myKeyPressOut"></p><br>
+
+				<textarea
+				id="myKeyOutput"
+				rows="4"
+				cols="50"
+				placeholder="Tip: Backspace will not delete more characters if you hold it down."
+				readonly></textarea><br>
+        </details>
 	</section>
 	<!-- script for all events -->
 	<section>
@@ -49,7 +149,10 @@
 			let myMoveOffOut = document.getElementById('myParaMoveOff');
 			let myRightClickOut = document.getElementById('myParaRightClick');
 			let myMiddleClickOut = document.getElementById('myParaMiddleClick');
-			
+            const myKeyDownOut = document.getElementById('myKeyDownOut');
+            const myKeyUpOut = document.getElementById('myKeyUpOut');
+            const myKeyPressOut = document.getElementById('myKeyPressOut');
+
 			// mouse event variables
 			
 			const myClick = document.getElementById('myButtonClick');
@@ -63,8 +166,9 @@
 			const myMiddleClick = document.getElementById('myButtonMiddleClick');
 			
 			// keyboard event variables
-			
-			
+
+
+            const myKeyInput = document.getElementById('myKeyInput');
 			
 			// functions
 			
@@ -115,7 +219,26 @@
 				myMoveOffOut.textContent = '';
 				myRightClickOut.textContent = '';
 				myMiddleClickOut.textContent = '';
-				myScrollOut.textContent = '';
+			}
+
+			function KeyDownFunc() {
+				myKeyDownOut.textContent = 'You pressed down the "' + event.key + '" key.';
+			}
+
+			function KeyUpFunc() {
+				myKeyUpOut.textContent = 'You released the "' + event.key + '" key.';
+			}
+
+			function KeyPressFunc() {
+				myKeyPressOut.textContent = 'You pressed the "' + event.key + '" key.';
+			}
+			
+			function TextRecord() {
+				if (event.key.length === 1) {
+					myKeyOutput.value += event.key;
+				} else if (event.key === 'Backspace') {
+					myKeyOutput.value = myKeyOutput.value.slice(0, -1);
+				}
 			}
 		</script>
 	</section>
