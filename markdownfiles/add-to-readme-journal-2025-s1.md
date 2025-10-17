@@ -271,9 +271,9 @@
 <details><summary>Thursday Oct 16th, 2025</summary>
 
 ### Title
-1.
-1.
-1.
+1.finished t1a12-events-caleb.html
+1.created template pages for t1a13 and t1a14
+1.started t1a13
 
 </details>
 
