@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>T1a11</title>
+	<style>
+		body { font-family: "Century Gothic", CenturyGothic, Geneva, AppleGothic, sans-serif; }
+	</style>
+	<section>
+		<script type="module">
+		import { myUser } from "/public/00-javascript-class-file.js";
+		</script>
+	</section>
+</head>
+<body>
+	<!-- header -->
+	<section>
+		<h1 align=center>t1a13-extend-class-caleb</h1>
+		<details>
+      <summary>Instructions + Ex:</summary>
+        <script>
+          class myAnimal { //
+            constructor(passName, passAge) { //
+				this.myName = passName;
+				this.myAge = passAge;
+			}
+			
+			myShow(){ //
+				document.getElementById('myDiv01').innerHTML = 'hello '+ this.myName+'<br>'
+			}
+		}
+        </script>
+		<h4> Example working classes code</h4>
+		<input type=button value="Example class set and show class animal" onclick="{
+			myDog = new myAnimal('snickers', 5)
+			myDog.myShow()
+		}">
+		<h4> Example extending class code</h4>
+		Nothing: <Input type=text id="myText01" value="Useless at the moment"><br>
+		
+		<input type=button value="example extend class animal" onclick="{
+			class myCat extends myAnimal {
+			
+				myShow(){
+					document.getElementById('myDiv01').innerHTML = this.myName + ' is a great cat<br>'
+				}
+			}
+			myPet = new myCat('fluffy', 14)
+			myPet.myShow()
+		}">
+		<div id="myDiv01">...</div>
