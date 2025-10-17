@@ -11,6 +11,7 @@
 <body>
 	<!-- header -->
 	<section>
+		<h6>CONSOLE = <span id="consoleStatus">ENABLED</span>, TO VIEW PLEASE PRESS CTRL + SHIFT + I</h6>
 		<h1 align=center>t1a12-events-caleb</h1>
 		<details>
 			<summary>teacher ex:</summary>
@@ -22,6 +23,14 @@
 	<!-- Student Examples -->
 	<section>
 		<h3>Student Examples</h3>
+		<p>All attribute events are logged to the console, can cause performance issues IF not managed properly. Console logging can be disabled/enabled using the button below.</p>
+		<button
+		onclick ="DisableEnableConsoleLog()"
+		id="consoleLogToggleBtn"
+		>
+			Disable/Enable Console Log
+		</button><br><br>
+
 		<details>
 			<summary>mouse-controlled events</summary>
 				<input
@@ -138,6 +147,15 @@
 	<!-- script for all events -->
 	<section>
 		<script>
+
+			// console log management variables
+
+			const originalConsoleLog = console.log;
+			const consoleStatus = document.getElementById('consoleStatus');
+			consoleStatus.textContent = 'ENABLED';
+			let consoleLogEnabled = true;
+
+
 			// paragraph variables
 			
 			let myClickOut = document.getElementById('myParaClick');
@@ -259,6 +277,19 @@
 				}
 				console.log('Key input recorded: ' + myKeyOutput.value);
 			}
+
+			function DisableEnableConsoleLog() {
+				if (consoleLogEnabled) {
+					console.log = function() {};
+					consoleLogEnabled = false;
+					consoleStatus.textContent = 'DISABLED';
+				} else {
+					console.log = originalConsoleLog;
+					consoleLogEnabled = true;
+					consoleStatus.textContent = 'ENABLED';
+				}
+			}
+
 		</script>
 	</section>
 </body>
