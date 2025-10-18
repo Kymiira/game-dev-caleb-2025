@@ -280,7 +280,7 @@
 <details><summary>Friday Oct 17th, 2025</summary>
 
 ### Title
-1.
+1. figured out how to utilize .css and .js files to import/export classes from and to (by the way, as CORS doesn't allow imports to pull from different files on your pc you have to set up a "dev chrome" shortcut, or similar in order to actually utilize external files locally.. kind of stupid that there isnt a flag for it but thats fine.
 1.
 1.
 
