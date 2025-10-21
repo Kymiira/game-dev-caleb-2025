@@ -122,7 +122,7 @@
             background-image: linear-gradient(
                 to bottom right,
                 rgba(31, 31, 31, 0.8), 
-                rgba(50, 50, 50, 0.8)  
+                rgba(50, 50, 50, 0.8) 
             );
             
             border-radius: 12px;
@@ -163,13 +163,12 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
         }
 
-        /* --- SCROLLABLE ASSIGNMENT LIST AREA --- */
+        /* --- SCROLLABLE ASSIGNMENT LIST AREA (Parent) --- */
         .assignment-list {
             max-height: 400px;
             overflow-y: auto;
             padding-right: 15px;
-
-			will-change: scroll-position;
+            will-change: scroll-position;
         }
         
         /* ASSIGNMENT CONTENT CONTAINERS */
@@ -182,24 +181,28 @@
         }
 
         /* SCROLLBAR STYLING */
-        .assignment-list::-webkit-scrollbar {
+        .assignment-list::-webkit-scrollbar,
+        .term-assignment-list::-webkit-scrollbar {
             width: 8px;
         }
 
-        .assignment-list::-webkit-scrollbar-track {
+        .assignment-list::-webkit-scrollbar-track,
+        .term-assignment-list::-webkit-scrollbar-track {
             background: #1f1f1f;
         }
 
-        .assignment-list::-webkit-scrollbar-thumb {
+        .assignment-list::-webkit-scrollbar-thumb,
+        .term-assignment-list::-webkit-scrollbar-thumb {
             background: #4db6ac;
             border-radius: 4px;
         }
 
-        .assignment-list::-webkit-scrollbar-thumb:hover {
+        .assignment-list::-webkit-scrollbar-thumb:hover,
+        .term-assignment-list::-webkit-scrollbar-thumb:hover {
             background: #64d4c8;
         }
 
-        /* --- LIST STYLES --- */
+        /* --- LIST STYLES (for Bonus Assignments) --- */
         .index-box ul {
             list-style-type: none;
             padding: 0;
@@ -220,12 +223,100 @@
             border-bottom: 2px solid #ff6e40;
             padding-bottom: 5px;
             display: inline-block;
+            margin-bottom: 15px;
         }
 
-        /* UTIL STYLES */
+        /* --- NEW COLUMN LAYOUT --- */
+        .term-columns-wrapper {
+            display: flex;
+            gap: 20px; /* Space between the two columns */
+        }
+        
+        .term-column {
+            flex: 1; /* Makes both columns take equal width */
+            min-width: 0; /* Ensures flex items behave correctly */
+        }
+
+        /* --- TABLE STYLES (for Regular Assignments) --- */
+        
+        /* New Scrollable Container for each Term Table */
+        .term-assignment-list {
+            max-height: 300px; /* Defines the scrollable height for each term */
+            overflow-y: auto;
+            display: block;
+            margin-bottom: 25px; 
+            border: 1px solid #333;
+            border-radius: 0 0 5px 5px;
+        }
+        
+        /* New Term Title Style */
+        .term-title {
+            color: #121212;
+            background-color: #4db6ac;
+            padding: 10px 15px;
+            margin-top: 0; /* Remove top margin for column layout */
+            margin-bottom: 0;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .assignment-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed; /* Ensures column widths are respected */
+        }
+
+        .assignment-table th, .assignment-table td {
+            padding: 10px 5px;
+            text-align: left;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        
+        .assignment-table th {
+            background-color: #2a2a2a;
+            color: #80cbc4;
+            font-weight: bold;
+            position: sticky; /* Sticky header *within* the term-assignment-list container */
+            top: 0;
+            z-index: 5;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            border-bottom: 1px solid #444;
+        }
+        
+        .assignment-table td {
+            font-size: 0.95em;
+        }
+        
+        .assignment-table a {
+            word-break: break-word; /* Prevent long filenames from breaking layout */
+        }
+        
+        /* Util STYLES */
         small, p { 
             display: block; 
             margin-top: 10px;
+        }
+
+        /* --- RESPONSIVENESS: Stack columns on smaller screens --- */
+        @media (max-width: 650px) {
+            .term-columns-wrapper {
+                flex-direction: column;
+                gap: 0;
+            }
+            .term-assignment-list {
+                max-height: 250px; /* Give more height when stacked vertically */
+            }
+            .term-title {
+                margin-top: 15px; /* Add margin back when stacked */
+                border-radius: 5px 5px 0 0;
+            }
+            /* Remove the border radius between the title and list when stacked */
+            .term-column:first-child .term-title {
+                margin-top: 0;
+            }
         }
     </style>
 </head>
@@ -288,42 +379,170 @@
             <!-- REGULAR ASSIGNMENTS CONTENT -->
             <div id="regularAssignments" class="assignment-content active">
                 <h4>PLEASE MARK!!! Assignment Links</h4>
-                <ul>
-                    <li><a href="t1a01-proper-webpage-caleb.html">t1a01-proper-webpage-caleb.html - done</a>
-                    <li><a href="t1a02-videoflac-caleb.html">t1a02-videoflac-caleb.html - done</a>
-                    <li><a href="t1a03-list+tables-caleb.html">t1a03-tables-and-lists-caleb.html - done</a>
-                    <li><a href="t1a04-vibe-clean-show-caleb.html">t1a04-vibecode-cleaning-caleb.html - done</a>
-                    <li><a href="t1a05-forms-caleb.html">t1a05-forms-caleb.html - done</a>
-                    <li><a href="t1a06-css-caleb.html">t1a06-css-caleb.html - done</a>
-                    <li><a href="t1a07-easyEDA_caleb.html">t1a07-easyEDA-caleb.html - done</a>
-                    <li><a href="t1a08-in-out-caleb.html">t1a08-in-out-caleb.html - done</a>
-                    <li><a href="t1a09-variables-caleb.html">t1a09-variables-caleb.html - done</a>
-                    <li><a href="t1a10-forloops-caleb.html">t1a10-forloops-caleb.html - done</a>
-                    <li><a href="t1a11-for-arrays-caleb.html">t1a11-for-arrays-caleb.html - done</a>
-                    <li><a href="t1a12-events-caleb.html">t1a12-events-caleb.html - not done</a>
-                    <li><a href="t1a13-extend-class-caleb.html">t1a13-extend-class-caleb.html - not done</a>
-                    <li><a href="t1a14-ai-edgeimpulse-caleb.html">t1a14-ai-edgeimpulse-caleb.html - not done</a>
-                </ul>
+                
+                <div class="term-columns-wrapper">
+                    <!-- TERM 1 COLUMN -->
+                    <div class="term-column">
+                        <h5 class="term-title">TERM 1 ASSIGNMENTS</h5>
+                        <div class="term-assignment-list">
+                            <table class="assignment-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 15%;">ID</th>
+                                        <th style="width: 65%;">File Name</th>
+                                        <th style="width: 20%;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>T1a01</td>
+                                        <td><a href="t1a01-proper-webpage-caleb.html">t1a01-proper-webpage-caleb.html</a></td>
+                                        <td>Done</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T1a02</td>
+                                        <td><a href="t1a02-videoflac-caleb.html">t1a02-videoflac-caleb.html</a></td>
+                                        <td>Done</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T1a03</td>
+                                        <td><a href="t1a03-list+tables-caleb.html">t1a03-tables-and-lists-caleb.html</a></td>
+                                        <td>Done</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T1a04</td>
+                                        <td><a href="t1a04-vibe-clean-show-caleb.html">t1a04-vibecode-cleaning-caleb.html</a></td>
+                                        <td>Done</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T1a05</td>
+                                        <td><a href="t1a05-forms-caleb.html">t1a05-forms-caleb.html</a></td>
+                                        <td>Done</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T1a06</td>
+                                        <td><a href="t1a06-css-caleb.html">t1a06-css-caleb.html</a></td>
+                                        <td>Done</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T1a07</td>
+                                        <td><a href="t1a07-easyEDA_caleb.html">t1a07-easyEDA-caleb.html</a></td>
+                                        <td>Done</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T1a08</td>
+                                        <td><a href="t1a08-in-out-caleb.html">t1a08-in-out-caleb.html</a></td>
+                                        <td>Done</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T1a09</td>
+                                        <td><a href="t1a09-variables-caleb.html">t1a09-variables-caleb.html</a></td>
+                                        <td>Done</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T1a10</td>
+                                        <td><a href="t1a10-forloops-caleb.html">t1a10-forloops-caleb.html</a></td>
+                                        <td>Done</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T1a11</td>
+                                        <td><a href="t1a11-for-arrays-caleb.html">t1a11-for-arrays-caleb.html</a></td>
+                                        <td>Done</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T1a12</td>
+                                        <td><a href="t1a12-events-caleb.html">t1a12-events-caleb.html</a></td>
+                                        <td>Not Done</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T1a13</td>
+                                        <td><a href="t1a13-extend-class-caleb.html">t1a13-extend-class-caleb.html</a></td>
+                                        <td>Not Done</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T1a14</td>
+                                        <td><a href="t1a14-ai-edgeimpulse-caleb.html">t1a14-ai-edgeimpulse-caleb.html</a></td>
+                                        <td>Not Done</td>
+                                    </tr>
+									<tr>
+										<td>T1a15</td>
+										<td><a href="#">t1a15.html</a></td>
+										<td>Not Done</td>
+									</tr>
+									<tr>
+										<td>T1a16</td>
+										<td><a href="t1a16-move-div-caleb.html">t1a16-move-div-caleb.html</a></td>
+										<td>Not Done</td>
+									</tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- TERM 2 COLUMN -->
+                    <div class="term-column">
+                        <h5 class="term-title">TERM 2 ASSIGNMENTS</h5>
+                        <div class="term-assignment-list">
+                            <table class="assignment-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 15%;">ID</th>
+                                        <th style="width: 65%;">File Name</th>
+                                        <th style="width: 20%;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                     <!-- TERM 2 ASSIGNMENTS -->
+                                    <tr>
+                                        <td>T2a01</td>
+                                        <td><a href="#"></a></td>
+                                        <td>Not Done</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T2a02</td>
+                                        <td><a href="#"></a></td>
+                                        <td>Not Done</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T2a03</td>
+                                        <td><a href="#"></a></td>
+                                        <td>Not Done</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T2a04</td>
+                                        <td><a href="#"></a></td>
+                                        <td>Not Done</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T2a05</td>
+                                        <td><a href="#"></a></td>
+                                        <td>Not Done</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
             
-            <!-- BONUS X ASSIGNMENTS CONTENT (Hidden by default) -->
+            <!-- BONUS X ASSIGNMENTS CONTENT -->
             <div id="bonusAssignments" class="assignment-content">
                 <h4>Bonus X Assignments</h4>
                 <ul>
                     <li><a href="#">x-1-caleb.html</a></li>
                     <li><a href="#">x-2-caleb.html</a></li>
                     <li><a href="#">x-3-caleb.html</a></li>
-					<li><a href="#">x-4-caleb.html</a></li>
-					<li><a href="#">x-5-caleb.html</a></li>
-					<li><a href="#">x-6-caleb.html</a></li>
-					<li><a href="#">x-7-caleb.html</a></li>
-					<li><a href="#">x-8-caleb.html</a></li>
-					<li><a href="#">x-9-caleb.html</a></li>
-					<li><a href="#">x-10-caleb.html</a></li>
-					<li><a href="#">x-11-caleb.html</a></li>
-					<li><a href="#">x-12-caleb.html</a></li>
-					<li><a href="#">x-13-caleb.html</a></li>
-					<li><a href="#">x-14-caleb.html</a></li>
+                    <li><a href="#">x-4-caleb.html</a></li>
+                    <li><a href="#">x-5-caleb.html</a></li>
+                    <li><a href="#">x-6-caleb.html</a></li>
+                    <li><a href="#">x-7-caleb.html</a></li>
+                    <li><a href="#">x-8-caleb.html</a></li>
+                    <li><a href="#">x-9-caleb.html</a></li>
+                    <li><a href="#">x-10-caleb.html</a></li>
+                    <li><a href="#">x-11-caleb.html</a></li>
+                    <li><a href="#">x-12-caleb.html</a></li>
+                    <li><a href="#">x-13-caleb.html</a></li>
+                    <li><a href="#">x-14-caleb.html</a></li>
                 </ul>
             </div>
 
@@ -350,7 +569,7 @@
                         }
                     });
 
-                    document.querySelector('.assignment-list').scrollTop = 0;
+                    document.querySelector('.assignment-list').scrollTop = 0; 
                 });
             });
         });
