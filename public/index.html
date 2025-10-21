@@ -163,7 +163,7 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
         }
 
-        /* --- SCROLLABLE ASSIGNMENT LIST AREA (Parent) --- */
+        /* --- SCROLLABLE ASSIGNMENT LIST AREA --- */
         .assignment-list {
             max-height: 400px;
             overflow-y: auto;
@@ -202,7 +202,7 @@
             background: #64d4c8;
         }
 
-        /* --- LIST STYLES (for Bonus Assignments) --- */
+        /* --- LIST STYLES --- */
         .index-box ul {
             list-style-type: none;
             padding: 0;
@@ -229,19 +229,18 @@
         /* --- NEW COLUMN LAYOUT --- */
         .term-columns-wrapper {
             display: flex;
-            gap: 20px; /* Space between the two columns */
+            gap: 20px;
         }
         
         .term-column {
-            flex: 1; /* Makes both columns take equal width */
-            min-width: 0; /* Ensures flex items behave correctly */
+            flex: 1;
+            min-width: 0;
         }
 
-        /* --- TABLE STYLES (for Regular Assignments) --- */
+        /* --- TABLE STYLES --- */
         
-        /* New Scrollable Container for each Term Table */
         .term-assignment-list {
-            max-height: 300px; /* Defines the scrollable height for each term */
+            max-height: 300px;
             overflow-y: auto;
             display: block;
             margin-bottom: 25px; 
@@ -249,12 +248,11 @@
             border-radius: 0 0 5px 5px;
         }
         
-        /* New Term Title Style */
         .term-title {
             color: #121212;
             background-color: #4db6ac;
             padding: 10px 15px;
-            margin-top: 0; /* Remove top margin for column layout */
+            margin-top: 0;
             margin-bottom: 0;
             font-size: 1.1em;
             font-weight: bold;
@@ -265,7 +263,7 @@
         .assignment-table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed; /* Ensures column widths are respected */
+            table-layout: fixed;
         }
 
         .assignment-table th, .assignment-table td {
@@ -278,7 +276,7 @@
             background-color: #2a2a2a;
             color: #80cbc4;
             font-weight: bold;
-            position: sticky; /* Sticky header *within* the term-assignment-list container */
+            position: sticky;
             top: 0;
             z-index: 5;
             text-transform: uppercase;
@@ -291,7 +289,7 @@
         }
         
         .assignment-table a {
-            word-break: break-word; /* Prevent long filenames from breaking layout */
+            word-break: break-word;
         }
         
         /* Util STYLES */
@@ -300,20 +298,19 @@
             margin-top: 10px;
         }
 
-        /* --- RESPONSIVENESS: Stack columns on smaller screens --- */
         @media (max-width: 650px) {
             .term-columns-wrapper {
                 flex-direction: column;
                 gap: 0;
             }
             .term-assignment-list {
-                max-height: 250px; /* Give more height when stacked vertically */
+                max-height: 250px;
             }
             .term-title {
-                margin-top: 15px; /* Add margin back when stacked */
+                margin-top: 15px;
                 border-radius: 5px 5px 0 0;
             }
-            /* Remove the border radius between the title and list when stacked */
+
             .term-column:first-child .term-title {
                 margin-top: 0;
             }
