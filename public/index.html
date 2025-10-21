@@ -1,95 +1,358 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GameDev Index</title>
-  <style>
-    body {
-      font-family: "Century Gothic", CenturyGothic, Geneva, AppleGothic, sans-serif;
-      margin: 0;
-      background-image: linear-gradient(to bottom right, #34a4eb, #e0f7fa);
-      min-height:100vh;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameDev Index</title>
+    <style>
+        /* --- GLOBAL STYLES & DARK THEME --- */
+        body {
+            font-family: "Century Gothic", CenturyGothic, Geneva, AppleGothic, sans-serif;
+            margin: 0;
+            background-color: #121212;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+        
+        a {
+            color: #4db6ac;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
 
-      width: 100%;
-    }
-  </style>
+        a:hover {
+            color: #80cbc4;
+        }
+
+        /* --- HEADER & DROPDOWN LAYOUT --- */
+        header {
+            background-image: linear-gradient(to bottom, #1f1f1f, #0d0d0d);
+            padding: 20px 0;
+            border-bottom: 2px solid #333;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .header-content {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .header-title h1 {
+            margin: 0;
+            font-size: 2em;
+            background-image: linear-gradient(45deg, #e0e0e0, #80cbc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        /* --- DROPDOWN STYLES --- */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            background-color: #333;
+            color: white;
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 1px solid #555;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .dropbtn:hover {
+            background-color: #555;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #2a2a2a;
+            min-width: 250px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.7);
+            z-index: 10;
+            border-radius: 5px;
+            overflow: hidden;
+            border: 1px solid #444;
+        }
+
+        .dropdown-content a {
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            color: #e0e0e0;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #444;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* --- MAIN INDEX BOX --- */
+        .index-box {
+            width: 90%;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            min-height: 500px; 
+            
+            background-color: #1f1f1f; 
+            background-image: linear-gradient(
+                to bottom right,
+                rgba(31, 31, 31, 0.8), 
+                rgba(50, 50, 50, 0.8)  
+            );
+            
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.7);
+            border: 1px solid #333; 
+        }
+
+        /* --- ASSIGNMENT CONTROLS --- */
+        .assignment-controls {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333; 
+        }
+
+        .category-selector {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            background-color: #333;
+            color: #e0e0e0;
+            transition: all 0.2s;
+        }
+
+        .category-selector:hover {
+            background-color: #555;
+        }
+
+        /* ACTIVE SELECTOR STYLING */
+        .category-selector.active {
+            background-color: #4db6ac; 
+            color: #121212;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- SCROLLABLE ASSIGNMENT LIST AREA --- */
+        .assignment-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 15px;
+        }
+        
+        /* ASSIGNMENT CONTENT CONTAINERS */
+        .assignment-content {
+            display: none; /* controlled by JS */
+        }
+        
+        .assignment-content.active {
+            display: block;
+        }
+
+        /* SCROLLBAR STYLING */
+        .assignment-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .assignment-list::-webkit-scrollbar-track {
+            background: #1f1f1f;
+        }
+
+        .assignment-list::-webkit-scrollbar-thumb {
+            background: #4db6ac;
+            border-radius: 4px;
+        }
+
+        .assignment-list::-webkit-scrollbar-thumb:hover {
+            background: #64d4c8;
+        }
+
+        /* --- LIST STYLES --- */
+        .index-box ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .index-box li {
+            padding: 8px 0;
+            border-bottom: 1px dashed #333;
+        }
+
+        .index-box li:last-child {
+            border-bottom: none;
+        }
+        
+        .index-box h4 {
+            color: #ff6e40;
+            margin-top: 0;
+            border-bottom: 2px solid #ff6e40;
+            padding-bottom: 5px;
+            display: inline-block;
+        }
+
+        /* UTIL STYLES */
+        small, p { 
+            display: block; 
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
 
-  <section>
-	<div>
-		<h1 align=center>index.html for Game Dev by caleb </h1><br>
-		<img align=center width="76px" height="76px" src="https://api.qrcode-monkey.com/tmp/03304112ad8f87c8a1eb799cd527c186.svg?1760989732002">
-	</div>
-  </section>
-  
-  <section>
-	<div>
-		<ul>
-			<p>
-			<small> Official HTML, CSS and JavaScript guides<br>
-				<li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS">cool CSS guide (dev.moz.org)</a>
-				<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript">cool JS guide (dev.moz.org)</a>
-				<li><a href="https://developer.mozilla.org/en-US/docs/Web/HTML">cool HTML guide (dev.moz.org)</a>
-			</small>
-				<br>
-			<small> Useful Links<br>
-				<li><a href="https://github.com/Kymiira/game-dev-caleb-2025">My Github Repository Full URL</a>
-				<li><a href="#">My Game Dev Website Full URL</a>
-				<li><a href="https://github.com/Kymiira/game-dev-caleb-2025/blob/main/markdownfiles/journal.md">The Journal</a> 
-				<a href="https://hpssjellis.github.io/my-examples-of-liteRTjs/public/index.html">LiteRTjs-ellis</a><br>
-			</small>
-		    </p>
-		</ul>
-	</div>
-  </section>
-  
-  <br>
-  
-  <section>
-	<div>
-		<ul> <h4><b>PLEASE MARK!!!</b></h4><br>
-			<li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a01-proper-webpage-caleb.html">t1a01-proper-webpage-caleb.html</a>
-			<li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a02-videoflac-caleb.html">t1a01-videoflac-caleb.html</a>
-			<li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a03-list+tables-caleb.html">t1a03-tables-and-lists-caleb.html</a>
-			<li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a04-vibe-clean-show-caleb.html">t1a04-vibecode-cleaning-caleb.html</a>
-			<li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a05-forms-caleb.html">t1a05-forms-caleb.html</a>
-			<li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a06-css-caleb.html">t1a06-css-caleb.html</a>
-			<li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a07-easyEDA_caleb.html">t1a07-easyEDA-caleb.html</a>
-			<li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a08-in-out-caleb.html">t1a08-in-out-caleb.html</a>
-			<li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a09-variables-caleb.html">t1a09-variables-caleb.html</a>
-			<li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a10-forloops-caleb.html">t1a10-forloops-caleb.html</a>
-			<li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a11-for-arrays-fred.html">t1a11-for-arrays-caleb.html</a>
-			<li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a12-events-caleb.html">t1a12-events-caleb.html</a>
-			<li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a13-extend-class-caleb.html">t1a13-extend-class-caleb.html</a>
-			<li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a14-ai-edgeimpulse-caleb.html">t1a14-ai-edgeimpulse-caleb.html</a>
-		</ul>
-	</div>
-  </section>
-  
-  <br>
+    <header>
+        <div class="header-content">
+            <div class="header-title">
+                <!-- QR Code + Header -->
+                <img width="76px" height="76px" src="https://api.qrcode-monkey.com/tmp/03304112ad8f87c8a1eb799cd527c186.svg?1760989732002" alt="QR Code Icon">
+                <h1>Game Dev Index by caleb</h1>
+            </div>
 
-  <section>
-	<div>
-		<ul>Bonus X Assignments<br>
-			<li><a href="#">NOURL</a>
-			<li><a href="#">NOURL</a>
-			<li><a href="#">NOURL</a>
-		</ul>
-	</div>
-  </section>
-  
-  <br>
+            <nav>
+                <!-- DROPDOWN 1: OFFICIAL GUIDES -->
+                <div class="dropdown">
+                    <button class="dropbtn">Official Guides</button>
+                    <div class="dropdown-content">
+                        <a href="https://developer.mozilla.org/en-US/docs/Web/HTML">HTML Guide</a>
+                        <a href="https://developer.mozilla.org/en-US/docs/Web/CSS">CSS Guide</a>
+                        <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript">JS Guide</a>
+                    </div>
+                </div>
 
-  <section>
-	<div>
-		<ul>Basic Tutorials, Etc.<br>
-			<li><a href="https://github.com/Kymiira/game-dev-caleb-2025/blob/main/markdownfiles/MARKDOWNTUTORIAL.md">Markdown Tutorial</a>
-			<li><a href="#">NOURL</a>
-			<li><a href="#">NOURL</a>
-		</ul>
-	</div>
-  </section>
-  
+                <!-- DROPDOWN 2: USEFUL LINKS -->
+                <div class="dropdown">
+                    <button class="dropbtn">Useful Links</button>
+                    <div class="dropdown-content">
+                        <a href="https://github.com/Kymiira/game-dev-caleb-2025">My Github Repository</a>
+                        <a href="#">My Game Dev Website Full URL</a>
+                        <a href="https://github.com/Kymiira/game-dev-caleb-2025/blob/main/markdownfiles/journal.md">The Journal</a> 
+                        <a href="https://hpssjellis.github.io/my-examples-of-liteRTjs/public/index.html">LiteRTjs-ellis</a>
+                    </div>
+                </div>
+
+                <!-- DROPDOWN 3: MARKDOWN TUTORIALS -->
+                <div class="dropdown">
+                    <button class="dropbtn">Markdown Tutorials</button>
+                    <div class="dropdown-content">
+                        <a href="https://github.com/Kymiira/game-dev-caleb-2025/blob/main/markdownfiles/MARKDOWNTUTORIAL.md">Markdown Tutorial</a>
+                        <a href="#">NOURL Tutorial 2</a>
+                        <a href="#">NOURL Tutorial 3</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN INDEX BOX -->
+    <main class="index-box">
+        
+        <!-- ASSIGNMENT CATEGORY SELECTORS -->
+        <div class="assignment-controls">
+            <button class="category-selector active" data-target="regularAssignments">Regular Assignments</button>
+            <button class="category-selector" data-target="bonusAssignments">Bonus X Assignments</button>
+        </div>
+
+        <!-- SCROLLABLE AREA -->
+        <div class="assignment-list">
+            
+            <!-- REGULAR ASSIGNMENTS CONTENT -->
+            <div id="regularAssignments" class="assignment-content active">
+                <h4>PLEASE MARK!!! Assignment Links</h4>
+                <ul>
+                    <li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a01-proper-webpage-caleb.html">t1a01-proper-webpage-caleb.html</a>
+                    <li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a02-videoflac-caleb.html">t1a02-videoflac-caleb.html</a>
+                    <li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a03-list+tables-caleb.html">t1a03-tables-and-lists-caleb.html</a>
+                    <li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a04-vibe-clean-show-caleb.html">t1a04-vibecode-cleaning-caleb.html</a>
+                    <li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a05-forms-caleb.html">t1a05-forms-caleb.html</a>
+                    <li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a06-css-caleb.html">t1a06-css-caleb.html</a>
+                    <li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a07-easyEDA_caleb.html">t1a07-easyEDA-caleb.html</a>
+                    <li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a08-in-out-caleb.html">t1a08-in-out-caleb.html</a>
+                    <li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a09-variables-caleb.html">t1a09-variables-caleb.html</a>
+                    <li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a10-forloops-caleb.html">t1a10-forloops-caleb.html</a>
+                    <li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a11-for-arrays-fred.html">t1a11-for-arrays-caleb.html</a>
+                    <li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a12-events-caleb.html">t1a12-events-caleb.html</a>
+                    <li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a13-extend-class-caleb.html">t1a13-extend-class-caleb.html</a>
+                    <li><a href="https://kymiira.github.io/game-dev-caleb-2025/public/t1a14-ai-edgeimpulse-caleb.html">t1a14-ai-edgeimpulse-caleb.html</a>
+                </ul>
+            </div>
+            
+            <!-- BONUS X ASSIGNMENTS CONTENT (Hidden by default) -->
+            <div id="bonusAssignments" class="assignment-content">
+                <h4>Bonus X Assignments</h4>
+                <ul>
+                    <li><a href="#">x-1-caleb.html</a></li>
+                    <li><a href="#">x-2-caleb.html</a></li>
+                    <li><a href="#">x-3-caleb.html</a></li>
+					<li><a href="#">x-4-caleb.html</a></li>
+					<li><a href="#">x-5-caleb.html</a></li>
+					<li><a href="#">x-6-caleb.html</a></li>
+					<li><a href="#">x-7-caleb.html</a></li>
+					<li><a href="#">x-8-caleb.html</a></li>
+					<li><a href="#">x-9-caleb.html</a></li>
+					<li><a href="#">x-10-caleb.html</a></li>
+					<li><a href="#">x-11-caleb.html</a></li>
+					<li><a href="#">x-12-caleb.html</a></li>
+					<li><a href="#">x-13-caleb.html</a></li>
+					<li><a href="#">x-14-caleb.html</a></li>
+                </ul>
+            </div>
+
+        </div> 
+    </main>
+
+    <script>
+        // --- JAVASCRIPT FOR CATEGORY SWITCHING ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const selectors = document.querySelectorAll('.category-selector');
+            const contents = document.querySelectorAll('.assignment-content');
+
+            selectors.forEach(selector => {
+                selector.addEventListener('click', () => {
+                    const targetId = selector.getAttribute('data-target');
+                    
+                    selectors.forEach(btn => btn.classList.remove('active'));
+                    selector.classList.add('active');
+
+                    contents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === targetId) {
+                            content.classList.add('active');
+                        }
+                    });
+
+                    document.querySelector('.assignment-list').scrollTop = 0;
+                });
+            });
+        });
+    </script>
 </body>
+</html>
