@@ -5,21 +5,104 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>A Well-Structured Webpage</title>
   <style>
-	body { font-family: "Century Gothic", CenturyGothic, Geneva, AppleGothic, sans-serif; }
+	body {
+            font-family: "Century Gothic", CenturyGothic, Geneva, AppleGothic, sans-serif;
+            margin: 0;
+            background-color: #121212;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+		
+	header {
+		background-image: linear-gradient(to bottom, #1f1f1f, #0d0d0d);
+		padding: 20px 0;
+		border-bottom: 2px solid #333;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+	}
+	
+	.header-content {
+		width: 90%;
+		max-width: 1200px;
+		margin: 0 auto;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	
+	.header-title {
+		display: flex;
+		align-items: center;
+		gap: 15px;
+	}
+	.header-title h1 {
+		margin: 0;
+		font-size: 2em;
+		background-image: linear-gradient(45deg, #e0e0e0, #80cbc4);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+	
+	.content-box {
+		width: 80%;
+		max-width: 800px;
+		margin: 40px auto;
+		padding: 30px;
+		min-height: 500px;
+		
+		background-color: #1f1f1f;
+		background-image: linear-gradient(
+			to bottom right,
+			rgba(31, 31, 31, 0.8),
+			rgba(50, 50, 50, 0.8)
+		);
+		
+		border-radius: 12px;
+		box-shadow: 0 8px 16px rgba(0, 0, 0, 0.7);
+		border: 1px solid #333;
+		
+		overflow-y: auto;
+	}
+	
+	.content-box::-webkit-scrollbar {
+		width: 8px;
+	}
+	
+	.content-box::-webkit-scrollbar-track {
+		background: #1f1f1f;
+	}
+	
+	.content-box::-webkit-scrollbar-thumb {
+		background: #4db6ac;
+		border-radius: 4px;
+	}
+	
+	.content-box::-webkit-scrollbar-thumb:hover {
+		background: #64d4c8;
+	}
   </style>
-</head>
-<body>
-	<h1 align=center>t1a16-move-div-caleb.html</h1>
-	<!-- actual stuff here -->
-	<section>
-		<div>
-			<p id="myMovingText01">I will move with a press of a button!<br></p>
-			<button id="myButtonMovingText01">Click me!</button>
-			<script>
-				function moveText()
-					const
-			</script>
+ </head>
+ <body>
+
+	<header>
+		<div class="header-content">
+			<div class="header-title">
+			<h1>t1a16 Move Div Caleb.html</h1>
+			</div>
 		</div>
-	</section>
-</body>
-</html>
+	</header>
+	
+	<main class="content-box">
+	
+		<div class="first-example"> <!-- move left, move right button and a paragraph -->
+			
+		</div>
+		
+		<div class="second-example"> <!-- continuous movement left -->
+			
+		</div>
+		
+		<div class="third-example">
+			
+		</div>
+	</main>
+ </body>
