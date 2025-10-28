@@ -109,7 +109,6 @@
 				type=button
 				value="click mouse wheel on"
 				id="myButtonMiddleClick"
-				onauxclick="MiddleClickFunc()"
 				><br>
 
 				<p id="myParaMiddleClick"></p><br>
@@ -231,12 +230,14 @@
 				console.log('Right click attempted');
 			}
 			
-			function MiddleClickFunc() {
-				event.preventDefault();
-				myMiddleClickOut.textContent = 'Middle clicking brings you nowhere.';
-				console.log('Middle click attempted');
-			}
+            myMiddleClick.addEventListener('auxclick', MiddleClickFunc);    
 			
+            function MiddleClickFunc(event) {
+                event.preventDefault();
+
+                myMiddleClickOut.textContent = 'You clicked the middle mouse button!';
+                console.log('Middle click attempted');
+            }
 			function ResetPage() {
 				myClickOut.textContent = '';
 				myDblClickOut.textContent = '';
