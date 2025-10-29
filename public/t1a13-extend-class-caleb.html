@@ -1,64 +1,911 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>T1a13</title>
-	<style>
-		body { font-family: "Century Gothic", CenturyGothic, Geneva, AppleGothic, sans-serif; }
-	</style>
-	<section>
-		<script type="module">
-		import { myVehicle } from "https://kymiira.github.io/game-dev-caleb-2025/public/00-javascript-class-file.js";
-		</script>
-	</section>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T1a13 - Class Extension Simulator</title>
+    <style>
+
+        .humanoid-profile {
+            position: relative; 
+            overflow: hidden; 
+        }
+
+        .max-age-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none; 
+            z-index: 10;
+            display: none; 
+            background-color: rgba(255, 255, 255, 0.4); 
+        }
+
+        .diagonal-line {
+            position: absolute;
+            top: 50%;
+            left: -10%; 
+            width: 120%; 
+            height: 4px; 
+            background: #d9534f; 
+            transform: rotate(-10deg); 
+            opacity: 0.9;
+        }
+
+        .overlay-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-10deg);
+            color: #d9534f;
+            font-size: 1.5rem;
+            font-weight: 900; 
+            white-space: nowrap;
+            border: 3px solid #d9534f;
+            padding: 5px 15px;
+            background-color: rgba(255, 255, 255, 0.95);
+            z-index: 11;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <script type="module">
+        
+        let humanoidCount = 0; 
+
+        const canadianColleges = [
+            { name: "University of Toronto", esteem: 100, chance: 1 },
+            { name: "McGill University", esteem: 90, chance: 2 },
+            { name: "University of British Columbia", esteem: 80, chance: 3 },
+            { name: "University of Alberta", esteem: 70, chance: 4 },
+            { name: "Simon Fraser University", esteem: 50, chance: 5 },
+            { name: "York University", esteem: 30, chance: 6 }
+        ];
+
+        const industries = [
+            { name: "Tech & Software", basePay: 120000, companies: ["Google", "Microsoft", "Amazon"], chanceWeight: 1 },
+            { name: "Finance & Banking", basePay: 100000, companies: ["RBC", "TD Bank", "Scotiabank"], chanceWeight: 2 },
+            { name: "Manufacturing", basePay: 70000, companies: ["Bombardier", "Magna"], chanceWeight: 3 }
+        ];
+        
+        const humanoids = {}; 
+        
+        function checkSuccess(successChancePercent) {
+            return Math.random() * 100 < successChancePercent;
+        }
+        
+        function updateProfileHTML(id, profileContainer, newHumanoid) {
+            const ageDisplay = profileContainer.querySelector('.humanoid-age-display');
+            const typeDisplay = profileContainer.querySelector('.humanoid-type-display');
+            const ageUpBtn = profileContainer.querySelector(`.age-up-button[data-id="${id}"]`);
+            const overlay = profileContainer.querySelector(`.max-age-overlay[data-id="${id}"]`);
+            
+            ageDisplay.innerHTML = `<b>Age:</b> ${newHumanoid.age}`;
+            typeDisplay.innerHTML = `<b>Type:</b> ${newHumanoid.type}`;
+            
+            const isPeakCareer = newHumanoid.isPromoted;
+            
+            if (newHumanoid.age >= 50) {
+                 ageUpBtn.value = "Max Age 50 Reached";
+                 ageUpBtn.disabled = true;
+                 ageUpBtn.style.backgroundColor = 'gray';
+                 if (overlay) { overlay.style.display = 'block'; }
+            } else if (isPeakCareer) {
+                ageUpBtn.value = `Peak Career! Age: ${newHumanoid.age}`;
+                ageUpBtn.disabled = true;
+                ageUpBtn.style.backgroundColor = 'gray'; 
+                ageUpBtn.style.cursor = 'not-allowed';
+            }
+        }
+        
+        class myHumanoid {
+            constructor(name, age, id) {
+                this.name = name;
+                this.age = parseInt(age);
+                this.id = id || `humanoid-${humanoidCount++}`;
+                this.isPromoted = false;
+                this.type = this.age < 5 ? "Youngster" : (this.age < 18 ? "Student" : "Adult"); 
+            }
+
+            ageUp(profileContainer) {
+                const summaryElement = profileContainer.querySelector('.current-action-summary');
+                const historyElement = profileContainer.querySelector('.log-history');
+                const ageUpBtn = profileContainer.querySelector(`.age-up-button[data-id="${this.id}"]`);
+                const overlay = profileContainer.querySelector(`.max-age-overlay[data-id="${this.id}"]`);
+
+                if (this.age >= 50) {
+                    ageUpBtn.value = "Max Age 50 Reached";
+                    ageUpBtn.disabled = true;
+                    ageUpBtn.style.backgroundColor = 'gray';
+            
+                    if (overlay) { overlay.style.display = 'block'; }
+            
+                    const message = `🛑 <b>${this.name}</b> has reached the maximum demo age of 50!`;
+                    summaryElement.innerHTML = message;
+                    console.log(`[ID: ${this.id}] MAX AGE LIMIT HIT (50): ${this.name} retired from simulation.`);
+                    return this;
+                }
+
+                this.age += 1;
+        
+                const prevMessage = summaryElement.innerHTML;
+                if (prevMessage && !prevMessage.includes("Ready to live life!") && !prevMessage.includes("Awaiting event")) {
+                     historyElement.innerHTML = `<p class="log-entry" style="padding: 2px 0;">${prevMessage}</p>` + historyElement.innerHTML;
+                }
+
+                summaryElement.innerHTML = `--- <b>${this.name}</b> is now <b>${this.age}</b>! Awaiting event...`;
+        
+                console.log(`[ID: ${this.id}] ${this.name} aged up to ${this.age}.`);
+
+                if (this.type === "Youngster" && this.age === 5) {
+                    const nextClass = new myStudent(this.name, this.age, this.id);
+                    summaryElement.innerHTML = `🎒 <b>${this.name}</b> turned 5 and started elementary school! Evolved to <b>${nextClass.type}</b>.`;
+                    console.log(`[ID: ${this.id}] AUTO-EVOLUTION: ${this.name} started school at age 5.`);
+                    return nextClass;
+                }
+        
+                return this.doAgeEvent(summaryElement);
+            }
+    
+            doAgeEvent(summaryElement) {
+                const message = `👤 <b>${this.name}</b> had an uneventful year.`;
+                summaryElement.innerHTML = message;
+                console.log(`[ID: ${this.id}] Event: Uneventful year. Type: ${this.type}`);
+                return this;
+            }
+        }
+
+        class myStudent extends myHumanoid {
+            constructor(name, age, id) {
+                super(name, age, id); 
+                this.type = "Student";
+            }
+
+            doAgeEvent(summaryElement) {
+                if (this.age >= 5 && this.age <= 11) {
+                    const event = ["learned basic math", "made a new friend", "struggled with reading"][Math.floor(Math.random()*3)];
+                    const message = `🖍️ <b>${this.name}</b> is in **Elementary School**. They ${event}.`;
+                    summaryElement.innerHTML = message; 
+                    return this;
+                } else if (this.age >= 12 && this.age <= 14) {
+                    const event = ["aced the history test", "got a new phone", "was invited to a party"][Math.floor(Math.random()*3)];
+                    const message = `🏫 <b>${this.name}</b> is in **Middle School**. They ${event}.`;
+                    summaryElement.innerHTML = message; 
+                    return this;
+                } else if (this.age >= 15 && this.age <= 17) {
+                    const event = ["got their driver's license", "started dating someone", "chose their university options"][Math.floor(Math.random()*3)];
+                    const message = `📚 <b>${this.name}</b> is in **High School**. They ${event}.`;
+                    summaryElement.innerHTML = message; 
+                    return this;
+                } else if (this.age === 18) {
+                    const randomRoll = Math.random();
+
+                    if (randomRoll < 0.45) { 
+                        const nextClass = new myGraduate(this.name, this.age, this.id);
+                        summaryElement.innerHTML = `🎓 <b>${this.name}</b> graduated high school and immediately began the job search! Evolved to <b>${nextClass.type}</b>.`;
+                        return nextClass;
+                    } else if (randomRoll < 0.85) { 
+                        const successChance = 80;
+                        const honorRoll = new myHonorRoll(this.name, this.age, successChance, this.id);
+                        const message = `🎉 <b>${this.name}</b> succeeded in their studies and started university! Promoted to <b>${honorRoll.type}</b> (GPA: ${honorRoll.gpa}).`;
+                        summaryElement.innerHTML = message;
+                        return honorRoll;
+                    } else if (randomRoll < 0.95) { 
+                        const nextClass = new myTeacher(this.name, this.age, this.id);
+                        summaryElement.innerHTML = `🍎 <b>${this.name}</b> decided to pursue teaching certification right away! Evolved to <b>${nextClass.type}</b>.`;
+                        return nextClass;
+                    } else if (randomRoll < 0.98) { 
+                        const nextClass = new myRecruit(this.name, this.age, this.id);
+                        summaryElement.innerHTML = `🫡 <b>${this.name}</b> enlisted in the Military! Evolved to <b>${nextClass.type}</b>.`;
+                        return nextClass;
+                    } else { 
+                        const nextClass = new myApprentice(this.name, this.age, this.id);
+                        summaryElement.innerHTML = `🔨 <b>${this.name}</b> decided to enter a Trade School! Evolved to <b>${nextClass.type}</b>.`;
+                        return nextClass;
+                    }
+                }
+                
+                const message = `📚 <b>${this.name}</b> had an uneventful year as a student.`;
+                summaryElement.innerHTML = message;
+                return this;
+            }
+        }
+
+        class myHonorRoll extends myStudent {
+            constructor(name, age, successPercent, id) {
+                super(name, age, id); 
+                this.type = "Honor Roll Student (Uni)";
+                this.gpa = Math.min(4.0, 3.5 + ((successPercent - 70) / 100)).toFixed(2);
+                this.isPromoted = false;
+            }
+            
+            doAgeEvent(summaryElement) {
+                if (this.age < 22) { 
+                    const message = `🎓 <b>${this.name}</b> is continuing their post-secondary studies with a ${this.gpa} GPA.`;
+                    summaryElement.innerHTML = message;
+                    return this;
+                }
+                
+                if (this.age === 22) {
+                    const nextClass = new myScientist(this.name, this.age, "Computer Science", this.id); 
+                    const message = `🔬 <b>${this.name}</b> graduated with honors and went straight into a research field! Promoted to <b>${nextClass.type}</b>.`;
+                    summaryElement.innerHTML = message;
+                    return nextClass;
+                }
+                
+                const message = `🎓 <b>${this.name}</b> has exceeded the typical graduation age.`;
+                summaryElement.innerHTML = message;
+                return this;
+            }
+        }
+        
+        class myScientist extends myHonorRoll {
+            constructor(name, age, discipline, id) {
+                super(name, age, 100, id); 
+                this.type = "Research Scientist";
+                this.discipline = discipline;
+                this.isPromoted = true;
+            }
+            doAgeEvent(summaryElement) {
+                const message = `⚛️ <b>${this.name}</b> is conducting groundbreaking work in <b>${this.discipline}</b>.`;
+                summaryElement.innerHTML = message;
+                return this;
+            }
+        }
+
+        class myTeacher extends myHumanoid {
+            constructor(name, age, id) {
+                super(name, age, id);
+                this.type = "School Teacher";
+            }
+            
+            doAgeEvent(summaryElement) {
+                if (this.age < 30 || this.age > 45) { 
+                    const message = `🍎 <b>${this.name}</b> taught another successful class at the local school.`;
+                    summaryElement.innerHTML = message;
+                    return this;
+                }
+                
+                const successChance = 30; 
+                if (checkSuccess(successChance)) {
+                    const professor = new myCollegeProfessor(this.name, this.age, this.id);
+                    const message = `🎓 <b>${this.name}</b> got promoted! Now a <b>${professor.type}</b> at <b>${professor.collegeName}</b>!`;
+                    summaryElement.innerHTML = message;
+                    return professor;
+                } else {
+                    const message = `🍎 <b>${this.name}</b>'s application for college faculty was deferred. (Chance: ${successChance}%)`;
+                    summaryElement.innerHTML = message;
+                    return this;
+                }
+            }
+        }
+
+        class myCollegeProfessor extends myTeacher {
+            constructor(name, age, id) {
+                super(name, age, id);
+                this.type = "College Professor";
+                this.isPromoted = true;
+
+                const totalChance = canadianColleges.reduce((sum, col) => sum + col.chance, 0);
+                let randomValue = Math.floor(Math.random() * totalChance) + 1; 
+                let selectedCollege = canadianColleges.find(college => (randomValue -= college.chance) <= 0);
+
+                this.collegeName = selectedCollege.name;
+                this.collegeEsteem = selectedCollege.esteem;
+            }
+            doAgeEvent(summaryElement) {
+                const message = `🏛️ <b>${this.name}</b> published research at <b>${this.collegeName}</b>.`;
+                summaryElement.innerHTML = message;
+                return this;
+            }
+        }
+
+        class myGraduate extends myHumanoid {
+            constructor(name, age, id) {
+                super(name, age, id);
+                this.type = "Graduate (Job Hunter)";
+            }
+
+            doAgeEvent(summaryElement) {
+                if (this.age < 22 || this.age > 35) {
+                    const message = `💤 <b>${this.name}</b> is still looking for the perfect opportunity.`;
+                    summaryElement.innerHTML = message;
+                    
+                    if (this.age > 35 && checkSuccess(20)) {
+                         const cook = new myLineCook(this.name, this.age, this.id);
+                         summaryElement.innerHTML = `🔪 After years of searching, <b>${this.name}</b> gave up and started work as a **Line Cook**! Evolved to <b>${cook.type}</b>.`;
+                         return cook;
+                    }
+                    return this;
+                }
+                
+                const totalWeight = industries.reduce((sum, item) => sum + item.chanceWeight, 0);
+                let randomWeight = Math.random() * totalWeight;
+                let selectedIndustry = industries.find(industry => (randomWeight -= industry.chanceWeight) <= 0);
+
+                const baseSuccess = 90; 
+                const payReduction = Math.floor(selectedIndustry.basePay / 1500); 
+                const finalSuccessChance = Math.max(10, baseSuccess - payReduction); 
+                
+                if (checkSuccess(finalSuccessChance)) {
+                    const worker = new myWorker(this.name, this.age, selectedIndustry, this.id);
+                    const message = `💼 <b>${this.name}</b> hired! New Type: <b>${worker.type}</b> at <b>${worker.company}</b> in <b>${worker.industry}</b>!`;
+                    summaryElement.innerHTML = message;
+                    return worker;
+                } else {
+                    const message = `❌ <b>${this.name}</b> applied to the <b>${selectedIndustry.name}</b> industry but failed. (Chance: ${finalSuccessChance.toFixed(0)}%)`;
+                    
+                    if (checkSuccess(10)) { 
+                        const musician = new myMusician(this.name, this.age, this.id);
+                        const musMessage = `🎶 After job failure, <b>${this.name}</b> gave up and decided to pursue music instead! Promoted to <b>${musician.type}</b> (${musician.genre} genre)!`;
+                        summaryElement.innerHTML = musMessage;
+                        return musician;
+                    }
+
+                    summaryElement.innerHTML = message;
+                    return this;
+                }
+            }
+        }
+        
+        class myWorker extends myHumanoid {
+            constructor(name, age, industry, id) {
+                super(name, age, id); 
+                this.type = "Junior Worker";
+                this.isPromoted = false;
+                this.industry = industry.name;
+                this.company = industry.companies[Math.floor(Math.random() * industry.companies.length)];
+                this.annualPay = industry.basePay;
+            }
+            doAgeEvent(summaryElement) {
+                if (this.age < 25 || this.age > 35) { 
+                    const message = `💻 <b>${this.name}</b> performed well at their job at ${this.company}.`;
+                    summaryElement.innerHTML = message;
+                    return this;
+                }
+                
+                if (checkSuccess(35)) {
+                    const senior = new mySeniorWorker(this.name, this.age, this.industry, this.company, this.annualPay * 1.2, this.id);
+                    const message = `🚀 <b>${this.name}</b> excelled! Promoted to <b>${senior.type}</b>!`;
+                    summaryElement.innerHTML = message;
+                    return senior;
+                }
+                const message = `💻 <b>${this.name}</b> awaits promotion news.`;
+                summaryElement.innerHTML = message;
+                return this;
+            }
+        }
+
+        class mySeniorWorker extends myWorker {
+            constructor(name, age, industry, company, pay, id) {
+                const industryObject = { name: industry, basePay: pay, companies: [company] };
+                super(name, age, industryObject, id); 
+                this.type = "Senior Worker";
+                this.isPromoted = false;
+                this.company = company; 
+                this.annualPay = pay; 
+            }
+            doAgeEvent(summaryElement) {
+                if (this.age < 30 || this.age > 45) {
+                    const message = `📈 <b>${this.name}</b> led a major project for ${this.company}.`;
+                    summaryElement.innerHTML = message;
+                    return this;
+                }
+                
+                if (checkSuccess(20)) { 
+                    const manager = new myManager(this.name, this.age, this.industry, this.company, this.annualPay * 1.5, this.id);
+                    const message = `👑 **EXECUTIVE PROMOTION!** <b>${this.name}</b> is now a <b>${manager.type}</b> at ${this.company}!`;
+                    summaryElement.innerHTML = message;
+                    return manager;
+                }
+                const message = `📈 <b>${this.name}</b> is a key contributor.`;
+                summaryElement.innerHTML = message;
+                return this;
+            }
+        }
+        
+        class myManager extends mySeniorWorker {
+            constructor(name, age, industry, company, pay, id) {
+                super(name, age, industry, company, pay, id);
+                this.type = "Director/Manager";
+                this.isPromoted = true; 
+            }
+            doAgeEvent(summaryElement) {
+                const message = `💰 <b>${this.name}</b> attended high-level board meetings for ${this.company}.`;
+                summaryElement.innerHTML = message;
+                return this;
+            }
+        }
+
+        class myMusician extends myGraduate {
+            constructor(name, age, id) {
+                super(name, age, id); 
+                this.type = "Full-Time Musician";
+                this.isPromoted = true;
+                this.genre = ["Rock", "Pop", "Jazz", "Classical", "Folk"][Math.floor(Math.random() * 5)];
+            }
+            doAgeEvent(summaryElement) {
+                const message = `🎸 <b>${this.name}</b> released a new album in the <b>${this.genre}</b> genre!`;
+                summaryElement.innerHTML = message;
+                return this;
+            }
+        }
+
+        class myLineCook extends myHumanoid {
+            constructor(name, age, id) {
+                super(name, age, id);
+                this.type = "Line Cook";
+                this.restaurant = ["The Golden Spoon", "Chez Pierre", "Burger Baron"][Math.floor(Math.random()*3)];
+            }
+            doAgeEvent(summaryElement) {
+                if (this.age < 25 || this.age > 38) {
+                    const message = `🍽️ <b>${this.name}</b> worked hard on the busy line at ${this.restaurant}.`;
+                    summaryElement.innerHTML = message;
+                    return this;
+                }
+                
+                if (checkSuccess(30)) {
+                    const sous = new mySousChef(this.name, this.age, this.restaurant, this.id);
+                    const message = `🧑‍🍳 <b>${this.name}</b> was recognized for skill! Promoted to <b>${sous.type}</b> at ${this.restaurant}!`;
+                    summaryElement.innerHTML = message;
+                    return sous;
+                }
+                const message = `🍽️ <b>${this.name}</b> sliced and diced, waiting for a break.`;
+                summaryElement.innerHTML = message;
+                return this;
+            }
+        }
+
+        class mySousChef extends myLineCook {
+            constructor(name, age, restaurant, id) {
+                super(name, age, id);
+                this.type = "Sous Chef";
+                this.restaurant = restaurant;
+            }
+            doAgeEvent(summaryElement) {
+                if (this.age < 30 || this.age > 45) {
+                    const message = `🔥 <b>${this.name}</b> managed the kitchen staff and inventory at ${this.restaurant}.`;
+                    summaryElement.innerHTML = message;
+                    return this;
+                }
+                
+                if (checkSuccess(20)) { 
+                    const head = new myHeadChef(this.name, this.age, this.restaurant, this.id);
+                    const message = `⭐ **TOP TIER!** <b>${this.name}</b> became the <b>${head.type}</b> of ${this.restaurant}!`;
+                    summaryElement.innerHTML = message;
+                    return head;
+                }
+                const message = `🔥 <b>${this.name}</b> is the right hand of the Head Chef.`;
+                summaryElement.innerHTML = message;
+                return this;
+            }
+        }
+
+        class myHeadChef extends mySousChef {
+            constructor(name, age, restaurant, id) {
+                super(name, age, restaurant, id);
+                this.type = "Head Chef/Owner";
+                this.isPromoted = true; 
+            }
+            doAgeEvent(summaryElement) {
+                const message = `👨‍🍳 <b>${this.name}</b> earned a 5-star review for the menu at ${this.restaurant}.`;
+                summaryElement.innerHTML = message;
+                return this;
+            }
+        }
+
+        class myRecruit extends myHumanoid {
+            constructor(name, age, id) {
+                super(name, age, id);
+                this.type = "Military Recruit";
+                this.branch = ["Army", "Navy", "Air Force"][Math.floor(Math.random()*3)];
+            }
+            doAgeEvent(summaryElement) {
+                if (this.age < 25 || this.age > 35) {
+                    const message = `🎖️ <b>${this.name}</b> completed a tour of duty with the ${this.branch}.`;
+                    summaryElement.innerHTML = message;
+                    return this;
+                }
+
+                if (checkSuccess(25)) {
+                    const officer = new myOfficer(this.name, this.age, this.branch, this.id);
+                    const message = `⭐ <b>${this.name}</b> graduated from officer training! Promoted to <b>${officer.type}</b>.`;
+                    summaryElement.innerHTML = message;
+                    return officer;
+                }
+                const message = `🎖️ <b>${this.name}</b> continues to serve in the ${this.branch}.`;
+                summaryElement.innerHTML = message;
+                return this;
+            }
+        }
+        
+        class myOfficer extends myRecruit {
+            constructor(name, age, branch, id) {
+                super(name, age, id);
+                this.type = "Commissioned Officer";
+                this.branch = branch;
+            }
+            doAgeEvent(summaryElement) {
+                if (this.age < 40 || this.age > 48) {
+                    const message = `🌟 <b>${this.name}</b> led successful missions as a high-ranking officer.`;
+                    summaryElement.innerHTML = message;
+                    return this;
+                }
+
+                if (checkSuccess(10)) { 
+                    const general = new myGeneral(this.name, this.age, this.branch, this.id);
+                    const message = `🔥 **HIGHEST RANK!** <b>${this.name}</b> reached the rank of <b>${general.type}</b> in the ${this.branch}!`;
+                    summaryElement.innerHTML = message;
+                    return general;
+                }
+                const message = `🌟 <b>${this.name}</b> is considered for promotion to General.`;
+                summaryElement.innerHTML = message;
+                return this;
+            }
+        }
+
+        class myGeneral extends myOfficer {
+            constructor(name, age, branch, id) {
+                super(name, age, branch, id);
+                this.type = branch.includes("Air") || branch.includes("Navy") ? "Admiral/General" : "General";
+                this.isPromoted = true; 
+            }
+            doAgeEvent(summaryElement) {
+                const message = `HQ <b>${this.name}</b> advised the government on national defense strategy.`;
+                summaryElement.innerHTML = message;
+                return this;
+            }
+        }
+
+        class myApprentice extends myHumanoid {
+            constructor(name, age, id) {
+                super(name, age, id);
+                this.trade = ["Electrician", "Plumber", "HVAC Tech"][Math.floor(Math.random()*3)];
+                this.type = `Apprentice (${this.trade})`;
+            }
+            doAgeEvent(summaryElement) {
+                if (this.age < 22 || this.age > 30) {
+                    const message = `🛠️ <b>${this.name}</b> learned the basics of the **${this.trade}** trade.`;
+                    summaryElement.innerHTML = message;
+                    return this;
+                }
+
+                if (checkSuccess(40)) {
+                    const journeyman = new myJourneyman(this.name, this.age, this.trade, this.id);
+                    const message = `💡 <b>${this.name}</b> passed the exam! Promoted to **${journeyman.type}**!`;
+                    summaryElement.innerHTML = message;
+                    return journeyman;
+                }
+                const message = `🛠️ <b>${this.name}</b> is close to finishing their **${this.trade}** apprenticeship.`;
+                summaryElement.innerHTML = message;
+                return this;
+            }
+        }
+        
+        class myJourneyman extends myApprentice {
+            constructor(name, age, trade, id) {
+                super(name, age, id);
+                this.trade = trade;
+                this.type = `Journeyman (${this.trade})`;
+            }
+            doAgeEvent(summaryElement) {
+                if (this.age < 35 || this.age > 45) {
+                    const message = `🔩 <b>${this.name}</b> worked on large projects as a **${this.trade}**.`;
+                    summaryElement.innerHTML = message;
+                    return this;
+                }
+
+                if (checkSuccess(20)) { 
+                    const master = new myMasterCraftsman(this.name, this.age, this.trade, this.id);
+                    const message = `🏆 **TOP OF THE TRADE!** <b>${this.name}</b> became a <b>${master.type}</b>!`;
+                    summaryElement.innerHTML = message;
+                    return master;
+                }
+                const message = `🔩 <b>${this.name}</b> mentors new apprentices.`;
+                summaryElement.innerHTML = message;
+                return this;
+            }
+        }
+
+        class myMasterCraftsman extends myJourneyman {
+            constructor(name, age, trade, id) {
+                super(name, age, trade, id);
+                this.type = `Master Craftsman (${trade})`;
+                this.isPromoted = true; 
+            }
+            doAgeEvent(summaryElement) {
+                const message = `🥇 <b>${this.name}</b> opened their own contracting business for **${this.trade}**.`;
+                summaryElement.innerHTML = message;
+                return this;
+            }
+        }
+
+        let createButton; 
+
+        function createHumanoidProfile(name, startAge, outputArea, nameInput, ageInput) {
+            
+            if (nameInput) {
+                if (!name || isNaN(startAge) || startAge < 1 || startAge > 20) {
+                    console.error("Profile creation attempted with invalid data.");
+                    return;
+                }
+            }
+
+            const selectedType = document.querySelector('input[name="humanoidtype"]:checked').value;
+            let newHumanoid;
+            let initialId;
+            
+            if (startAge < 5) {
+                newHumanoid = new myHumanoid(name, startAge); 
+            } else if (startAge >= 5 && startAge < 18) {
+                newHumanoid = new myStudent(name, startAge); 
+            } else { 
+                switch(selectedType) {
+                    case "Teacher": newHumanoid = new myTeacher(name, startAge); break;
+                    case "Graduate": newHumanoid = new myGraduate(name, startAge); break;
+                    case "Student": 
+                    default: 
+                        // FIX: For starting ages 18+, the 'Student' option (which is the default)
+                        // should start them as a Graduate (Job Hunter) to avoid the infinite Student bug.
+                        newHumanoid = new myGraduate(name, startAge); 
+                }
+            }
+
+            initialId = newHumanoid.id;
+            
+            humanoids[initialId] = newHumanoid;
+
+            const profileHTML = `
+                <div id="${initialId}" class="humanoid-profile" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background-color: #f9f9f9;">
+                    <div class="max-age-overlay" data-id="${initialId}">
+                        <div class="diagonal-line"></div>
+                        <div class="overlay-text">DEMO AGE 50 REACHED</div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                        <span style="font-size: 1.1em;"><b>Name:</b> ${newHumanoid.name}</span> 
+                        <div>
+                            <input type="button" class="remove-button" data-id="${initialId}" value="X Remove" style="background-color: #d9534f; color: white; border: none; padding: 5px; cursor: pointer;">
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 10px;">
+                        <span class="humanoid-age-display" style="margin-right: 15px;"><b>Age:</b> ${newHumanoid.age}</span>
+                        <span class="humanoid-type-display"><b>Type:</b> ${newHumanoid.type}</span>
+                    </div>
+
+                    <input type="button" class="age-up-button" data-id="${initialId}" value="Age Up (1 Year)" style="width: 100%; padding: 8px; background-color: #5bc0de; color: white; border: none; cursor: pointer;">
+                    
+                    <details class="log-details" style="margin-top: 10px; padding: 5px; border: 1px solid #eee; background-color: white;">
+                        <summary class="current-action-summary" style="cursor: pointer; font-weight: bold;">Log: Ready to live life!</summary>
+                        <div class="log-history" style="max-height: 150px; overflow-y: auto; font-size: 0.8em; color: #666; margin-top: 5px; border-top: 1px solid #eee; padding-top: 5px;">
+                            <p class="log-entry" style="padding: 2px 0;">Profile created successfully.</p>
+                        </div>
+                    </details>
+                </div>
+            `;
+            
+            outputArea.innerHTML += profileHTML;
+            console.log(`[ID: ${initialId}] Created new Humanoid: ${newHumanoid.name} (${newHumanoid.type}) at age ${newHumanoid.age}.`);
+
+            if (nameInput) nameInput.value = "";
+            
+            if (ageInput) {
+                ageInput.value = "1";
+            }
+            if (document.getElementById('ageValue')) document.getElementById('ageValue').innerText = "1";
+            
+            checkFormValidity(); 
+        }
+
+        function checkFormValidity() {
+            const nameInput = document.getElementById("humanoidname");
+            const isNameValid = nameInput.value.trim() !== "";
+            
+            if (isNameValid) {
+                createButton.disabled = false;
+                createButton.style.backgroundColor = 'green';
+                createButton.style.cursor = 'pointer';
+                createButton.style.color = 'white';
+            } else {
+                createButton.disabled = true;
+                createButton.style.backgroundColor = '#ccc';
+                createButton.style.cursor = 'not-allowed';
+                createButton.style.color = '#666';
+            }
+        }
+
+        function script() { 
+            createButton = document.getElementById("createhumanoid"); 
+            const createExampleButton = document.getElementById("createexample"); 
+            const outputArea = document.getElementById("humanoidoutput");
+            const nameInput = document.getElementById("humanoidname");
+            const ageInput = document.getElementById("humanoidage");
+            
+            outputArea.innerHTML = '<h5 style="font-size: 1.2em; font-weight: bold; margin-bottom: 10px;">Active Humanoid Profiles:</h5>';
+
+            nameInput.addEventListener("input", checkFormValidity);
+            ageInput.addEventListener("input", checkFormValidity);
+
+            checkFormValidity();
+
+
+            createButton.addEventListener("click", () => {
+                const name = nameInput.value.trim();
+                const startAge = parseInt(ageInput.value); 
+                
+                createHumanoidProfile(name, startAge, outputArea, nameInput, ageInput);
+            });
+            
+            createExampleButton.addEventListener("click", () => {
+                createHumanoidProfile("John Doe", 1, outputArea);
+            });
+
+
+            outputArea.addEventListener("click", (event) => {
+                const target = event.target;
+                const id = target.getAttribute('data-id');
+                const profileContainer = document.getElementById(id);
+
+                if (!id || !profileContainer) return;
+
+                let currentHumanoid = humanoids[id];
+
+                if (target.classList.contains('age-up-button')) {
+                    
+                    let updatedHumanoid = currentHumanoid.ageUp(profileContainer);
+
+                    if (updatedHumanoid !== currentHumanoid) {
+                        humanoids[id] = updatedHumanoid; 
+                    } 
+                    
+                    updateProfileHTML(id, profileContainer, humanoids[id]);
+                    
+                } else if (target.classList.contains('remove-button')) {
+                    delete humanoids[id];
+                    profileContainer.remove();
+                    console.log(`[ID: ${id}] REMOVED profile: ${currentHumanoid.name}`);
+                }
+            });
+        }
+        
+        document.addEventListener("DOMContentLoaded", script);
+    </script>
 </head>
-<body>
-	<!-- header -->
-	<section>
-		<h1 align=center>t1a13-extend-class-caleb</h1>
-		<details>
-      <summary>Instructions + Ex:</summary>
-        <script>
-          class myAnimal { //
-            constructor(passName, passAge) { //
-				this.myName = passName;
-				this.myAge = passAge;
-			}
-			
-			myShow(){ //
-				document.getElementById('myDiv01').innerHTML = 'hello '+ this.myName+'<br>'
-			}
-		}
-        </script>
-		<h4> Example working classes code</h4>
-		<input type=button value="Example class set and show class animal" onclick="{
-			myDog = new myAnimal('snickers', 5)
-			myDog.myShow()
-		}">
-		<h4> Example extending class code</h4>
-		Nothing: <Input type=text id="myText01" value="Useless at the moment"><br>
-		
-		<input type=button value="example extend class animal" onclick="{
-			class myCat extends myAnimal {
-			
-				myShow(){
-					document.getElementById('myDiv01').innerHTML = this.myName + ' is a great cat<br>'
-				}
-			}
-			myPet = new myCat('fluffy', 14)
-			myPet.myShow()
-		}">
-		<div id="myDiv01">...</div>
-		</details>
-	</section>
-	<!-- student code -->
-	<section>
-	<!-- header -->
-		<section>
-			<h4 align="center">these are going to all be examples of extending classes, these classes will be imported from <a href="https://kymiira.github.io/game-dev-caleb-2025/public/00-javascript-class-file.js"></a></h4>
-		</section>
-		<details>
-			<summary>1st ex:</summary>
-		</details>
-	</section>
+<body style="font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
+    
+    <section style="margin-bottom: 20px;">
+        <h1 style="text-align: center; margin-bottom: 10px;">T1a13 - Class Extension Simulator</h1>
+        <details style="border: 1px solid #ccc; padding: 10px; background-color: #eee;">
+            <summary style="font-weight: bold; cursor: pointer;">Instructions + Example</summary>
+            <div style="margin-top: 10px; border-top: 1px solid #ccc; padding-top: 10px;">
+                <script>
+                  class myAnimal {
+                    constructor(passName, passAge) {
+                        this.myName = passName;
+                        this.myAge = passAge;
+                    }
+                    
+                    myShow(){
+                        document.getElementById('myDiv01').innerHTML = 'Hello '+ this.myName+'<br>'
+                    }
+                  }
+                </script>
+                <h4 style="margin-top: 5px;">Example Working Classes Code</h4>
+                <input type="button" value="Example class set and show class animal" onclick="{
+                    myDog = new myAnimal('Snickers', 5)
+                    myDog.myShow()
+                }">
+                <h4 style="margin-top: 5px;">Example Extending Class Code</h4>
+                <input type="button" value="Example extend class animal" onclick="{
+                    class myCat extends myAnimal {
+                    
+                        myShow(){
+                            document.getElementById('myDiv01').innerHTML = this.myName + ' is a great cat<br>'
+                        }
+                    }
+                    myPet = new myCat('Fluffy', 14)
+                    myPet.myShow()
+                }">
+                <div id="myDiv01" style="margin-top: 10px; padding: 5px; border: 1px solid #ddd; background-color: #f4f4f4; font-style: italic;">...</div>
+            </div>
+        </details>
+    </section>
+    
+    <section style="border: 1px solid #000; padding: 15px;">
+        <header style="text-align: center; margin-bottom: 15px;">
+            <h4 style="font-size: 1.5em;">Humanoid Class Simulator</h4>
+            <p style="font-size: 0.9em; color: #555;">(Age Up for Events/Promotions/Evolutions)</p>
+        </header>
+
+           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+             <div id="userinput" style="padding: 10px; border: 1px solid blue;">
+                 <label for="humanoidname" style="display: block; margin-bottom: 5px; font-weight: bold;">Humanoid Name:</label>
+                 <input type="text" id="humanoidname" style="width: 100%; padding: 5px; margin-bottom: 10px;"><br>
+                 
+                 <label for="humanoidage" style="display: block; margin-bottom: 5px; font-weight: bold;">Starting Age (1-20): <span id="ageValue">1</span></label>
+                 <input type="range" id="humanoidage" min="1" max="20" value="1" oninput="document.getElementById('ageValue').innerText = this.value;" style="width: 100%; margin-bottom: 15px;"><br>
+                 
+                 <p style="font-weight: bold; margin-bottom: 5px;">Choose starting class (Age 18+ only):</p>
+                 <div style="margin-bottom: 15px;">
+                     <input type="radio" id="Student" name="humanoidtype" value="Student" checked>
+                     <label for="Student">Student (Default)</label><br>
+                     
+                     <input type="radio" id="Teacher" name="humanoidtype" value="Teacher">
+                     <label for="Teacher">Teacher</label><br>
+                     
+                     <input type="radio" id="Graduate" name="humanoidtype" value="Graduate"> 
+                     <label for="Graduate">Graduate</label><br>
+                 </div>
+                 
+                 <hr style="margin: 15px 0;">
+                 <div style="display: flex; flex-direction: column; gap: 10px;">
+                     <input type="button" id="createhumanoid" value="Create New Humanoid" disabled style="padding: 8px; background-color: #ccc; color: #666; border: none; cursor: not-allowed;">
+                     <input type="button" id="createexample" value="Create Example: John Doe (Age 1)" style="padding: 8px; background-color: orange; color: white; border: none; cursor: pointer;">
+                 </div>
+             </div>
+             <div id="output" style="padding: 10px; border: 1px solid #ccc; max-height: 500px; overflow-y: auto;">
+                 <div id="humanoidoutput">Humanoid Profiles:</div>
+             </div>
+
+           </div>
+    </section>
+
+    <section id="documentation" style="margin-top: 20px;">
+        <details style="border: 1px solid #000; padding: 15px; background-color: #f0f8ff;">
+            <summary style="font-weight: bold; font-size: 1.2em; cursor: pointer;">
+                📋 Humanoid Class Documentation & Paths (Click to View)
+            </summary>
+            <div id="class-details" style="max-height: 400px; overflow-y: auto; padding-top: 10px; margin-top: 10px; border-top: 1px solid #ccc;">
+                
+                <h3 style="margin-top: 0; border-bottom: 2px solid #5bc0de; padding-bottom: 5px;">🧬 Core and Education Path</h3>
+                
+                <p><strong><span style="color: #6c757d;">myHumanoid</span></strong> (Youngster)</p>
+                <p style="margin-left: 15px; font-size: 0.9em;">Base Class. Age 1-4. Auto-Evolves to myStudent at Age 5.</p>
+
+                <p><strong><span style="color: #6c757d;">myStudent</span></strong></p>
+                <p style="margin-left: 15px; font-size: 0.9em;">Ages 5-17 (Elementary to High School). At age 18, branches into one of five initial career/education paths based on chance.</p>
+
+                <p><strong><span style="color: #6c757d;">myHonorRoll</span></strong> &gt; <strong><span style="color: #28a745;">myScientist</span></strong> (Peak)</p>
+                <p style="margin-left: 15px; font-size: 0.9em;">University Path. Student enters university (Age 18) and becomes myScientist upon graduation (Age 22). myScientist is a Peak Career.</p>
+                
+                <p><strong><span style="color: #6c757d;">myTeacher</span></strong> &gt; <strong><span style="color: #28a745;">myCollegeProfessor</span></strong> (Peak)</p>
+                <p style="margin-left: 15px; font-size: 0.9em;">Education Path. Teacher can be promoted to myCollegeProfessor between Ages 30-45 (30% chance per year). myCollegeProfessor is a Peak Career.</p>
+
+                <hr style="margin: 15px 0;">
+                <h3 style="border-bottom: 2px solid #5bc0de; padding-bottom: 5px;">💼 Career Paths (Post-High School)</h3>
+
+                <p><strong><span style="color: #6c757d;">myGraduate</span></strong></p>
+                <p style="margin-left: 15px; font-size: 0.9em;">Job Hunter Path. Ages 18-35. Attempts to get a job annually. Most succeed in becoming a myWorker. If they fail consistently past age 35, they default to myLineCook. (Rare 10% chance to become myMusician after job failure).</p>
+
+                <p><strong><span style="color: #6c757d;">myWorker</span></strong> &gt; <strong><span style="color: #6c757d;">mySeniorWorker</span></strong> &gt; <strong><span style="color: #28a745;">myManager</span></strong> (Peak)</p>
+                <p style="margin-left: 15px; font-size: 0.9em;">Corporate Ladder Path. Junior Worker promotes to Senior Worker (Ages 25-35, 35% chance). Senior Worker promotes to myManager (Ages 30-45, 20% chance). myManager is a Peak Career.</p>
+
+                <p><strong><span style="color: #28a745;">myMusician</span></strong> (Peak)</p>
+                <p style="margin-left: 15px; font-size: 0.9em;">Artist Path. Rare branch from a failed myGraduate. Peak Career immediately upon evolution.</p>
+
+                <hr style="margin: 15px 0;">
+                <h3 style="border-bottom: 2px solid #5bc0de; padding-bottom: 5px;">🍽️ Culinary Path</h3>
+
+                <p><strong><span style="color: #6c757d;">myLineCook</span></strong> &gt; <strong><span style="color: #6c757d;">mySousChef</span></strong> &gt; <strong><span style="color: #28a745;">myHeadChef</span></strong> (Peak)</p>
+                <p style="margin-left: 15px; font-size: 0.9em;">Kitchen Path. Line Cook promotes to Sous Chef (Ages 25-38, 30% chance). Sous Chef promotes to myHeadChef (Ages 30-45, 20% chance). myHeadChef is a Peak Career.</p>
+                
+                <hr style="margin: 15px 0;">
+                <h3 style="border-bottom: 2px solid #5bc0de; padding-bottom: 5px;">🫡 Military Path</h3>
+
+                <p><strong><span style="color: #6c757d;">myRecruit</span></strong> &gt; <strong><span style="color: #6c757d;">myOfficer</span></strong> &gt; <strong><span style="color: #28a745;">myGeneral</span></strong> (Peak)</p>
+                <p style="margin-left: 15px; font-size: 0.9em;">Service Path. Recruit promotes to Officer (Ages 25-35, 25% chance). Officer promotes to myGeneral (Ages 40-48, 10% chance). myGeneral is a Peak Career.</p>
+                
+                <hr style="margin: 15px 0;">
+                <h3 style="border-bottom: 2px solid #5bc0de; padding-bottom: 5px;">🛠️ Trades Path</h3>
+
+                <p><strong><span style="color: #6c757d;">myApprentice</span></strong> &gt; <strong><span style="color: #6c757d;">myJourneyman</span></strong> &gt; <strong><span style="color: #28a745;">myMasterCraftsman</span></strong> (Peak)</p>
+                <p style="margin-left: 15px; font-size: 0.9em;">Skilled Trade Path. Apprentice promotes to Journeyman (Ages 22-30, 40% chance). Journeyman promotes to myMasterCraftsman (Ages 35-45, 20% chance). myMasterCraftsman is a Peak Career.</p>
+
+            </div>
+        </details>
+    </section>
+
+</body>
+</html>
