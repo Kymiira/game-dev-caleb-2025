@@ -115,7 +115,7 @@ header {
 
 .item-content {
     padding: 15px;
-    overflow: hidden; /* Crucial for containing moving elements */
+    overflow: hidden;
 }
 
 .item-content p {
