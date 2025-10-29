@@ -178,7 +178,7 @@
 
 </details>
 
-<details open><summary>Thursday Oct 2nd, 2025</summary>
+<details><summary>Thursday Oct 2nd, 2025</summary>
 
 ### Title
 1. started t1a10 - fromloops
@@ -335,7 +335,7 @@
 
 ---     
 
-<details ><summary>Monday Oct 27th, 2025</summary>
+<details open><summary>Monday Oct 27th, 2025</summary>
 
 ### Title
 1.
@@ -347,18 +347,18 @@
 <details><summary>Tuesday Oct 28th, 2025</summary>
 
 ### Title
-1.
-1.
-1.
+1. worked on unfinished assignments
+1. finished ta12
+1. finished t1a13
 
 </details>
 
 <details><summary>Wednesday Oct 29th, 2025</summary>
 
 ### Title
-1.
-1.
-1.
+1. created styles folder to hold .css files within repo
+2. created modules folder to hold .js files within repo
+1. 
 
 </details>
 
