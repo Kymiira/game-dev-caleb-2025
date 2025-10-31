@@ -16,8 +16,8 @@
   <br><br>
   <section>
    <h2>Adds two integers together via parseInt()</h2>
-   <input type="number" id="myFirstInt01" value="0" placeholder="ONLY NUMBERS WILL WORK" pattern="\e.;,"/><br>
-   <input type="number" id="mySecondInt01" value="0" placeholder="ONLY NUMBERS WILL WORK" pattern="\e.;,"/><br>
+   <input type="number" id="myFirstInt01" value="0" placeholder="ONLY NUMBERS WILL WORK" pattern="\e.;," value="1"/><br>
+   <input type="number" id="mySecondInt01" value="0" placeholder="ONLY NUMBERS WILL WORK" pattern="\e.;," value="5"/><br>
    <button id="myCalculate01" onclick="myIntAdd()">Calculate</button><br>
    <br><br>
    <span id="mySum01">...</span>
@@ -35,7 +35,7 @@
 
   <section>
     <h2>Will display the last character typed into this text box</h2>
-    <input type="text" id="myCharTextbox01" placeholder="Enter Text Here"/><br>
+    <input type="text" id="myCharTextbox01" placeholder="Enter Text Here" value="Enter Text Here"/><br>
     Last Character Typed: <span id="myLastChar01">...</span> and the total number of characters is: <span id="myTotalChars01">0</span>
     <br><span style="font-size: x-small;"> the script for this character box display uses slice to get the last character of the string, its usually used with arrays but strings are treated like arrays of characters... </span><br>
     <script>
@@ -77,8 +77,8 @@
 
   <section>
     <h2>Adds two floats together via parseFloat()</h2>
-    <input type="number" value="0" id="myFloatVal01"/><br>
-    <input type="number" value="0" id="myFloatVal02"/><br>
+    <input type="number" value="0" id="myFloatVal01" value="1.1"/><br>
+    <input type="number" value="0" id="myFloatVal02" value="2.2"/><br>
     <button id="myFloatCalc01" onclick="myFloatAdd()">Calculate</button><br>
     <br><br>
     <span id="myFloatSum01">...</span>
@@ -96,7 +96,7 @@
 
   <section>
    <h2>String Methods</h2>
-   <input type="text" id="myStringInput01" placeholder="Enter Text Here"/><br>
+   <input type="text" id="myStringInput01" placeholder="Enter Text Here" value="PlaceholderText"/><br>
    <button id="myStringReverse01" onclick="myStringReverse()">Reverse String</button><br>
    <button id="myStringCorrector01" onclick="myStringCorrector()">Proper Sentence</button><br>
    <button id="myStringCounter01" onclick="myStringCounter()">Count Characters</button><br>
