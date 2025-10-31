@@ -4,43 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>T1a16 - UNFINISHED</title>
-	<style>
-		body {
-			font-family: "Century Gothic", CenturyGothic, Geneva, AppleGothic, sans-serif;
-			margin: 0;
-			background-color: #121212;
-			color: #e0e0e0;
-			min-height: 100vh;
-		}
-
-		header {
-			background-image: linear-gradient(to bottom, #1f1f1f, #0d0d0d);
-			padding: 0px 0;
-			border-bottom: 2px solid #333;
-			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-		}
-
-		header p {
-		
-		}
-
-		.reset-div {
-			all: initial;
-			display: block;
-			font-family: unset;
-			font-size: unset;
-			margin: 0;
-			paddng: 0;
-			box-sizing: content-box;
-			background-color: #FFFFFF;
-		}
-		
-		.reset-div * {
-			all: unset;
-			display: revert;
-		}
-	</style>
-	<!-- <link rel="stylesheet" href="https://kymiira.github.io/game-dev-caleb-2025/public/styles/t1a16.css"> -->
+	<style></style>
 </head>
 <body>
 	<header>
@@ -48,22 +12,22 @@
 	</header>
 	<main>
 		<details>
-			<summary><p>THIS IS TEACHER EX<br>ALL STYLES IN THIS HAVE BEEN RESET TO REFLECT BARE BONES PAGE</P></summary>
-			<div class="reset-div">
+			<summary>THIS IS TEACHER EX</summary>
+			<div>
 				<script>
-				let myTimer01
-				
-				function myAuto(){
-					const myIm = document.getElementById('myImage01')
-					myIm.style.left = parseInt(myIm.style.left) + 5 + 'px'
-					if (parseInt(myIm.style.left) > 600){
-						myIm.style.left = '10px'
+					let myTimer01
+					
+					function myAuto(){
+						const myIm = document.getElementById('myImage01')
+						myIm.style.left = parseInt(myIm.style.left) + 5 + 'px'
+						if (parseInt(myIm.style.left) > 600){
+							myIm.style.left = '10px'
+						}
 					}
-				}
-				
-				function myKeyPress(event) {
-					console.log(`You pressed: ${event.key}`);
-				}
+					
+					function myKeyPress(event) {
+						console.log(`You pressed: ${event.key}`);
+					}
 				</script>
 				
 				<h1 align=center>t1a16-move-div-fred.html</h1>
@@ -88,28 +52,66 @@
 				
 				<img src="myImage01.jpg" id="myImage01" width=40 style="position:relative; left:0; right:0">
 			</div>
-			</details>
-		<div class="content-box">
-		
-		</div>
-		<div class="content-box">
-		
-		</div>
-		<div class="content-box">
-		
-		</div>
-		<div class="content-box">
-		
-		</div>
-		<div class="content-box">
-		
-		</div>
-		<div class="content-box">
-		
-		</div>
-		<div class="content-box">
-		
-		</div>
-		<div class="content-box">
-		
-		</div>
+		</details>
+		<section> <!-- student work -->
+			<div id="container02" style="
+				position: relative;
+				width: 400px;
+				height: 300px; 
+				background-color: #f0f0f0;
+				border: 2px solid #ccc;
+				overflow: hidden;
+				margin: 0 auto;
+				display: block;
+			">
+				<div id="bouncing-square01" style="
+					position: absolute;
+					width: 50px;
+					height: 50px; 
+					background-color: white;
+				">
+				</div>
+			</div>
+			<script>
+				// objects
+				const container = document.getElementById('container02');
+				const square = document.getElementById('bouncing-square01');
+				// restraints
+				const containerWidth = container.clientWidth;
+				const containerHeight = container.clientHeight;
+				const squareWidth = square.clientWidth;
+				const squareHeight = square.clientHeight;
+				//position
+				let x = (containerWidth / 2) - (squareWidth / 2);
+				let y = (containerHeight / 2) - (squareHeight / 2);
+				//directiom (pixel/second)
+				let dx = 3;
+				let dy = 3;
+				
+				function animateBounce() {
+					x += dx;
+					y += dy;
+					
+					if (x + squareWidth > containerWidth || x < 0) {
+						dx = -dx;
+					}
+					
+					if (y + squareHeight > containerHeight || y < 0) {
+						dy = -dy;
+					}
+					
+					if (x < 0) x = 0;
+					if (y < 0) y = 0;
+					if (x + squareWidth > containerWidth) x = containerWidth - squareWidth;
+					if (y + squareHeight > containerHeight) y = containerHeight - squareHeight;
+					
+					square.style.left = x + 'px';
+					square.style.top = y + 'px';
+					
+					requestAnimationFrame(animateBounce);
+				}
+				
+				animateBounce();
+			</script>
+		</section>
+	</main>
