@@ -1,117 +1,379 @@
-a<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>T1a16 - UNFINISHED</title>
-	<style></style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T1a16 - Interactive Divs (Class-Based)</title>
+    <style>
+        .movement-container {
+            position: relative;
+            width: 250px;
+            height: 150px;
+            background-color: #f0f0f0;
+            border: 2px solid #ccc;
+            overflow: hidden;
+            margin: 10px;
+            display: inline-block;
+            vertical-align: top;
+        }
+        .movable-element {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.1s;
+        }
+        #myImage01 {
+            position: relative; 
+            left: 0; 
+            right: 0;
+        }
+    </style>
 </head>
 <body>
-	<header>
-		<p>T1a16-move-div.html</p>
-	</header>
-	<main>
-		<details>
-			<summary>THIS IS TEACHER EX</summary>
-			<div>
-				<script>
-					let myTimer01
-					
-					function myAuto(){
-						const myIm = document.getElementById('myImage01')
-						myIm.style.left = parseInt(myIm.style.left) + 5 + 'px'
-						if (parseInt(myIm.style.left) > 600){
-							myIm.style.left = '10px'
-						}
-					}
-					
-					function myKeyPress(event) {
-						console.log(`You pressed: ${event.key}`);
-					}
-				</script>
-				
-				<h1 align=center>t1a16-move-div-fred.html</h1>
-				
-				Have 8 different types of objects move in different ways
-				
-				<div style="position:relative; left:0; right:0" id="myDiv01">...</div>
-				
-				<button onclick="{
-					const myDiv = document.getElementById('myDiv01')
-					myDiv.style.left = '100px'
-				}">Move to 100px</button><br>
-			
-				<button id="myButton02" onclick="{
-					const myDiv = document.getElementById('myDiv01')
-					myDiv.style.left = parseInt(myDiv.style.left) + 20 + 'px'
-				}">Move Right</button><br>
-				
-				<b onclick="{
-					myTimer01 = setInterval(myAuto, 50)
-				}">Move Auto</b><br>
-				
-				<img src="myImage01.jpg" id="myImage01" width=40 style="position:relative; left:0; right:0">
-			</div>
-		</details>
-		<section> <!-- student work, 7 examples left -->
-			<div id="container02" style="
-				position: relative;
-				width: 400px;
-				height: 300px; 
-				background-color: #f0f0f0;
-				border: 2px solid #ccc;
-				overflow: hidden;
-				margin: 0 auto;
-				display: block;
-			">
-				<div id="bouncing-square01" style="
-					position: absolute;
-					width: 50px;
-					height: 50px; 
-					background-color: white;
-				">
-				</div>
-			</div>
-			<script>
-				// objects
-				const container = document.getElementById('container02');
-				const square = document.getElementById('bouncing-square01');
-				// restraints
-				const containerWidth = container.clientWidth;
-				const containerHeight = container.clientHeight;
-				const squareWidth = square.clientWidth;
-				const squareHeight = square.clientHeight;
-				//position
-				let x = (containerWidth / 2) - (squareWidth / 2);
-				let y = (containerHeight / 2) - (squareHeight / 2);
-				//directiom (pixel/second)
-				let dx = 5;
-				let dy = 5;
-				
-				function animateBounce() {
-					x += dx;
-					y += dy;
-					
-					if (x + squareWidth > containerWidth || x < 0) {
-						dx = -dx;
-					}
-					
-					if (y + squareHeight > containerHeight || y < 0) {
-						dy = -dy;
-					}
-					
-					if (x < 0) x = 0;
-					if (y < 0) y = 0;
-					if (x + squareWidth > containerWidth) x = containerWidth - squareWidth;
-					if (y + squareHeight > containerHeight) y = containerHeight - squareHeight;
-					
-					square.style.left = x + 'px';
-					square.style.top = y + 'px';
-					
-					requestAnimationFrame(animateBounce);
-				}
-				
-				animateBounce();
-			</script>
-		</section>
-	</main>
+    <header>
+        <p>T1a16-move-div.html - Class Implementation</p>
+    </header>
+    <main>
+        <details> 
+            <summary>THIS IS TEACHER EX</summary>
+            <div>
+                <script>
+                    let myTimer01
+                    
+                    function myAuto(){
+                        const myIm = document.getElementById('myImage01')
+                        myIm.style.left = parseInt(myIm.style.left) + 5 + 'px'
+                        if (parseInt(myIm.style.left) > 600){
+                            myIm.style.left = '10px'
+                        }
+                    }
+                    
+                    function myKeyPress(event) {
+                        console.log(`You pressed: ${event.key}`);
+                    }
+                </script>
+                
+                <h1 align=center>t1a16-move-div-fred.html</h1>
+                
+                Have 8 different types of objects move in different ways
+                
+                <div style="position:relative; left:0; right:0" id="myDiv01">...</div>
+                
+                <button onclick="{
+                    const myDiv = document.getElementById('myDiv01')
+                    myDiv.style.left = '100px'
+                }">Move to 100px</button><br>
+            
+                <button id="myButton02" onclick="{
+                    const myDiv = document.getElementById('myDiv01')
+                    myDiv.style.left = parseInt(myDiv.style.left) + 20 + 'px'
+                }">Move Right</button><br>
+                
+                <b onclick="{
+                    myTimer01 = setInterval(myAuto, 50)
+                }">Move Auto</b><br>
+                
+                <img src="myImage01.jpg" id="myImage01" width=40 style="position:relative; left:0; right:0">
+            </div>
+        </details>
+        <hr>
+        <h2>Interactive Div Examples (Using One Class)</h2>
+
+        <div id="cont1" class="movement-container" style="background-color: #e0f7fa;">
+            <div id="elem1" class="movable-element" style="background-color: crimson;"></div>
+            <p style="text-align: center; margin-top: 10px;">1. Continuous Bounce</p>
+        </div>
+
+
+        <div id="cont2" class="movement-container" style="background-color: #e8f5e9;">
+            <div id="elem2" class="movable-element" style="background-color: green;"></div>
+            <p style="text-align: center; margin-top: 10px;">2. Mouse Repel</p>
+        </div>
+
+
+        <div id="cont3" class="movement-container" style="background-color: #e3f2fd;">
+            <div id="elem3" class="movable-element" style="background-color: blue;"></div>
+            <p style="text-align: center; margin-top: 10px;">3. Teleport on Click</p>
+        </div>
+
+
+        <div id="cont4" class="movement-container" style="background-color: #fff3e0;">
+            <div id="elem4" class="movable-element" style="background-color: orange;"></div>
+            <p style="text-align: center; margin-top: 10px;">4. Hover Start/Stop</p>
+        </div>
+
+
+        <div id="cont5" class="movement-container" style="background-color: #fce4ec;">
+            <div id="elem5" class="movable-element" style="background-color: teal;"></div>
+            <p style="text-align: center; margin-top: 10px;">5. Accelerating Bounce</p>
+        </div>
+
+
+        <div id="cont6" class="movement-container" style="background-color: #f3e5f5;">
+            <div id="elem6" class="movable-element" style="background-color: darkred; border-radius: 50%;"></div>
+            <p style="text-align: center; margin-top: 10px;">6. Gravity Bounce</p>
+        </div>
+        
+
+        <div id="cont7" class="movement-container" style="background-color: #fbe9e7;">
+            <div id="elem7" class="movable-element" style="background-color: brown;"></div>
+            <p style="text-align: center; margin-top: 10px;">7. Mouse Follower</p>
+        </div>
+
+
+        <div id="cont8" class="movement-container" style="background-color: #fafafa;">
+            <div id="elem8" class="movable-element" style="background-color: magenta;"></div>
+            <p style="text-align: center; margin-top: 10px;">8. Border Hugger</p>
+        </div>
+
+
+        <script>
+
+
+            class InteractiveDiv {
+                constructor(containerId, elementId, dx, dy, color) {
+                    this.container = document.getElementById(containerId);
+                    this.element = document.getElementById(elementId);
+                    
+                    if (!this.container || !this.element) return;
+
+                    this.containerRect = this.container.getBoundingClientRect();
+                    this.elementWidth = this.element.clientWidth;
+                    this.elementHeight = this.element.clientHeight;
+                    
+
+                    this.x = (this.containerRect.width / 2) - (this.elementWidth / 2);
+                    this.y = (this.containerRect.height / 2) - (this.elementHeight / 2);
+
+                    this.dx = dx;
+                    this.dy = dy;
+                    this.element.style.backgroundColor = color;
+                    this.animationId = null;
+                    
+                    this.applyStyle();
+                }
+                
+                updatePosition() {
+
+                    this.x += this.dx;
+                    this.y += this.dy;
+
+                    if (this.x + this.elementWidth > this.containerRect.width || this.x < 0) {
+                        this.dx = -this.dx;
+                        if (this.x < 0) this.x = 0;
+                        if (this.x + this.elementWidth > this.containerRect.width) this.x = this.containerRect.width - this.elementWidth;
+                    }
+                    if (this.y + this.elementHeight > this.containerRect.height || this.y < 0) {
+                        this.dy = -this.dy;
+                        if (this.y < 0) this.y = 0;
+                        if (this.y + this.elementHeight > this.containerRect.height) this.y = this.containerRect.height - this.elementHeight;
+                    }
+                }
+
+                applyStyle() {
+                    this.element.style.left = this.x + 'px';
+                    this.element.style.top = this.y + 'px';
+                }
+
+                animate = () => {
+                    this.updatePosition(); 
+                    this.applyStyle();
+                    this.animationId = requestAnimationFrame(this.animate);
+                }
+
+                start() {
+                    if (!this.animationId) this.animate();
+                }
+
+                stop() {
+                    cancelAnimationFrame(this.animationId);
+                    this.animationId = null;
+                }
+
+                moveTo(newX, newY) {
+                    this.x = newX;
+                    this.y = newY;
+                    this.applyStyle();
+                }
+            }
+            
+
+
+            const ex1 = new InteractiveDiv('cont1', 'elem1', 4, 4, 'crimson');
+            ex1.start();
+
+
+            const ex2 = new InteractiveDiv('cont2', 'elem2', 0, 0, 'green'); 
+            ex2.container.addEventListener('mousemove', (e) => {
+                const centerX = ex2.x + ex2.elementWidth / 2;
+                const centerY = ex2.y + ex2.elementHeight / 2;
+                const deltaX = centerX - e.offsetX;
+                const deltaY = centerY - e.offsetY;
+                const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+                if (distance < 80) {
+                    ex2.dx = deltaX / 15;
+                    ex2.dy = deltaY / 15;
+                } else {
+                    ex2.dx = 0;
+                    ex2.dy = 0;
+                }
+                ex2.updatePosition();
+                ex2.applyStyle();
+            });
+
+
+            const ex3 = new InteractiveDiv('cont3', 'elem3', 0, 0, 'blue');
+            ex3.element.addEventListener('click', () => {
+                const newX = Math.random() * (ex3.containerRect.width - ex3.elementWidth);
+                const newY = Math.random() * (ex3.containerRect.height - ex3.elementHeight);
+                ex3.moveTo(newX, newY);
+            });
+
+
+            const ex4 = new InteractiveDiv('cont4', 'elem4', 5, 5, 'orange');
+            ex4.element.addEventListener('mouseenter', () => ex4.start());
+            ex4.element.addEventListener('mouseleave', () => ex4.stop());
+
+
+            const ex5 = new InteractiveDiv('cont5', 'elem5', 1, 1, 'teal');
+            ex5.animate = () => {
+                ex5.dx *= 1.01; 
+                ex5.dy *= 1.01;
+
+                const oldDx = ex5.dx;
+                const oldDy = ex5.dy;
+                ex5.updatePosition();
+                
+                if (ex5.dx * oldDx < 0 || ex5.dy * oldDy < 0) { 
+                    ex5.dx = ex5.dx > 0 ? 1 : -1;
+                    ex5.dy = ex5.dy > 0 ? 1 : -1;
+                }
+
+                ex5.applyStyle();
+                ex5.animationId = requestAnimationFrame(ex5.animate);
+            };
+            ex5.start();
+
+
+            const ex6 = new InteractiveDiv('cont6', 'elem6', 4, 0, 'darkred');
+            ex6.gravity = 0.5; 
+            ex6.bounciness = 0.8; 
+            ex6.bounceCount = 0; 
+            ex6.superBounceVelocity = -15;
+
+
+            const centerX6 = (ex6.containerRect.width / 2) - (ex6.elementWidth / 2);
+            const centerY6 = (ex6.containerRect.height / 2) - (ex6.elementHeight / 2);
+            ex6.moveTo(centerX6, centerY6);
+
+
+            ex6.updatePosition = function() {
+
+                this.dy += this.gravity;
+                
+
+                this.x += this.dx;
+                this.y += this.dy;
+
+
+                if (this.x + this.elementWidth > this.containerRect.width || this.x < 0) {
+                    this.dx = -this.dx;
+                    if (this.x < 0) this.x = 0;
+                    if (this.x + this.elementWidth > this.containerRect.width) this.x = this.containerRect.width - this.elementWidth;
+                }
+                
+
+                const floor = this.containerRect.height - this.elementHeight;
+                if (this.y >= floor) {
+                    this.y = floor;
+
+
+                    this.bounceCount++;
+                    if (this.bounceCount % 10 === 0) {
+                        this.dy = this.superBounceVelocity; 
+                        this.element.style.backgroundColor = 'blue';
+                        setTimeout(() => this.element.style.backgroundColor = 'darkred', 100);
+                    } else {
+
+                        this.dy = -this.dy * this.bounciness; 
+                        
+
+                        if (Math.abs(this.dy) < this.gravity) {
+                            this.dy = 0; 
+                        }
+                    }
+                }
+
+                if (this.y < 0) this.y = 0;
+            };
+            ex6.start();
+            
+
+            const ex7 = new InteractiveDiv('cont7', 'elem7', 0, 0, 'brown'); 
+            ex7.container.addEventListener('mousemove', (e) => {
+                let newX = e.offsetX - ex7.elementWidth / 2;
+                let newY = e.offsetY - ex7.elementHeight / 2;
+
+
+                if (newX < 0) newX = 0;
+                if (newX + ex7.elementWidth > ex7.containerRect.width) newX = ex7.containerRect.width - ex7.elementWidth;
+                if (newY < 0) newY = 0;
+                if (newY + ex7.elementHeight > ex7.containerRect.height) newY = ex7.containerRect.height - ex7.elementHeight;
+                
+                ex7.moveTo(newX, newY);
+            });
+
+
+            const ex8 = new InteractiveDiv('cont8', 'elem8', 3, 0, 'magenta');
+            ex8.updatePosition = function() {
+                this.x += this.dx;
+                this.y += this.dy;
+
+                const max_x = this.containerRect.width - this.elementWidth;
+                const max_y = this.containerRect.height - this.elementHeight;
+                const speed = 3; 
+
+
+                if (this.dy === 0 && this.dx > 0) {
+                    if (this.x >= max_x) {
+                        this.x = max_x;
+                        this.dx = 0;
+                        this.dy = speed;
+                    }
+                } 
+
+                else if (this.dx === 0 && this.dy > 0) {
+                    if (this.y >= max_y) {
+                        this.y = max_y;
+                        this.dx = -speed;
+                        this.dy = 0;
+                    }
+                } 
+
+                else if (this.dy === 0 && this.dx < 0) {
+                    if (this.x <= 0) {
+                        this.x = 0;
+                        this.dx = 0;
+                        this.dy = -speed;
+                    }
+                }
+
+                else if (this.dx === 0 && this.dy < 0) {
+                    if (this.y <= 0) {
+                        this.y = 0;
+                        this.dx = speed;
+                        this.dy = 0;
+                    }
+                }
+            };
+
+            ex8.moveTo(0, 0); 
+            ex8.start();
+        </script>
+    </main>
+</body>
+</html>
