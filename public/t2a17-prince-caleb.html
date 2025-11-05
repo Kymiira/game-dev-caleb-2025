@@ -1,16 +1,405 @@
-<!-- idea:
-    typing game that draws a crown for each word spelled properly?
-    each failure sets you back 1 "word"
-    word def: each line will be drawn per word correctly answered.
-  -->
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>:(</title>
-    <style></style>
-  </head>
-  <body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+	<title>t2a17-prince-caleb</title>
+	<style>
+		body {
+			font-family: 'Inter', sans-serif;
+			margin: 0;
+			background-color: #121212;
+			color: #e0e0e0;
+			min-height: 100vh;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			padding: 0;
+		}
+		
+		.header-wrapper {
+			width: 100%;
+		}
+
+		header {
+			background-image: linear-gradient(to bottom, #1f1f1f, #0d0d0d);
+			padding: 20px 0;
+			border-bottom: 2px solid #333;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+			text-align: center;
+			width: 100%;
+		}
+
+		header h1 {
+			margin: 0;
+			font-size: 2em;
+			background-image: linear-gradient(45deg, #e0e0e0, #80cbc4);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			display: inline-block;
+		}
+		
+		main {
+			width: 100%;
+			flex-grow: 1;
+			padding: 20px;
+			display: flex;
+			justify-content: center;
+		}
+		
+		.container {
+			background-color: #ffffff;
+			color: #333333;
+			max-width: 95vw;
+			width: 100%;
+			padding: 30px;
+			margin: 20px 0;
+			border: 1px solid #cccccc;
+			border-radius: 8px;
+			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+			display: flex;
+			flex-direction: row;
+			gap: 20px;
+			height: auto; 
+			max-height: 90vh; 
+		}
+		
+		#myCanvas {
+			border: 2px solid #0e0e0e;
+			background-color: #f1f1f1;
+			border-radius: 0.5rem;
+			box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+			width: 80%;
+			height: 100%;
+		}
+		
+		.controls-wrapper {
+			width: 20%;
+			display: flex;
+			flex-direction: column;
+			gap: 10px; 
+            height: 100%;
+			overflow-y: auto;
+			padding-right: 5px; 
+			padding-bottom: 5px; 
+		}
+
+		
+		.control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            color: #333;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+		.controls-wrapper input {
+			border: 2px solid #0e0e0e;
+			background-color: #f1f1f1;
+			padding: 5px; 
+			border-radius: 0.5rem;
+			box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+			width: 100%;
+			box-sizing: border-box;
+		}
+        
+        .controls-wrapper input[type="color"] {
+            height: 40px; 
+            padding: 0;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+		
+		#myCrown {
+			background-color: #80cbc4;
+			border-color: #4db6ac;
+			color: #333333; 
+			font-weight: 700;
+			text-shadow: 
+				0 1px 1px rgba(0, 0, 0, 0.2), 
+				1px 1px 0 #FFFFFF, 
+				-1px 1px 0 #FFFFFF, 
+				1px -1px 0 #FFFFFF, 
+				-1px -1px 0 #FFFFFF;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+            cursor: pointer;
+		}
+
+        .gen-btn {
+            font-weight: 500;
+            text-transform: none;
+            letter-spacing: normal;
+            cursor: pointer;
+            padding: 8px 5px;
+            transition: all 0.1s ease;
+        }
+        
+        .gen-btn.classic {
+            background-color: #A36A00;
+            border-color: #553700;
+            color: #f7f7f7;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+        }
+        .gen-btn.regal {
+            background-color: #C0C0C0;
+            border-color: #888888;
+            color: #1a237e;
+            font-weight: 700;
+        }
+        .gen-btn.warlord {
+            background-color: #333333;
+            border-color: #111111;
+            color: #ff5252;
+            font-weight: 700;
+        }
+        .gen-btn.empress {
+            background-color: #E0F2F1;
+            border-color: #B2DFDB;
+            color: #00897B;
+        }
+        .gen-btn.guard {
+            background-color: #b8860b;
+            border-color: #8B4513;
+            color: #f0f0f0;
+        }
+        .gen-btn.phantom {
+            background-color: #1e1e1e;
+            border-color: #000000;
+            color: #BBDEFB;
+        }
+        .gen-btn.jester {
+            background-color: #FFEB3B;
+            border-color: #FFC107;
+            color: #6A1B9A;
+            font-weight: 700;
+        }
+
+
+		#clearCanvasBtn {
+			background-color: #DC2626;
+			border-color: #991B1B;
+			color: #FFFFFF;
+			font-weight: 700;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+            cursor: pointer;
+		}
+        
+        .color-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .color-group .control-group {
+            flex: 1 1 50%;
+        }
+	</style>
+</head>
+<body>
+	<div class="header-wrapper">
+		<header>
+			<h1>t2a17-prince-caleb</h1>
+		</header>
+	</div>
+	<main>
+		<div class="container">
+			<canvas id="myCanvas" width="500" height="600"></canvas>
+			
+			<div class="controls-wrapper">
+                
+                <input type="button" class="gen-btn classic" id="genClassic" onclick="generateStyle('classic')" value="Classic King (Balanced)">
+                <input type="button" class="gen-btn regal" id="genRegal" onclick="generateStyle('regal')" value="Regal Duke (Delicate)">
+                <input type="button" class="gen-btn warlord" id="genWarlord" onclick="generateStyle('warlord')" value="Warlord Crown (Heavy Base)">
+                <input type="button" class="gen-btn empress" id="genEmpress" onclick="generateStyle('empress')" value="Empress Circlet (Tall, Narrow)">
+                <input type="button" class="gen-btn guard" id="genGuard" onclick="generateStyle('guard')" value="Guard's Coronet (Wide, Simple)">
+                <input type="button" class="gen-btn phantom" id="genPhantom" onclick="generateStyle('phantom')" value="Phantom Diadem (Deep Band)">
+                <input type="button" class="gen-btn jester" id="genJester" onclick="generateStyle('jester')" value="Jester's Mock (Sharp Peaks)">
+
+				<input type="button" id="myCrown" onclick="generateCrownHandler()" value="Apply Colors / Redraw">
+                
+                <div class="color-group">
+                    <div class="control-group">
+                        <label for="primaryColor1">Primary Color 1 (Fill):</label>
+                        <input type="color" id="primaryColor1" value="#FFD700">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="primaryColor2">Primary Color 2 (Line):</label>
+                        <input type="color" id="primaryColor2" value="#4a4a4a">
+                    </div>
+                </div>
+
+                <input type="button" id="clearCanvasBtn" onclick="clearCanvasHandler()" value="Clear Canvas">
+			</div>
+		</div>
+	</main>
     
-  </body>
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+        const primaryColor1Input = document.getElementById('primaryColor1');
+        const primaryColor2Input = document.getElementById('primaryColor2');
+
+        let animationStartTime = null;
+        let animationFrameId = null; 
+        const animationDuration = 800;
+        let isCanvasFilled = false;
+
+        let currentCrownWidth = 250; 
+        let currentBandHeight = 120;  
+        let currentPointHeight = 180; 
+
+        const CROWN_PRESETS = {
+            'classic': { w: 250, bH: 120, pH: 180 },
+            'regal': { w: 320, bH: 80, pH: 240 },
+            'warlord': { w: 280, bH: 180, pH: 100 },
+            'empress': { w: 200, bH: 50, pH: 250 },
+            'guard': { w: 400, bH: 100, pH: 40 },
+            'phantom': { w: 260, bH: 150, pH: 150 },
+            'jester': { w: 350, bH: 60, pH: 190 }
+        };
+
+        function getCrownColor() {
+            return primaryColor1Input.value;
+        }
+
+        function getStrokeColor() {
+            return primaryColor2Input.value;
+        }
+
+        function drawCrownPath(centerX, baseY, crownWidth, bandHeight, pointHeight) {
+            const bandTopY = baseY - bandHeight;
+            const numSegments = 6; 
+            const segment = crownWidth / numSegments; 
+            
+            ctx.beginPath();
+            
+            ctx.moveTo(centerX - crownWidth / 2, baseY);
+            
+            ctx.lineTo(centerX - crownWidth / 2, bandTopY);
+
+            for (let i = 0; i <= numSegments; i++) {
+                const currentX = centerX - crownWidth / 2 + i * segment;
+                
+                let targetY = bandTopY; 
+                
+                if (i % 2 !== 0) {
+                    targetY = bandTopY - pointHeight; 
+                }
+                
+                ctx.lineTo(currentX, targetY);
+            }
+
+            ctx.lineTo(centerX + crownWidth / 2, baseY);
+            
+            ctx.lineTo(centerX - crownWidth / 2, baseY); 
+            
+            ctx.closePath();
+        }
+        
+        function drawCrown(progress) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const crownColor = getCrownColor();
+            const strokeColor = getStrokeColor(); 
+            
+            const centerX = canvas.width / 2;
+            const baseY = canvas.height * 0.7;
+            const crownWidth = currentCrownWidth; 
+            const bandHeight = currentBandHeight;  
+            const pointHeight = currentPointHeight; 
+            
+            const revealWidth = crownWidth * progress;
+            const clipXStart = centerX - crownWidth / 2;
+            const clipHeight = canvas.height; 
+
+            ctx.save(); 
+            
+            ctx.beginPath();
+            ctx.rect(clipXStart, 0, revealWidth, clipHeight); 
+            ctx.clip(); 
+
+            drawCrownPath(centerX, baseY, crownWidth, bandHeight, pointHeight);
+
+            ctx.fillStyle = crownColor; 
+            ctx.strokeStyle = strokeColor; 
+            ctx.lineWidth = 4; 
+            ctx.lineJoin = 'bevel'; 
+            
+            ctx.fill(); 
+            ctx.stroke(); 
+            
+            ctx.restore(); 
+        }
+        
+        function animateCrown(timestamp) {
+            if (!animationStartTime) {
+                animationStartTime = timestamp;
+            }
+
+            const elapsed = timestamp - animationStartTime;
+            let progress = Math.min(elapsed / animationDuration, 1);
+            
+            drawCrown(progress);
+            
+            if (progress < 1) {
+                animationFrameId = requestAnimationFrame(animateCrown);
+            } else {
+                animationStartTime = null; 
+                animationFrameId = null;
+                isCanvasFilled = true; 
+                console.log(`Crown animation complete. Canvas is now filled.`);
+            }
+        }
+
+        function generateCrownHandler() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+                animationStartTime = null;
+            }
+
+            if (isCanvasFilled) {
+                drawCrown(1); 
+                console.log("Colors applied instantly.");
+                return;
+            } 
+            
+            requestAnimationFrame(animateCrown);
+        }
+
+        function generateStyle(styleKey) {
+            clearCanvasHandler(); 
+
+            const preset = CROWN_PRESETS[styleKey];
+            
+            currentCrownWidth = preset.w;
+            currentBandHeight = preset.bH;
+            currentPointHeight = preset.pH;
+            
+            generateCrownHandler();
+        }
+        
+        function clearCanvasHandler() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+                animationStartTime = null; 
+            }
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            isCanvasFilled = false;
+            console.log("Canvas cleared.");
+        }
+        
+        window.onload = () => generateStyle('classic'); 
+        
+    </script>
+
+</body>
+</html>
