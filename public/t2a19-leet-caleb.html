@@ -4,17 +4,108 @@
 <br><br><li>write your code to solve the problem within pre tags</li>
 <ol>
 <br><br><li>show your prompt here</li>
+<br><br><li>LeetCode Question: FizzBuzz(x) "create a function that takes a parameter as a variable, prints numbers up to that parameter set, if divisible by 3 print fizz if divisible by 5 print buzz if divisible by 3 AND 5 print fizzbuzz (15, 30, 45, 60"</li>
 <br><br><li>show the leet question here</li>
 
 <br><br><li>within pre tags show your version of the leet answer without looking up the actual answer.<br></li>
 
 <pre>
-  this code is in the pre tag
-    it saves spaces and line breaks
-      for example this is shifted in
-
+	button id="myButton"/button
+	span id="myOutput"/span
+	
+		// variables
+		const span = document.getElementById('myOutput');
+		const button = document.getElementById('myButton');
+		// working stuff
+		function fizzbuzz(n) {
+			
+			let end = "";
+			
+			for (let i = 1; i <= n; i++) {
+				if (i % 15 === 0) {
+					end += "fizzbuzz";
+				} else if (i % 3 === 0) {
+					end += "fizz";
+				} else if (i % 5 === 0) {
+					end += "buzz";
+				} else {
+					end += i + "";
+				}
+			}
+			
+			span.innerHTML = end;
+		}
+		button.addEventListener('click', () => fizzbuzz(100));
+	
 </pre>
 
-<br><br><li>put the chatgpt working code here (sensibly it does not need several tags that are not used)</li>
+<br><br><li>put the chatgpt working code here (sensibly it does not need several tags that are not used)<br></li>
+<!-- FizzBuzz Input and Output Component -->
+<li><div id="fizzbuzz-widget">
+    <h3>FizzBuzz Generator</h3>
 
+    <input
+        type="number"
+        id="fizzbuzz-input"
+        value="30"
+        min="1"
+        placeholder="Enter a limit number"
+    >
+
+    <button
+        id="run-button"
+        onclick="runFizzBuzz()"
+    >
+        Generate Sequence
+    </button>
+
+    <pre
+        id="results-container"
+    >Click "Generate Sequence" to run FizzBuzz.</pre>
+</div>
+
+<script>
+    function fizzBuzz(max) {
+        let output = '';
+        if (max < 1 || isNaN(max)) {
+            return "Please enter a valid number greater than 0.";
+        }
+
+        for (let i = 1; i <= max; i++) {
+            let result = '';
+
+            if (i % 3 === 0 && i % 5 === 0) {
+                result = 'FizzBuzz';
+            } else if (i % 3 === 0) {
+                result = 'Fizz';
+            } else if (i % 5 === 0) {
+                result = 'Buzz';
+            } else {
+                result = i.toString();
+            }
+
+            output += result + '\n';
+        }
+        return output.trim();
+    }
+
+    function runFizzBuzz() {
+        const inputElement = document.getElementById('fizzbuzz-input');
+        const resultsContainer = document.getElementById('results-container');
+        
+        const max = parseInt(inputElement.value, 10);
+
+        const sequence = fizzBuzz(max);
+        resultsContainer.textContent = sequence;
+        
+        resultsContainer.scrollTop = 0;
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        if (document.getElementById('fizzbuzz-input')) {
+            runFizzBuzz();
+        }
+    });
+</script></li>
+<!-- End of FizzBuzz Component -->
 </ol>
