@@ -1,25 +1,25 @@
 // main.js
 
-// --- Global Initialization ---
+// --- Global Setup State ---
 
 let animationFrameId = null;
 let isMaximized = false;
 
 /**
  * Calculates the available width and height for the canvas 
- * based on its parent container's size.
+ * based on the space between the header and footer.
  */
 function calculateCanvasSize() {
     const container = document.querySelector('.game-container');
     if (container) {
-        // Use clientWidth and clientHeight to get the content area dimensions
+        // clientWidth/Height gives the size excluding padding.
+        // The padding is the 1.5rem margin we want.
         const width = container.clientWidth;
         const height = container.clientHeight;
         
-        // Use Math.floor to ensure integer dimensions for canvas attributes
         return { width: Math.floor(width), height: Math.floor(height) };
     }
-    return { width: 800, height: 600 }; // Fallback
+    return { width: 800, height: 600 }; 
 }
 
 /**
@@ -27,12 +27,14 @@ function calculateCanvasSize() {
  */
 function handleResize() {
     const { width, height } = calculateCanvasSize();
-    // This calls the resize function implemented in renderer.js
-    Renderer.resizeCanvas(width, height); 
+    // Renderer is responsible for the actual canvas attributes change
+    if (typeof Renderer !== 'undefined') {
+        Renderer.resizeCanvas(width, height); 
+    }
 }
 
 /**
- * Toggles the maximized state of the canvas.
+ * Toggles the maximized state of the canvas by hiding header/footer.
  */
 function toggleMaximize() {
     const body = document.body;
@@ -48,43 +50,50 @@ function toggleMaximize() {
         btn.textContent = 'MAXIMIZE';
     }
     
-    // Force a resize calculation after the DOM elements have changed visibility
-    // Use setTimeout to ensure the browser has time to reflow the layout
+    // Crucial: Force a resize calculation after the DOM elements have changed visibility
     setTimeout(handleResize, 10);
 }
 
 
 /**
  * The core game loop using requestAnimationFrame.
- * @param {number} currentTime 
  */
 function gameLoop(currentTime) {
     // 1. --- LOGIC UPDATE ---
-    // GameLogic.update(deltaTime); // To be implemented later
+    // GameLogic.update(deltaTime); // TBD
 
     // 2. --- RENDERING ---
-    // We pass a mock gameState for now
-    const MockGameState = {}; 
-    Renderer.draw(MockGameState); 
+    // Passes the entire GameState to the Renderer
+    if (typeof Renderer !== 'undefined') {
+        Renderer.draw(GameState); 
+    }
 
     animationFrameId = requestAnimationFrame(gameLoop);
 }
 
 
-// --- Window Load and Event Setup ---
+// --- Window Load and Event Setup (Entry Point) ---
 
 window.onload = function() {
-    // 1. Initialize Renderer and set initial size
+    // 1. Initialize core systems (data structures first)
+    if (typeof Grid !== 'undefined' && Grid.init) Grid.init();
+    if (typeof GameState !== 'undefined' && GameState.init) GameState.init();
+
+    // 2. Initialize Renderer and set initial size
     const { width, height } = calculateCanvasSize();
-    // Ensure Renderer.init is available before calling
     if (typeof Renderer !== 'undefined' && Renderer.init) {
         Renderer.init('gameCanvas', width, height); 
     } else {
-        console.error('Renderer module not loaded correctly.');
+        console.error('ERROR: Renderer module not loaded correctly.');
         return;
     }
+
+    // 3. Initialize Input Handler (attaches click listener to canvas)
+    if (typeof InputHandler !== 'undefined' && InputHandler.init) {
+        InputHandler.init('gameCanvas');
+    }
     
-    // 2. Attach event listeners
+    // 4. Attach environment listeners
     window.addEventListener('resize', handleResize);
     
     const maximizeBtn = document.getElementById('maximizeBtn');
@@ -92,7 +101,7 @@ window.onload = function() {
         maximizeBtn.addEventListener('click', toggleMaximize);
     }
 
-    // 3. Start the game loop
+    // 5. Start the game loop
     console.log('Game Initialized. Starting game loop...');
     gameLoop(0); 
 };
