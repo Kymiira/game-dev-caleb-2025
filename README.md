@@ -4,11 +4,11 @@
   <tr>
     <td><div>
       <img width="80%" src="https://img.icons8.com/?size=64&id=3tC9EQumUAuq&format=png">
-      <p><b><i>GitPage Links</i></b></p>
+      <p><b><i>Github links</i></b></p>
     </div></td>
     <td><div>
       <img width="50%" src="https://img.icons8.com/?size=50&id=21812&format=png">
-      <p><b><i>Markdown Links</i></b></p>
+      <p><b><i>in-repo links</i></b></p>
     </div></td>
   </tr>
   <tr>
