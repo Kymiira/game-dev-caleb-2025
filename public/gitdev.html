@@ -1,1 +1,107 @@
-<!-- this file will specifically be used to manipulate the github.dev browser IDE, nothing will ever be commited to this. -->
+<script>
+    // --- GameObject Class: Represents a drawable/movable element ---
+    class GameObject {
+        // Links the class instance to a DOM element (like 'myImg01').
+        constructor(id) {
+            this.element = document.getElementById(id);
+        }
+
+        // Gets the calculated boundary coordinates (left, right, top, bottom).
+        getBounds() {
+            const style = this.element.style;
+            const left = parseInt(style.left || 0);
+            const top = parseInt(style.top || 0);
+            const width = parseInt(style.width || 0);
+            const height = parseInt(style.height || 0);
+            
+            return {
+                left: left,
+                right: left + width,
+                top: top,
+                bottom: top + height
+            };
+        }
+
+        // Checks for collision with another GameObject instance.
+        collidesWith(other) {
+            const b1 = this.getBounds();
+            const b2 = other.getBounds();
+
+            return (
+                (b1.right >= b2.left) &&
+                (b1.bottom >= b2.top) &&
+                (b1.left <= b2.right) &&
+                (b1.top <= b2.bottom)
+            );
+        }
+
+        // Moves the object horizontally.
+        moveX(dx) {
+            const currentLeft = this.getBounds().left;
+            this.element.style.left = (currentLeft + dx) + 'px';
+        }
+
+        // Resets the object's position (used after collision).
+        resetPosition(x, y) {
+            this.element.style.left = x + 'px';
+            this.element.style.top = y + 'px';
+        }
+    }
+
+    // --- Global Setup and Functions ---
+    let player;
+    let obstacle;
+    const initialPlayerX = 0; // Starting 'left' position of myImg01
+
+    // Instantiate objects on page load.
+    window.onload = function() {
+        player = new GameObject('myImg01');
+        obstacle = new GameObject('myImg02');
+    }
+    
+    // Displays a non-alert message box.
+    function showMessage(text) {
+        const msgBox = document.getElementById('messageBox');
+        document.getElementById('messageText').innerText = text;
+        msgBox.style.display = 'block';
+    }
+
+    // Closes the message box.
+    function closeMessage() {
+        document.getElementById('messageBox').style.display = 'none';
+    }
+
+    // Checks for collision and handles the loss state.
+    function myCheckHit(){
+        if (!player || !obstacle) return;
+
+        if (player.collidesWith(obstacle)){
+            showMessage('You lose! Collision Detected.');
+            
+            // Reset position to initial state.
+            player.resetPosition(initialPlayerX, 0); 
+            
+            // Simulates the original redirect action's intent.
+            // location = 't2a13-keydown.html'; 
+            console.log('Game state reset.');
+        }
+    }
+</script>
+
+<br><br><h2 align="center">T2a21-collision-fred.html</h2>
+
+<!-- Minimal Message Box (replaces alert) -->
+<div id="messageBox" style="
+    display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+    background-color: white; border: 1px solid black; padding: 10px; z-index: 1000;">
+    <p id="messageText" style="margin-bottom: 10px;"></p>
+    <button onclick="closeMessage()">OK</button>
+</div>
+
+<!-- Game Images -->
+<img id="myImg01" src="https://kymiira.github.io/game-dev-caleb-2025/public/square.png" style="position:absolute; left:0px; top:0px; width:50px; height:30px;">
+<img id="myImg02" src="https://kymiira.github.io/game-dev-caleb-2025/public/square.png" style="position:absolute; left:100px; top:0px; width:50px; height:30px;">
+
+<!-- Button: Calls the class method to move, then checks for collision -->
+<input type="button" value="move" onclick="{player.moveX(10); myCheckHit();}">
+<br>
