@@ -1,0 +1,164 @@
+<!DOCTYPE html> <!-- would have turned the collision entities into a single class but will save that for x assignment in progress -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T2A21 Collision Game</title>
+</head>
+<body>
+<p style="text-align: center; font-family: sans-serif; font-size: small; color: #666;">Use WASD to collide into the central box</p>
+<div id="myGameContainer" style="
+    width: 400px; 
+    height: 300px; 
+    border: 3px solid #000; 
+    margin: 20px auto; 
+    position: relative; 
+    background-color: #f0f0f0; 
+    overflow: hidden;
+">
+    <img id="myImg01" 
+         src="../../utils/placeholder-image.png" 
+         style="position:absolute; left:20px; top:20px; width:50px; height:30px;">
+    
+    <img id="myImg02" 
+         src="../../utils/placeholder-image.png" 
+         style="position:absolute; width:50px; height:30px;">
+</div>
+<div id="myMessageBox" style="
+    position: fixed; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    background-color: rgba(0, 0, 0, 0.9); 
+    color: white; 
+    padding: 20px 40px; 
+    border-radius: 8px; 
+    font-family: sans-serif; 
+    z-index: 1000;
+    display: none;
+    text-align: center;
+">
+    <h3 id="myMessageText"></h3>
+    <button onclick="myHideMessage()" style="
+        background-color: #007bff; 
+        color: white; 
+        border: none; 
+        padding: 10px 20px; 
+        margin-top: 15px;
+        border-radius: 4px; 
+        cursor: pointer;
+    ">Continue</button>
+</div>
+<script>
+    const myPlayer = document.getElementById('myImg01');
+    const myTarget = document.getElementById('myImg02');
+    const myContainer = document.getElementById('myGameContainer');
+    const myMessageBox = document.getElementById('myMessageBox');
+    const myMessageText = document.getElementById('myMessageText');
+    const myStep = 15;
+
+    const myContainerWidth = 400;
+    const myContainerHeight = 300;
+
+    function myGameInit() {
+        const targetWidth = parseInt(myTarget.style.width);
+        const targetHeight = parseInt(myTarget.style.height);
+        
+        const centerLeft = (myContainerWidth / 2) - (targetWidth / 2);
+        const centerTop = (myContainerHeight / 2) - (targetHeight / 2);
+
+        myTarget.style.left = centerLeft + 'px';
+        myTarget.style.top = centerTop + 'px';
+
+        window.addEventListener('keydown', myMove, false);
+    }
+
+    function myShowMessage(message) {
+        myMessageText.textContent = message;
+        myMessageBox.style.display = 'block';
+    }
+
+    function myHideMessage() {
+        myMessageBox.style.display = 'none';
+        myPlayer.style.left = '20px';
+        myPlayer.style.top = '20px';
+    }
+
+    function myHitOther(my1, my2) {
+        const el1 = document.getElementById(my1);
+        const el2 = document.getElementById(my2);
+
+        const left1 = parseInt(el1.style.left);
+        const width1 = parseInt(el1.style.width);
+        const top1 = parseInt(el1.style.top);   
+        const height1 = parseInt(el1.style.height);
+        
+        const right1 = left1 + width1;
+        const bottom1 = top1 + height1;
+        
+        const left2 = parseInt(el2.style.left);
+        const width2 = parseInt(el2.style.width);
+        const top2 = parseInt(el2.style.top);   
+        const height2 = parseInt(el2.style.height);
+
+        const right2 = left2 + width2;
+        const bottom2 = top2 + height2;
+
+        if (right1 >= left2 && 
+            bottom1 >= top2 &&
+            left1 <= right2 &&
+            top1 <= bottom2) {
+            return true;
+        }
+        return false;
+    }
+
+    function myCheckHit() {
+        if (myHitOther('myImg01', 'myImg02')) {
+            myShowMessage('You Lose! You hit the target. Try again!');
+        }
+    }
+
+    function myMove(event) {
+        let newX = parseInt(myPlayer.style.left);
+        let newY = parseInt(myPlayer.style.top);
+
+        switch (event.key.toLowerCase()) {
+            case 'w':
+                newY -= myStep;
+                break;
+            case 's':
+                newY += myStep;
+                break;
+            case 'a':
+                newX -= myStep;
+                break;
+            case 'd':
+                newX += myStep;
+                break;
+            default:
+                return;
+        }
+
+        event.preventDefault();
+
+        const playerWidth = parseInt(myPlayer.style.width);
+        const playerHeight = parseInt(myPlayer.style.height);
+
+        if (newX < 0) newX = 0;
+        if (newX > myContainerWidth - playerWidth) newX = myContainerWidth - playerWidth;
+
+        if (newY < 0) newY = 0;
+        if (newY > myContainerHeight - playerHeight) newY = myContainerHeight - playerHeight;
+
+        myPlayer.style.left = newX + 'px';
+        myPlayer.style.top = newY + 'px';
+
+        myCheckHit();
+    }
+
+    window.onload = myGameInit;
+</script>
+
+</body>
+</html>

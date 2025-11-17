@@ -165,11 +165,11 @@
 
 ---
 
-<details open><summary>October 2025 Journal Entries</summary>
+<details><summary>October 2025 Journal Entries</summary>
 
 ---
 
-<details open><summary>Wednesday Oct 1st, 2025</summary>
+<details><summary>Wednesday Oct 1st, 2025</summary>
 
 ### Title
 1. finished t1a09 - variables
@@ -388,7 +388,7 @@
 
 
 
-<details ><summary>November 2025 Journal Entries</summary>
+<details open><summary>November 2025 Journal Entries</summary>
 
 ---
 
@@ -488,12 +488,12 @@
 
 ---     
 
-<details ><summary>Monday Nov 17th, 2025</summary>
+<details open><summary>Monday Nov 17th, 2025</summary>
 
 ### Title
-1.
-1.
-1.
+1. finished t2a20
+1. finished t2a21
+1. refactored entire repo file sorting system
 
 </details>
 
