@@ -1,65 +1,235 @@
 <h1 align=center>t2a20-manipulation-caleb.html (CTRL + SHIFT + J FOR CONSOLE)</h1>
-<section>
-    String, array, Object Maniuplation Methods<br>
-    <input id="myInput01" type="text" value="This is a string" ><br>
-    <span id="mySpan01">...</span><br>
-    <input type="button" value=".toUpperCase()" onclick="{
-        let myIn = document.getElementById('myInput01').value;
-        document.getElementById('mySpan01').innerHTML = myIn.toUpperCase();
-    }"><br>
-    <input type="button" value=".split()" onclick="{
-        let myIn = document.getElementById('myInput01').value
-        document.getElementById('mySpan01').innerHTML = myIn.split('')
-    }"><br>
-    <input type="button" value="Object.keys()" onclick="{
-        let myObject = {
-            first: 10,
-            second: 'Hello',
-            third: true
-        }
-        let keyArray = Object.keys(myObject)
-        document.getElementById('mySpan01').innerHTML = keyArray
-    }"><br>
+
+<section style="margin-bottom: 20px; padding: 10px; border: 1px solid #ccc;">
+    String, array, Object Maniuplation Methods<br>
+    <input id="myInput01" type="text" value="This is a string" ><br>
+    <span id="mySpan01" style="display: block; margin-top: 5px; padding: 5px; border: 1px dashed #999;"><pre>...</pre></span><br>
+    <input type="button" value=".toUpperCase()" onclick="{
+        let myIn = document.getElementById('myInput01').value;
+        document.getElementById('mySpan01').innerHTML = `<pre>${myIn.toUpperCase()}</pre>`;
+    }"><br>
+    <input type="button" value=".split()" onclick="{
+        let myIn = document.getElementById('myInput01').value
+        document.getElementById('mySpan01').innerHTML = `<pre>${myIn.split('')}</pre>`
+    }"><br>
+    <input type="button" value="Object.keys()" onclick="{
+        let myObject = {
+            first: 10,
+            second: 'Hello',
+            third: true
+        }
+        let keyArray = Object.keys(myObject)
+        document.getElementById('mySpan01').innerHTML = `<pre>${keyArray}</pre>`
+    }"><br>
 </section>
 
+---
+
 <section>
-    <details>
-        <summary>String Manipulation</summary>
-        <input type="text" id="myString01" value="  A b C d E f G  pLaCeHoLdEr  G f E d C b A  "><br>
-        <span id="mySpan02">...</span><br>
-        <input type="button" id="myLowerCase01" value="toLowerCase()">
-        <input type="button" id="myTrim01" value="trim()">
-        <input type="button" id="myIncludes01" value="includes()">
-        <input type="button" id="mySubstring01" value="substring()">
-        <input type="button" id="myIndexOf01" value="indexOf()">
+    <details open>
+        <summary>String Manipulation (5 Methods)</summary>
+        <input type="text" id="myString01" value="  A b C d E f G  pLaCeHoLdEr  G f E d C b A  "><br>
+        <span id="mySpan02" style="display: block; margin-top: 5px; padding: 5px; border: 1px dashed #007bff;"><pre>...</pre></span><br>
+        <input type="button" id="myLowerCase01" value="toLowerCase()">
+        <input type="button" id="myTrim01" value="trim()">
+        <input type="button" id="myIncludes01" value="includes()">
+        <input type="button" id="mySubstring01" value="substring()">
+        <input type="button" id="myIndexOf01" value="indexOf()">
 
-        <script>
-            const myLower = document.getElementById('myLowerCase01');
-            const myTrim = document.getElementById('myTrim01');
-            const myIncludes = document.getElementById('myIncludes01');
-            const mySubstring = document.getElementById('mySubstring01');
-            const myIndexOf = document.getElementById('myIndexOf01');
-            const stringOutput = document.getElementById('mySpan02').innerHTML;
+        <script>
+            const myLower = document.getElementById('myLowerCase01');
+            const myTrim = document.getElementById('myTrim01');
+            const myIncludes = document.getElementById('myIncludes01');
+            const mySubstring = document.getElementById('mySubstring01');
+            const myIndexOf = document.getElementById('myIndexOf01');
+            const stringOutput = document.getElementById('mySpan02'); 
 
-            function myLowerCase() {
-                let stringInput = document.getElementById('myString01').value;
-                document.getElementById('mySpan02').innerHTML = stringInput.toLowerCase();
-				console.log("set all to lowercase");
-            }
+            function myLowerCase() {
+                let stringInput = document.getElementById('myString01').value;
+                stringOutput.innerHTML = `<pre>${stringInput.toLowerCase()}</pre>`;
+                console.log("ran .toLowerCase() method");
+            }
+            
+            function myTrimmer() {
+                let stringInput = document.getElementById('myString01').value;
+                stringOutput.innerHTML = `<pre>${stringInput.trim()}</pre>`;  
+                console.log("ran .trim() method");
+            }
+
+            function myIncluder() {
+                let stringInput = document.getElementById('myString01').value;
+                let result = stringInput.includes("pLaCeHoLdEr"); 
+                stringOutput.innerHTML = `<pre>Includes 'pLaCeHoLdEr'? ${result}</pre>`;
+                console.log("ran .includes() method");
+            }
+
+            function mySubstr() {
+                let stringInput = document.getElementById('myString01').value;
+                let result = stringInput.substring(16, 30); 
+                stringOutput.innerHTML = `<pre>Substring(16, 30): ${result}</pre>`;
+                console.log("ran .substring() method");
+            }
+
+            function myIndexer() {
+                let stringInput = document.getElementById('myString01').value;
+                let result = stringInput.indexOf("pLaCeHoLdEr"); 
+                stringOutput.innerHTML = `<pre>IndexOf 'pLaCeHoLdEr': ${result}</pre>`;
+                console.log("ran .indexOf() method");
+            }
+
+            myLower.addEventListener('click', myLowerCase);
+            myTrim.addEventListener('click', myTrimmer);
+            myIncludes.addEventListener('click', myIncluder);
+            mySubstring.addEventListener('click', mySubstr);
+            myIndexOf.addEventListener('click', myIndexer);
+        </script>
+    </details>
+</section>
+
+---
+
+<section>
+    <details open>
+        <summary>Array Manipulation (5 Methods)</summary>
+        <input type="text" id="myArray01" value="apple,banana,cherry,date,elderberry" style="width: 300px;"><br>
+        <span style="font-size: smaller;">(Array used in functions: <strong>['apple', 'banana', 'cherry', 'date', 'elderberry']</strong>)</span><br>
+        <span id="mySpan03" style="display: block; margin-top: 5px; padding: 5px; border: 1px dashed #28a745;"><pre>...</pre></span><br>
+        <input type="button" id="myPush01" value="push()">
+        <input type="button" id="myPop01" value="pop()">
+        <input type="button" id="mySlice01" value="slice()">
+        <input type="button" id="myJoin01" value="join()">
+        <input type="button" id="myMap01" value="map()">
+
+        <script>
+            const myPush = document.getElementById('myPush01');
+            const myPop = document.getElementById('myPop01');
+            const mySlice = document.getElementById('mySlice01');
+            const myJoin = document.getElementById('myJoin01');
+            const myMap = document.getElementById('myMap01');
+            const arrayOutput = document.getElementById('mySpan03');
             
-            function myTrimmer() {
-                let stringInput = document.getElementById('myString01').value;
-                document.getElementById('mySpan02').innerHTML = stringInput.trim();  
-				console.log("removed all unneeded whitespace");
+            function getFreshArray() {
+                return document.getElementById('myArray01').value.split(',');
             }
 
-            function myIncluder() {
-                let stringInput = document.getElementById('myString01').value;
+            function myPusher() {
+                let array = getFreshArray();
+                array.push('fig'); 
+                arrayOutput.innerHTML = `<pre>${array} (Length: ${array.length})</pre>`;
+                console.log("ran .push() method");
+            }
 
+            function myPopper() {
+                let array = getFreshArray();
+                let removed = array.pop(); 
+                arrayOutput.innerHTML = `<pre>Removed: ${removed}\nRemaining: ${array}</pre>`;
+                console.log("ran .pop() method");
+            }
+
+            function mySlicer() {
+                let array = getFreshArray();
+                let newArray = array.slice(1, 4); 
+                arrayOutput.innerHTML = `<pre>Original array is NOT changed.\nNew Array (slice(1,4)): ${newArray}</pre>`;
+                console.log("ran .slice() method");
+            }
+
+            function myJoiner() {
+                let array = getFreshArray();
+                let joinedString = array.join(' & '); 
+                arrayOutput.innerHTML = `<pre>Joined String:\n${joinedString}</pre>`;
+                console.log("ran .join() method");
+            }
+
+            function myMapper() {
+                let array = getFreshArray();
+                let mappedArray = array.map(item => item.toUpperCase()); 
+                arrayOutput.innerHTML = `<pre>Mapped Array:\n${mappedArray}</pre>`;
+                console.log("ran .map() method");
+            }
+
+            myPush.addEventListener('click', myPusher);
+            myPop.addEventListener('click', myPopper);
+            mySlice.addEventListener('click', mySlicer);
+            myJoin.addEventListener('click', myJoiner);
+            myMap.addEventListener('click', myMapper);
+        </script>
+    </details>
+</section>
+
+---
+
+<section>
+    <details open>
+        <summary>Object Manipulation (5 Methods)</summary>
+        <input type="text" id="myObject01" value="name:Alice,age:30,city:Wonderland" style="width: 300px;"><br>
+        <span style="font-size: smaller;">(Object used in functions: <strong>{ name: 'Alice', age: '30', city: 'Wonderland' }</strong>)</span><br>
+        <span id="mySpan04" style="display: block; margin-top: 5px; padding: 5px; border: 1px dashed #ffc107;"><pre>...</pre></span><br>
+        <input type="button" id="myKeys01" value="Object.keys()">
+        <input type="button" id="myValues01" value="Object.values()">
+        <input type="button" id="myEntries01" value="Object.entries()">
+        <input type="button" id="myAssign01" value="Object.assign()">
+        <input type="button" id="myFreeze01" value="Object.freeze()">
+
+        <script>
+            const myKeys = document.getElementById('myKeys01');
+            const myValues = document.getElementById('myValues01');
+            const myEntries = document.getElementById('myEntries01');
+            const myAssign = document.getElementById('myAssign01');
+            const myFreeze = document.getElementById('myFreeze01');
+            const objectOutput = document.getElementById('mySpan04');
+
+            function getFreshObject() {
+                const input = document.getElementById('myObject01').value;
+                const pairs = input.split(',');
+                let obj = {};
+                pairs.forEach(pair => {
+                    const [key, value] = pair.split(':');
+                    obj[key] = value;
+                });
+                return obj;
             }
-            myLower.addEventListener('click', myLowerCase);
-            myTrim.addEventListener('click', myTrimmer);
-            myIncludes.addEventListener('click', myIncluder);
-        </script>
-    </details>
+
+            function myKeyser() {
+                let object = getFreshObject();
+                let keys = Object.keys(object);
+                objectOutput.innerHTML = `<pre>Keys: ${keys}</pre>`;
+                console.log("ran Object.keys() method");
+            }
+
+            function myValuer() {
+                let object = getFreshObject();
+                let values = Object.values(object);
+                objectOutput.innerHTML = `<pre>Values: ${values}</pre>`;
+                console.log("ran Object.values() method");
+            }
+
+            function myEntrier() {
+                let object = getFreshObject();
+                let entries = Object.entries(object);
+                objectOutput.innerHTML = `<pre>Entries (key/value pairs):\n${JSON.stringify(entries, null, 2)}</pre>`;
+                console.log("ran Object.entries() method");
+            }
+
+            function myAssigner() {
+                let object = getFreshObject();
+                let newObject = Object.assign({}, object, { country: 'UK', age: 31 });
+                objectOutput.innerHTML = `<pre>Original not changed. New Object:\n${JSON.stringify(newObject, null, 2)}</pre>`;
+                console.log("ran Object.assign() method");
+            }
+
+            function myFreezer() {
+                let object = getFreshObject();
+                Object.freeze(object);
+                object.age = 100; 
+                objectOutput.innerHTML = `<pre>Object.freeze() prevents changes.\nAttempted change to age: 100\nFinal age: ${object.age}\nIsFrozen: ${Object.isFrozen(object)}</pre>`;
+                console.log("ran Object.freeze() method");
+            }
+
+            myKeys.addEventListener('click', myKeyser);
+            myValues.addEventListener('click', myValuer);
+            myEntries.addEventListener('click', myEntrier);
+            myAssign.addEventListener('click', myAssigner);
+            myFreeze.addEventListener('click', myFreezer);
+        </script>
+    </details>
 </section>
