@@ -500,9 +500,10 @@
 <details><summary>Tuesday Nov 18th, 2025</summary>
 
 ### Title
-1.
-1.
-1.
+1. created /passion/ folder for passion projects
+1. created passionideas.md
+1. started planning for x-1
+1. started on x-1, created basis for Phaser framework.
 
 </details>
 

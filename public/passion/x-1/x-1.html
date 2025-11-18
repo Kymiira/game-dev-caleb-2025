@@ -1,1 +1,55 @@
-<!-- passion proj #1 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phaser Framework Test X-1-caleb</title>
+    <style>
+        body { margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <div id="phaser-game"></div>
+        <script src="[https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js](https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js)"></script>
+
+        <script>
+            // config for Phaser
+            const config = {
+                type: Phaser.AUTO,
+                width: 800,
+                height: 600,
+                parent: 'phaser-game',
+                physics: {
+                    default: 'arcade',
+                    arcade: {
+                        gravity: { y: 300 },
+                        debug: false
+                    }
+                },
+                scene: {
+                    preload: preload,
+                    create: create,
+                    update: update
+                }
+            };
+            // start the game
+            const game = new Phaser.Game(config)
+
+            function preload() {
+                this.load.image('sky', 'https://placehold.co/800x600/3498db/ffffff?text=SKY](https://placehold.co/800x600/3498db/ffffff?text=SKY)');
+                this.load.image('star', '[https://placehold.co/30x30/f1c40f/ffffff?text=](https://placehold.co/30x30/f1c40f/ffffff?text=)*');
+            }
+
+            function create() {
+                this.add.image(400, 300, 'sky');
+                star = this.physics.add.image(100, 50, 'star');
+                star.setBounce(0.8);
+                star.setCollideWorldBounds(true);
+            }
+
+            function update() {
+                star.angle += 1;
+            }
+        </script>
+</body>
+</html>
