@@ -3,6 +3,11 @@
     const LATITUDE = 49.13;
     const LONGITUDE = -122.31;
     const WEATHER_API_URL = `https://api.open-meteo.com/v1/forecast?latitude=${LATITUDE}&longitude=${LONGITUDE}&current=temperature_2m,weather_code&timezone=America%2FVancouver&forecast_days=1`;
+    
+    const SEEN_DATA_KEY = 'seenAPIDataHashes';
+    const RETRY_DELAY_MS = 500;
+    
+    const seenHashes = new Set(JSON.parse(localStorage.getItem(SEEN_DATA_KEY) || '[]'));
 
     function mapWmoCode(code) {
         let text;
@@ -21,6 +26,57 @@
             default: text = 'Unknown Conditions';
         }
         return text;
+    }
+
+    function hashJSON(data) {
+        return JSON.stringify(data);
+    }
+
+    async function fetchAndCache(url, maxRetries = 10) {
+        const displayDiv = document.getElementById('myDiv01');
+        let data;
+        let attempt = 0;
+        let isDuplicate = true;
+
+        while (isDuplicate && attempt < maxRetries) {
+            attempt++;
+            
+            const delayTime = RETRY_DELAY_MS * attempt; 
+            
+            displayDiv.innerHTML = `json load text (Attempt ${attempt} - Waiting ${delayTime / 1000}s)`;
+            
+            if (attempt > 1) {
+                await new Promise(resolve => setTimeout(resolve, delayTime));
+            }
+
+            const response = await fetch(url);
+
+            if (response.status === 429 || !response.ok) {
+                 if (response.status === 429) {
+                     displayDiv.innerHTML = `Hit 429 Rate Limit. Retrying in ${delayTime / 1000}s... (Attempt ${attempt})`;
+                 } else {
+                     throw new Error(`HTTP error. ${response.status}`);
+                 }
+                 continue;
+            }
+
+            data = await response.json();
+            const dataHash = hashJSON(data);
+
+            if (seenHashes.has(dataHash)) {
+                isDuplicate = true;
+                displayDiv.innerHTML = `Duplicate found. Retrying in ${delayTime / 1000}s... (Attempt ${attempt})`;
+            } else {
+                isDuplicate = false;
+                seenHashes.add(dataHash);
+                localStorage.setItem(SEEN_DATA_KEY, JSON.stringify(Array.from(seenHashes)));
+                return data; 
+            }
+        }
+        
+        if (isDuplicate) {
+            throw new Error(`Exceeded ${maxRetries} retries finding unique content for ${url}.`);
+        }
     }
 
     async function getWeather() {
@@ -66,16 +122,10 @@
 
     async function randomImage(url){
         const displayDiv = document.getElementById('myDiv01');
-        displayDiv.innerHTML = 'json load text';
-
+        
         try {
-            const response = await fetch(url);
-
-            if (!response.ok) {
-                throw new Error(`HTTP error. ${response.status}`);
-            }
-
-            const data = await response.json();
+            const data = await fetchAndCache(url);
+            
             let mediaUrl = '';
             
             switch (true) {
@@ -116,16 +166,9 @@
     
     async function randomUtil(url){
         const displayDiv = document.getElementById('myDiv01');
-        displayDiv.innerHTML = 'JSON load text';
 
         try {
-            const response = await fetch(url);
-
-            if (!response.ok) {
-                throw new Error(`HTTP error. ${response.status}`);
-            }
-
-            const data = await response.json();
+            const data = await fetchAndCache(url);
             let utilData = '';
             
             switch (true) {
@@ -148,6 +191,13 @@
             console.error("Fetch Error:", error);
         }
     }
+
+    function clearCache() {
+        localStorage.removeItem(SEEN_DATA_KEY);
+        seenHashes.clear();
+        document.getElementById('myDiv01').innerHTML = 
+            '<h3>Cache Cleared!</h3><p>The history of seen JSONs has been reset.</p>';
+    }
 </script>
 
 ---
@@ -164,5 +214,6 @@
 
 <h2>Utility APIs</h2>
 <input type="button" onclick="getWeather()" value="get weather (mission)">
+<input type="button" onclick="clearCache()" value="Clear Seen History Cache">
 
 <div id="myDiv01">...</div>
