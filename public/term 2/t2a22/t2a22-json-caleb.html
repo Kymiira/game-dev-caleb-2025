@@ -1,22 +1,168 @@
 <h1 align="center">t2a22-json-caleb.html</h1>
 <script>
-    async function fetchData(url){
-        const response = await fetch(url);
-        const data = await response.json();
-        console.log(data);
+    const LATITUDE = 49.13;
+    const LONGITUDE = -122.31;
+    const WEATHER_API_URL = `https://api.open-meteo.com/v1/forecast?latitude=${LATITUDE}&longitude=${LONGITUDE}&current=temperature_2m,weather_code&timezone=America%2FVancouver&forecast_days=1`;
 
-        const myJson = JSON.stringify(data, null, 2);
-        document.getElementById('myDiv01').innerHTML = `<pre>${myJson}</pre>`;
-
-        document.getElementById('myDiv01').innerHTML += `<img src="${data.image}" alt="Random Image" style="max-width: 100%; height: auto;">`;
-
+    function mapWmoCode(code) {
+        let text;
+        switch (code) {
+            case 0: text = 'Clear Sky'; break;
+            case 1: text = 'Mainly Clear'; break;
+            case 2: text = 'Partly Cloudy'; break;
+            case 3: text = 'Overcast'; break;
+            case 45: case 48: text = 'Foggy'; break;
+            case 51: case 53: case 55: text = 'Drizzle'; break;
+            case 61: case 63: case 65: text = 'Rain'; break;
+            case 71: case 73: case 75: text = 'Snow'; break;
+            case 80: case 81: case 82: text = 'Rain Showers'; break;
+            case 95: text = 'Thunderstorm'; break;
+            case 96: case 99: text = 'Thunderstorm with Hail'; break;
+            default: text = 'Unknown Conditions';
+        }
+        return text;
     }
 
+    async function getWeather() {
+        const displayDiv = document.getElementById('myDiv01');
+        displayDiv.innerHTML = 'json load text';
+
+        try {
+            const response = await fetch(WEATHER_API_URL);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error. ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            const current = data.current;
+            const temp = current.temperature_2m.toFixed(1);
+            const wmoCode = current.weather_code;
+            
+            const conditions = mapWmoCode(wmoCode);
+            
+            const myJson = JSON.stringify(data, null, 2);
+
+            displayDiv.innerHTML =
+                `<h3>JSON:</h3><pre>${myJson}</pre>
+                <h3>Mission, BC Current Weather:</h3>
+                <p>Conditions: ${conditions}</p>
+                <p>Temperature: ${temp}°C</p>
+                <br>`;
+
+        } catch (error) {
+            displayDiv.innerHTML = 
+                `<h3>Error!</h3><p>Can't fetch data for weather.</p><p> ${error.message}</p>`;
+            console.error("Weather Fetch Error:", error);
+        }
+    }
+
+    function isMediaVideo(url) {
+        const videoExtensions = ['.mp4', '.webm', '.ogg'];
+        const urlLower = url.toLowerCase();
+        return videoExtensions.some(ext => urlLower.endsWith(ext));
+    }
+
+    async function randomImage(url){
+        const displayDiv = document.getElementById('myDiv01');
+        displayDiv.innerHTML = 'json load text';
+
+        try {
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error. ${response.status}`);
+            }
+
+            const data = await response.json();
+            let mediaUrl = '';
+            
+            switch (true) {
+                case url.includes('randomfox.ca'):
+                    mediaUrl = data.image;
+                    break;
+                case url.includes('dog.ceo'):
+                    mediaUrl = data.message;
+                    break;
+                case url.includes('random.dog'):
+                case url.includes('cataas.com'):
+                    mediaUrl = data.url; 
+                    break;
+                case url.includes('thecatapi.com'):
+                    mediaUrl = data[0].url; 
+                    break;
+                default:
+                    throw new Error("Improper API / image URL key");
+            }
+            
+            const mediaTag = isMediaVideo(mediaUrl) 
+                ? `<video src="${mediaUrl}" controls loop autoplay muted style="max-width: 100%; height: auto;">Your browser does not support the video tag.</video>`
+                : `<img src="${mediaUrl}" alt="Random Media" style="max-width: 100%; height: auto;">`;
+
+
+            const myJson = JSON.stringify(data, null, 2);
+            
+            displayDiv.innerHTML =
+                `<h3>JSON:</h3><pre>${myJson}</pre>` +
+                `<h3>Media:</h3>${mediaTag}`;
+
+        } catch (error) {
+            displayDiv.innerHTML = 
+                `<h3>Error!</h3><p>Can't fetch data for ${url}.</p><p> ${error.message}</p>`;
+            console.error("Fetch Error:", error);
+        }
+    }
+    
+    async function randomUtil(url){
+        const displayDiv = document.getElementById('myDiv01');
+        displayDiv.innerHTML = 'JSON load text';
+
+        try {
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error. ${response.status}`);
+            }
+
+            const data = await response.json();
+            let utilData = '';
+            
+            switch (true) {
+                case url.includes('catfact.ninja'):
+                    utilData = data.fact;
+                    break;
+                default:
+                    throw new Error("Improper API / URL key");
+            }
+
+            const myJson = JSON.stringify(data, null, 2);
+            
+            displayDiv.innerHTML =
+                `<h3>JSON:</h3><pre>${myJson}</pre>` +
+                `<h3>Fact/Data:</h3><p>${utilData}</p>`;
+
+        } catch (error) {
+            displayDiv.innerHTML = 
+                `<h3>Error!</h3><p>Can't fetch data for ${url}.</p><p> ${error.message}</p>`;
+            console.error("Fetch Error:", error);
+        }
+    }
 </script>
 
-<select id="mySelect" size="1" onchange="fetchData(this.value)">
-    <option ></option>
-    <option value="https://randomfox.ca/floof/">randomfox</option>
-</select><br><br>
+---
+
+<h2>Image APIs</h2>
+<input type="button" onclick="randomImage(this.value)" value="https://randomfox.ca/floof/">
+<input type="button" onclick="randomImage(this.value)" value="https://random.dog/woof.json">
+<input type="button" onclick="randomImage(this.value)" value="https://dog.ceo/api/breeds/image/random">
+<input type="button" onclick="randomImage(this.value)" value="https://api.thecatapi.com/v1/images/search">
+<input type="button" onclick="randomImage(this.value)" value="https://cataas.com/cat?json=true">
+<input type="button" onclick="randomUtil(this.value)" value="https://catfact.ninja/fact">
+
+---
+
+<h2>Utility APIs</h2>
+<input type="button" onclick="getWeather()" value="get weather (mission)">
 
 <div id="myDiv01">...</div>
