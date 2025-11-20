@@ -1,219 +1,301 @@
-<h1 align="center">t2a22-json-caleb.html</h1>
-<script>
-    const LATITUDE = 49.13;
-    const LONGITUDE = -122.31;
-    const WEATHER_API_URL = `https://api.open-meteo.com/v1/forecast?latitude=${LATITUDE}&longitude=${LONGITUDE}&current=temperature_2m,weather_code&timezone=America%2FVancouver&forecast_days=1`;
+<!DOCTYPE html>
+<html>
+<head>
+    <title>t2a22 stable-3</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body onload="document.getElementById('myDiv01').innerHTML = 'Ready to fetch data...'">
     
-    const SEEN_DATA_KEY = 'seenAPIDataHashes';
-    const RETRY_DELAY_MS = 500;
-    
-    const seenHashes = new Set(JSON.parse(localStorage.getItem(SEEN_DATA_KEY) || '[]'));
+    <h1 align="center">t2a22-json-caleb.html</h1>
 
-    function mapWmoCode(code) {
-        let text;
-        switch (code) {
-            case 0: text = 'Clear Sky'; break;
-            case 1: text = 'Mainly Clear'; break;
-            case 2: text = 'Partly Cloudy'; break;
-            case 3: text = 'Overcast'; break;
-            case 45: case 48: text = 'Foggy'; break;
-            case 51: case 53: case 55: text = 'Drizzle'; break;
-            case 61: case 63: case 65: text = 'Rain'; break;
-            case 71: case 73: case 75: text = 'Snow'; break;
-            case 80: case 81: case 82: text = 'Rain Showers'; break;
-            case 95: text = 'Thunderstorm'; break;
-            case 96: case 99: text = 'Thunderstorm with Hail'; break;
-            default: text = 'Unknown Conditions';
+    <script>
+        const LATITUDE = 49.13;
+        const LONGITUDE = -122.31;
+        const WEATHER_API_URL = `https://api.open-meteo.com/v1/forecast?latitude=${LATITUDE}&longitude=${LONGITUDE}&current=temperature_2m,weather_code&timezone=America%2FVancouver&forecast_days=1`;
+        
+        const SEEN_DATA_KEY = 'seenAPIDataHashes';
+        const RETRY_DELAY_MS = 500;
+        const seenHashes = new Set(JSON.parse(localStorage.getItem(SEEN_DATA_KEY) || '[]'));
+
+        const YOUTUBE_API_KEY = "AIzaSyCArENI5N5uFHtvlDMQfZkQ1D7kyVMK1Uc";
+        const YOUTUBE_BASE_URL = "https://www.googleapis.com/youtube/v3/search";
+
+        function mapWmoCode(code) {
+            let text;
+            switch (code) {
+                case 0: text = 'Clear Sky'; break;
+                case 1: text = 'Mainly Clear'; break;
+                case 2: text = 'Partly Cloudy'; break;
+                case 3: text = 'Overcast'; break;
+                case 45: case 48: text = 'Foggy'; break;
+                case 51: case 53: case 55: text = 'Drizzle'; break;
+                case 61: case 63: case 65: text = 'Rain'; break;
+                case 71: case 73: case 75: text = 'Snow'; break;
+                case 80: case 81: case 82: text = 'Rain Showers'; break;
+                case 95: text = 'Thunderstorm'; break;
+                case 96: case 99: text = 'Thunderstorm with Hail'; break;
+                default: text = 'Unknown Conditions';
+            }
+            return text;
         }
-        return text;
-    }
 
-    function hashJSON(data) {
-        return JSON.stringify(data);
-    }
+        function hashJSON(data) {
+            return JSON.stringify(data);
+        }
 
-    async function fetchAndCache(url, maxRetries = 10) {
-        const displayDiv = document.getElementById('myDiv01');
-        let data;
-        let attempt = 0;
-        let isDuplicate = true;
+        async function fetchAndCache(url, maxRetries = 10) {
+            const displayDiv = document.getElementById('myDiv01');
+            let data;
+            let attempt = 0;
+            let isDuplicate = true;
 
-        while (isDuplicate && attempt < maxRetries) {
-            attempt++;
-            
-            const delayTime = RETRY_DELAY_MS * attempt; 
-            
-            displayDiv.innerHTML = `json load text (Attempt ${attempt} - Waiting ${delayTime / 1000}s)`;
-            
-            if (attempt > 1) {
-                await new Promise(resolve => setTimeout(resolve, delayTime));
+            while (isDuplicate && attempt < maxRetries) {
+                attempt++;
+                
+                const delayTime = RETRY_DELAY_MS * attempt; 
+                
+                displayDiv.innerHTML = `json load text (Attempt ${attempt} - Waiting ${delayTime / 1000}s)`;
+                
+                if (attempt > 1) {
+                    await new Promise(resolve => setTimeout(resolve, delayTime));
+                }
+
+                const response = await fetch(url);
+
+                if (response.status === 429 || !response.ok) {
+                    if (response.status === 429) {
+                        displayDiv.innerHTML = `Hit 429 Rate Limit. Retrying in ${delayTime / 1000}s... (Attempt ${attempt})`;
+                    } else {
+                        throw new Error(`HTTP error. ${response.status}`);
+                    }
+                    continue;
+                }
+
+                data = await response.json();
+                const dataHash = hashJSON(data);
+
+                if (seenHashes.has(dataHash)) {
+                    isDuplicate = true;
+                    displayDiv.innerHTML = `Duplicate found. Retrying in ${delayTime / 1000}s... (Attempt ${attempt})`;
+                } else {
+                    isDuplicate = false;
+                    seenHashes.add(dataHash);
+                    localStorage.setItem(SEEN_DATA_KEY, JSON.stringify(Array.from(seenHashes)));
+                    return data; 
+                }
             }
-
-            const response = await fetch(url);
-
-            if (response.status === 429 || !response.ok) {
-                 if (response.status === 429) {
-                     displayDiv.innerHTML = `Hit 429 Rate Limit. Retrying in ${delayTime / 1000}s... (Attempt ${attempt})`;
-                 } else {
-                     throw new Error(`HTTP error. ${response.status}`);
-                 }
-                 continue;
+            
+            if (isDuplicate) {
+                throw new Error(`Exceeded ${maxRetries} retries finding unique content for ${url}.`);
             }
+        }
 
-            data = await response.json();
-            const dataHash = hashJSON(data);
+        async function getWeather() {
+            const displayDiv = document.getElementById('myDiv01');
+            displayDiv.innerHTML = 'json load text';
 
-            if (seenHashes.has(dataHash)) {
-                isDuplicate = true;
-                displayDiv.innerHTML = `Duplicate found. Retrying in ${delayTime / 1000}s... (Attempt ${attempt})`;
-            } else {
-                isDuplicate = false;
-                seenHashes.add(dataHash);
-                localStorage.setItem(SEEN_DATA_KEY, JSON.stringify(Array.from(seenHashes)));
-                return data; 
+            try {
+                const response = await fetch(WEATHER_API_URL);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error. ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                const current = data.current;
+                const temp = current.temperature_2m.toFixed(1);
+                const wmoCode = current.weather_code;
+                
+                const conditions = mapWmoCode(wmoCode);
+                
+                const myJson = JSON.stringify(data, null, 2);
+
+                displayDiv.innerHTML =
+                    `<h3>JSON:</h3><pre>${myJson}</pre>
+                    <h3>Mission, BC Current Weather:</h3>
+                    <p>Conditions: ${conditions}</p>
+                    <p>Temperature: ${temp}°C</p>
+                    <br>`;
+
+            } catch (error) {
+                displayDiv.innerHTML = 
+                    `<h3>Error!</h3><p>Can't fetch data for weather.</p><p> ${error.message}</p>`;
+                console.error("Weather Fetch Error:", error);
+            }
+        }
+
+        function isMediaVideo(url) {
+            const videoExtensions = ['.mp4', '.webm', '.ogg'];
+            const urlLower = url.toLowerCase();
+            return videoExtensions.some(ext => urlLower.endsWith(ext));
+        }
+
+        async function randomImage(url){
+            const displayDiv = document.getElementById('myDiv01');
+            
+            try {
+                const data = await fetchAndCache(url);
+                
+                let mediaUrl = '';
+                
+                switch (true) {
+                    case url.includes('randomfox.ca'):
+                        mediaUrl = data.image;
+                        break;
+                    case url.includes('dog.ceo'):
+                        mediaUrl = data.message;
+                        break;
+                    case url.includes('random.dog'):
+                    case url.includes('cataas.com'):
+                        mediaUrl = data.url ? data.url : `https://cataas.com/cat/${data._id}`;
+                        break;
+                    case url.includes('thecatapi.com'):
+                        mediaUrl = data[0].url; 
+                        break;
+                    default:
+                        throw new Error("Improper API / image URL key");
+                }
+                
+                const mediaTag = isMediaVideo(mediaUrl) 
+                    ? `<video src="${mediaUrl}" controls loop autoplay muted style="max-width: 100%; height: auto;">Your browser does not support the video tag.</video>`
+                    : `<img src="${mediaUrl}" alt="Random Media" style="max-width: 100%; height: auto;">`;
+
+
+                const myJson = JSON.stringify(data, null, 2);
+                
+                displayDiv.innerHTML =
+                    `<h3>JSON:</h3><pre>${myJson}</pre>` +
+                    `<h3>Media:</h3>${mediaTag}`;
+
+            } catch (error) {
+                displayDiv.innerHTML = 
+                    `<h3>Error!</h3><p>Can't fetch data for ${url}.</p><p> ${error.message}</p>`;
+                console.error("Fetch Error:", error);
             }
         }
         
-        if (isDuplicate) {
-            throw new Error(`Exceeded ${maxRetries} retries finding unique content for ${url}.`);
+        async function randomUtil(url){
+            const displayDiv = document.getElementById('myDiv01');
+
+            try {
+                const data = await fetchAndCache(url);
+                let utilData = '';
+                
+                switch (true) {
+                    case url.includes('catfact.ninja'):
+                        utilData = data.fact;
+                        break;
+                    default:
+                        throw new Error("Improper API / URL key");
+                }
+
+                const myJson = JSON.stringify(data, null, 2);
+                
+                displayDiv.innerHTML =
+                    `<h3>JSON:</h3><pre>${myJson}</pre>` +
+                    `<h3>Fact/Data:</h3><p>${utilData}</p>`;
+
+            } catch (error) {
+                displayDiv.innerHTML = 
+                    `<h3>Error!</h3><p>Can't fetch data for ${url}.</p><p> ${error.message}</p>`;
+                console.error("Fetch Error:", error);
+            }
         }
-    }
 
-    async function getWeather() {
-        const displayDiv = document.getElementById('myDiv01');
-        displayDiv.innerHTML = 'json load text';
+        function clearCache() {
+            localStorage.removeItem(SEEN_DATA_KEY);
+            seenHashes.clear();
+            document.getElementById('myDiv01').innerHTML = 
+                '<h3>Cache Cleared!</h3><p>The history of seen JSONs has been reset.</p>';
+        }
 
-        try {
-            const response = await fetch(WEATHER_API_URL);
+        async function searchVideos() {
+            const container = document.getElementById("youtubeResultsContainer");
+            const query = document.getElementById("searchInput").value;
+            container.innerHTML = "Searching YouTube...";
 
-            if (!response.ok) {
-                throw new Error(`HTTP error. ${response.status}`);
+            if (!query) {
+                container.innerHTML = "Please enter a search term.";
+                return;
             }
 
-            const data = await response.json();
-            
-            const current = data.current;
-            const temp = current.temperature_2m.toFixed(1);
-            const wmoCode = current.weather_code;
-            
-            const conditions = mapWmoCode(wmoCode);
-            
-            const myJson = JSON.stringify(data, null, 2);
+            const apiUrl = `${YOUTUBE_BASE_URL}?part=snippet&q=${encodeURIComponent(query)}}&key=${YOUTUBE_API_KEY}&type=video&maxResults=5`;
 
-            displayDiv.innerHTML =
-                `<h3>JSON:</h3><pre>${myJson}</pre>
-                <h3>Mission, BC Current Weather:</h3>
-                <p>Conditions: ${conditions}</p>
-                <p>Temperature: ${temp}°C</p>
-                <br>`;
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                displayResults(data.items, query);
 
-        } catch (error) {
-            displayDiv.innerHTML = 
-                `<h3>Error!</h3><p>Can't fetch data for weather.</p><p> ${error.message}</p>`;
-            console.error("Weather Fetch Error:", error);
-        }
-    }
+                const mainDiv = document.getElementById('myDiv01');
+                mainDiv.innerHTML = 
+                    `<h3>Latest JSON Response (YouTube Search):</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
 
-    function isMediaVideo(url) {
-        const videoExtensions = ['.mp4', '.webm', '.ogg'];
-        const urlLower = url.toLowerCase();
-        return videoExtensions.some(ext => urlLower.endsWith(ext));
-    }
-
-    async function randomImage(url){
-        const displayDiv = document.getElementById('myDiv01');
-        
-        try {
-            const data = await fetchAndCache(url);
-            
-            let mediaUrl = '';
-            
-            switch (true) {
-                case url.includes('randomfox.ca'):
-                    mediaUrl = data.image;
-                    break;
-                case url.includes('dog.ceo'):
-                    mediaUrl = data.message;
-                    break;
-                case url.includes('random.dog'):
-                case url.includes('cataas.com'):
-                    mediaUrl = data.url; 
-                    break;
-                case url.includes('thecatapi.com'):
-                    mediaUrl = data[0].url; 
-                    break;
-                default:
-                    throw new Error("Improper API / image URL key");
+            } catch (error) {
+                console.error("YouTube Fetch error:", error);
+                container.innerHTML = `<p style="color: red;">Error: Failed to fetch YouTube data. (Check API Key/Console)</p>`;
+                document.getElementById('myDiv01').innerHTML = `<h3>Error!</h3><p>Can't fetch data for YouTube.</p><p> ${error.message}</p>`;
             }
-            
-            const mediaTag = isMediaVideo(mediaUrl) 
-                ? `<video src="${mediaUrl}" controls loop autoplay muted style="max-width: 100%; height: auto;">Your browser does not support the video tag.</video>`
-                : `<img src="${mediaUrl}" alt="Random Media" style="max-width: 100%; height: auto;">`;
-
-
-            const myJson = JSON.stringify(data, null, 2);
-            
-            displayDiv.innerHTML =
-                `<h3>JSON:</h3><pre>${myJson}</pre>` +
-                `<h3>Media:</h3>${mediaTag}`;
-
-        } catch (error) {
-            displayDiv.innerHTML = 
-                `<h3>Error!</h3><p>Can't fetch data for ${url}.</p><p> ${error.message}</p>`;
-            console.error("Fetch Error:", error);
         }
-    }
-    
-    async function randomUtil(url){
-        const displayDiv = document.getElementById('myDiv01');
 
-        try {
-            const data = await fetchAndCache(url);
-            let utilData = '';
-            
-            switch (true) {
-                case url.includes('catfact.ninja'):
-                    utilData = data.fact;
-                    break;
-                default:
-                    throw new Error("Improper API / URL key");
+        function displayResults(items, query) {
+            const container = document.getElementById("youtubeResultsContainer");
+            container.innerHTML = `<h3>YouTube Search Results for: "${query}"</h3>`;
+
+            if (items.length === 0) {
+                container.innerHTML += "<p>No videos found for this query.</p>";
+                return;
             }
 
-            const myJson = JSON.stringify(data, null, 2);
+            const list = document.createElement('ul');
             
-            displayDiv.innerHTML =
-                `<h3>JSON:</h3><pre>${myJson}</pre>` +
-                `<h3>Fact/Data:</h3><p>${utilData}</p>`;
+            items.forEach(item => {
+                const videoTitle = item.snippet.title;
+                const videoId = item.id.videoId;
+                const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
 
-        } catch (error) {
-            displayDiv.innerHTML = 
-                `<h3>Error!</h3><p>Can't fetch data for ${url}.</p><p> ${error.message}</p>`;
-            console.error("Fetch Error:", error);
+                const listItem = document.createElement('li');
+                
+                listItem.innerHTML = `<a href="${videoUrl}" target="_blank"><strong>${videoTitle}</strong></a>`;
+                
+                list.appendChild(listItem);
+            });
+
+            container.appendChild(list);
         }
-    }
+    </script>
 
-    function clearCache() {
-        localStorage.removeItem(SEEN_DATA_KEY);
-        seenHashes.clear();
-        document.getElementById('myDiv01').innerHTML = 
-            '<h3>Cache Cleared!</h3><p>The history of seen JSONs has been reset.</p>';
-    }
-</script>
+    <hr>
 
----
+    <h2>📺 YouTube Search API (User Input)</h2>
+    <input type="text" id="searchInput" placeholder="Enter video search term (e.g., 'API tutorial')">
+    <button onclick="searchVideos()">Search YouTube</button>
+    <div id="youtubeResultsContainer">Enter a search term and click search to view results.</div>
 
-<h2>Image APIs</h2>
-<input type="button" onclick="randomImage(this.value)" value="https://randomfox.ca/floof/">
-<input type="button" onclick="randomImage(this.value)" value="https://random.dog/woof.json">
-<input type="button" onclick="randomImage(this.value)" value="https://dog.ceo/api/breeds/image/random">
-<input type="button" onclick="randomImage(this.value)" value="https://api.thecatapi.com/v1/images/search">
-<input type="button" onclick="randomImage(this.value)" value="https://cataas.com/cat?json=true">
-<input type="button" onclick="randomUtil(this.value)" value="https://catfact.ninja/fact">
+    <hr>
 
----
+    <h2>Image/Media APIs (Uses Unique Content Cache)</h2>
+    <input type="button" onclick="randomImage(this.value)" value="https://randomfox.ca/floof/">
+    <input type="button" onclick="randomImage(this.value)" value="https://random.dog/woof.json">
+    <input type="button" onclick="randomImage(this.value)" value="https://dog.ceo/api/breeds/image/random">
+    <input type="button" onclick="randomImage(this.value)" value="https://api.thecatapi.com/v1/images/search">
+    <input type="button" onclick="randomImage(this.value)" value="https://cataas.com/cat?json=true">
 
-<h2>Utility APIs</h2>
-<input type="button" onclick="getWeather()" value="get weather (mission)">
-<input type="button" onclick="clearCache()" value="Clear Seen History Cache">
+    <hr>
 
-<div id="myDiv01">...</div>
+    <h2>Utility APIs</h2>
+    <input type="button" onclick="randomUtil(this.value)" value="https://catfact.ninja/fact">
+    <input type="button" onclick="getWeather()" value="Get Weather (Mission, BC)">
+    <input type="button" onclick="clearCache()" value="Clear Seen History Cache">
+
+    <hr>
+
+    <div id="myDiv01">...</div>
+
+</body>
+</html>
