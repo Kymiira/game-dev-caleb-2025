@@ -13,6 +13,7 @@
     <td valign="top">
       <a href="https://kymiira.github.io/game-dev-caleb-2025/public/index.html">📇 Assignment Index</a><br>
       <a href="https://github.com/hpssjellis/high-school-javascript-game-dev-assignment-images">💻Assignments Code Src</a><br>
+      <a href="https://replit.com/@Kymiira/game-dev-caleb-2025">Replit Link</a><br>
     </td>
     <td valign="top">
       <a href="http://github.com/Kymiira/game-dev-caleb-2025/blob/main/markdownfiles/add-to-readme-journal-2025-s1.md"<br>🗒️ Details Journal</a><br>
