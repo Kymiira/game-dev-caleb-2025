@@ -12,4 +12,4 @@ attempt to utilize classes, practice for ool/oop?
     How does this practice OOL/OOP?
      - staple of object oriented programming is utilizing classes and extending those classes to others
      - this teaches class usage, leading to extra knowledge on OOP
-
+    
