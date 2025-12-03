@@ -1,13 +1,3 @@
 <h1>Basic In/Out</h1>
-<input id="in1" type="text" placeholder="type here">
+<input id="in1" type="text" placeholder="type here" onSubmit="document.getElementById('in1') = documrnt.getElementById('out1')">
 <span id="out1">...</span>
-<script>
-    let input = document.getElementById('in1')
-    let output = document.getElementById('out1')
-    
-    function valueswap() {
-        input.value = output.innerHTML
-        valueswap()
-    }
-    valueswap()
-</script>
