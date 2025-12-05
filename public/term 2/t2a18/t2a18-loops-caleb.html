@@ -1,73 +1,99 @@
-<h1 align=center>t2a18-loops-1-page-fred</h1>
+<h1 align="center">t2a18-loops-1-page-caleb</h1>
 
+<select id="loopSelect">
+  <option value="for">For Loop</option>
+  <option value="while">While Loop</option>
+  <option value="doWhile">Do-While Loop</option>
+  <option value="forIn">For-In Loop</option>
+  <option value="forOf">For-Of Loop</option>
+  <option value="forEach">ForEach</option>
+  <option value="generator">Async Generator Loop</option>
+  <option value="map">Map</option>
+  <option value="filter">Filter</option>
+  <option value="reduce">Reduce</option>
+</select>
 
-Use an LLM to make a one page html file that shows all the types of javascript loops, then print the page and circle the code you don't understand.
+<button onclick="runLoop()">Run Loop</button>
 
+<br><br>
+<span id="output" style="white-space: pre; font-family: monospace;"></span>
 
-let output = '';
-for (let i = 0; i < 3; i++) {
-    output += 'Count: ' + i + '\n';
+<script>
+async function runLoop() {
+    const choice = document.getElementById("loopSelect").value;
+    let out = '';
+
+    if (choice === "for") {
+        for (let i = 0; i < 3; i++) {
+            out += "Count: " + i + "\n";
+        }
+    }
+
+    if (choice === "while") {
+        let i = 0;
+        while (i < 3) {
+            out += "Index: " + i + "\n";
+            i++;
+        }
+    }
+
+    if (choice === "doWhile") {
+        let i = 5;
+        do {
+            out += "Run: " + i + "\n";
+            i++;
+        } while (i < 3);
+    }
+
+    if (choice === "forIn") {
+        const user = { name: "Alice", age: 30 };
+        for (const key in user) {
+            out += key + ": " + user[key] + "\n";
+        }
+    }
+
+    if (choice === "forOf") {
+        const fruits = ["Apple", "Banana"];
+        for (const fruit of fruits) {
+            out += "Fruit: " + fruit + "\n";
+        }
+    }
+
+    if (choice === "forEach") {
+        const numbers = [10, 20];
+        numbers.forEach((num, index) => {
+            out += `Value: ${num}, Index: ${index}\n`;
+        });
+    }
+
+    if (choice === "generator") {
+        async function* generator() { 
+            yield 100; 
+            yield 200; 
+        }
+        for await (const val of generator()) {
+            out += "Yielded: " + val + "\n";
+        }
+    }
+
+    if (choice === "map") {
+        const nums = [1, 2];
+        const squared = nums.map(n => n * 2);
+        out += "Squared: " + squared.join(", ");
+    }
+
+    if (choice === "filter") {
+        const ages = [10, 20];
+        const adults = ages.filter(a => a >= 18);
+        out += "Adults: " + adults.join(", ");
+    }
+
+    if (choice === "reduce") {
+        const vals = [1, 2];
+        const sum = vals.reduce((acc, curr) => acc + curr, 0);
+        out += "Sum: " + sum;
+    }
+
+    document.getElementById("output").textContent = out;
 }
-
-
-
-let output = '';
-let i = 0;
-while (i < 3) {
-    output += 'Index: ' + i + '\n';
-    i++;
-}
-
-
-
-let output = '';
-let i = 5; // Condition is false initially
-do {
-    output += 'Run: ' + i + '\n';
-    i++;
-} while (i < 3);
-
-
-
-const user = { name: 'Alice', age: 30 };
-let output = '';
-for (const key in user) {
-    output += key + ': ' + user[key] + '\n';
-}
-
-
-
-const fruits = ['Apple', 'Banana'];
-let output = '';
-for (const fruit of fruits) {
-    output += 'Fruit: ' + fruit + '\n';
-}
-
-
-const numbers = [10, 20];
-numbers.forEach((num, index) => {
-    // Gets value and index
-});
-
-
-async function* generator() { yield 100; yield 200; }
-// Must be inside an async function
-for await (const val of generator()) {
-    // Waits for each value
-}
-
-
-
-const nums = [1, 2];
-const squared = nums.map(n => n * 2);
-// Result: [2, 4]
-
-
-const ages = [10, 20];
-const adults = ages.filter(a => a >= 18);
-// Result: [20]
-
-
-const vals = [1, 2];
-const sum = vals.reduce((acc, curr) => acc + curr, 0);
-// Result: 3
+</script>
