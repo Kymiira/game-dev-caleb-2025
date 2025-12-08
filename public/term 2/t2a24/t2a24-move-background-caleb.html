@@ -1,30 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mario-Style Game Messages</title>
+<style>
+body { margin:0; overflow:hidden; background-image: url('../t2a25/BackgroundImg.png'); background-repeat: repeat; }
+#gameContainer { position:relative; width:800px; height:500px; margin:auto; overflow:hidden; background:#87ceeb; border:2px solid #000; }
+img { position:absolute; }
+#ui { position:absolute; top:0; left:0; padding:5px; color:#fff; font-family:sans-serif; z-index:1000; }
+#message { position:absolute; top:200px; left:50%; transform:translateX(-50%); font-size:24px; color:#fff; background:rgba(0,0,0,0.7); padding:10px 20px; border-radius:5px; display:none; z-index:1001; }
+</style>
+</head>
+<body>
 
-<body id="myBody" style="background-repeat:repeat; background-size: 80%" background="../t2a25/BackgroundImg.png">
-<h1 align=center>t2a24-move-background-caleb.html</h1>
-  
+<div id="gameContainer">
+  <div id="ui">Lives: 3 | Score: 0</div>
+  <div id="message"></div>
+
+  <!-- Player -->
+  <img id="player" src="../t2a25/MoveImg.png" style="width:50px; height:50px; top:300px; left:50px;">
+
+  <!-- Hazards -->
+  <img id="hazard1" src="../t2a25/StillImg.png" style="width:50px; height:50px; top:350px; left:300px;">
+  <img id="hazard2" src="../t2a25/StillImg.png" style="width:50px; height:50px; top:350px; left:500px;">
+
+  <!-- Ground -->
+  <img id="ground" src="../t2a25/GroundImg.png" style="width:2000px; height:50px; top:450px; left:0;">
+
+  <!-- Platforms -->
+  <img id="platform1" src="../t2a25/GroundImg.png" style="width:100px; height:20px; top:350px; left:200px;">
+  <img id="platform2" src="../t2a25/GroundImg.png" style="width:100px; height:20px; top:300px; left:400px;">
+  <img id="platform3" src="../t2a25/GroundImg.png" style="width:100px; height:20px; top:250px; left:600px;">
+
+  <!-- Goal -->
+  <img id="goal" src="https://placehold.co/50x50/00FF00/FFFFFF?text=FLAG" style="width:50px; height:50px; top:350px; left:900px;">
+</div>
+
 <script>
-   let myGlobalX = 0
-   let myClock
+class GameObject {
+    constructor(id, x, y, width, height) {
+        this.id = id;
+        this.el = document.getElementById(id);
+        this.x = x; this.y = y;
+        this.width = width; this.height = height;
+        this.vx = 0; this.vy = 0;
+        this.updatePosition();
+    }
+    updatePosition() { this.el.style.left = this.x + 'px'; this.el.style.top = this.y + 'px'; }
+    collidesWith(other) { return !(this.x + this.width <= other.x || this.x >= other.x + other.width || this.y + this.height <= other.y || this.y >= other.y + other.height); }
+}
+
+class Player extends GameObject {
+    constructor(id, x, y, width, height) { super(id,x,y,width,height); this.onGround=false; }
+    move() { this.x += this.vx; this.y += this.vy; this.updatePosition(); }
+}
+
+class Hazard extends GameObject {
+    constructor(id, x, y, width, height) { super(id,x,y,width,height); this.vx=1.5; }
+    move() { this.x += this.vx; this.y += this.vy; this.updatePosition(); }
+}
+
+class Ground extends GameObject {}
+class Platform extends GameObject {}
+class Goal extends GameObject {}
+
+const player = new Player('player',50,300,50,50);
+const hazards = [
+    new Hazard('hazard1',300,350,50,50),
+    new Hazard('hazard2',500,350,50,50)
+];
+const grounds = [ new Ground('ground',0,450,2000,50) ];
+const platforms = [
+    new Platform('platform1',200,350,100,20),
+    new Platform('platform2',400,300,100,20),
+    new Platform('platform3',600,250,100,20)
+];
+const goal = new Goal('goal',900,350,50,50);
+
+const keys = {};
+document.addEventListener('keydown', e => keys[e.key.toLowerCase()]=true);
+document.addEventListener('keyup', e => keys[e.key.toLowerCase()]=false);
+
+const gravity=0.8, moveSpeed=4, jumpPower=-14;
+const container=document.getElementById('gameContainer');
+const messageDiv = document.getElementById('message');
+
+function showMessage(text,duration=1500){
+    messageDiv.innerText = text;
+    messageDiv.style.display = 'block';
+    setTimeout(()=>{ messageDiv.style.display='none'; }, duration);
+}
+
+function checkCollision(obj) {
+    obj.onGround=false;
+    for(let plat of platforms){
+        if(obj.y + obj.height <= plat.y &&
+           obj.y + obj.height + obj.vy >= plat.y &&
+           obj.x + obj.width > plat.x &&
+           obj.x < plat.x + plat.width){
+            obj.y = plat.y - obj.height;
+            obj.vy=0;
+            obj.onGround=true;
+        }
+    }
+    for(let g of grounds){
+        if(obj.y + obj.height >= g.y &&
+           obj.y + obj.height + obj.vy >= g.y &&
+           obj.x + obj.width > g.x &&
+           obj.x < g.x + g.width){
+            obj.y = g.y - obj.height;
+            obj.vy=0;
+            obj.onGround=true;
+        }
+    }
+}
+
+function updateHazards(){
+    for(let h of hazards){
+        h.vy += gravity;
+        checkCollision(h);
+        let onPlatformOrGround = grounds.concat(platforms).some(p => h.y + h.height === p.y && h.x + h.width > p.x && h.x < p.x + p.width);
+        if(!onPlatformOrGround) h.vx*=-1;
+        if(h.x <= 0 || h.x + h.width >= 2000) h.vx*=-1;
+        h.move();
+    }
+}
+
+function updateGoal(){
+    goal.vy += gravity;
+    checkCollision(goal);
+    goal.updatePosition();
+}
+
+function gameLoop(){
+    player.vx=0;
+    if(keys['a']) player.vx=-moveSpeed;
+    if(keys['d']) player.vx=moveSpeed;
+    if(keys['w'] && player.onGround) player.vy=jumpPower;
+
+    player.vy += gravity;
+    checkCollision(player);
+    player.move();
+
+    updateHazards();
+    updateGoal();
+
+    for(let h of hazards){
+        if(player.collidesWith(h)){
+            showMessage('Hit hazard! Restarting...',2000);
+            setTimeout(()=>location.reload(),2000);
+            return;
+        }
+    }
+
+    if(player.collidesWith(goal)){
+        showMessage('Level Complete!',2000);
+        setTimeout(()=>location.reload(),2000);
+        return;
+    }
+
+    const offset = Math.max(player.x - 400,0);
+    [...hazards,...platforms,...grounds,goal].forEach(obj => { obj.el.style.left = (obj.x - offset) + 'px'; });
+    player.el.style.left = Math.min(400,player.x)+'px';
+
+    requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
 </script>
-
-<input id="myButton01" type=button value="background move left" onclick="{
-  myTemp = '100px 0px'
-  myGlobalX -= 5
-  myTemp =  myGlobalX + 'px 0px'
-  document.getElementById('myBody').style.backgroundPosition =myTemp
-
-}">
-
-<input type=button value="Auto Background Left" onclick="{
-  clearInterval(myClock)
-  myClock = setInterval(function(){
-     document.getElementById('myButton01').click() 
-  }, 100)
-    
-}">
-
-<input type=button value="Image Right" onclick="{
-  document.getElementById('myImage01').style.left = parseInt(document.getElementById('myImage01').style.left) + 10 + 'px'
-}"><br><br>
-
-<img id="myImage01" style="position:relative; width:100px; height:80px; top:0px; left:0px;" src="../t2a25/MoveImg.png">
+</body>
+</html>
