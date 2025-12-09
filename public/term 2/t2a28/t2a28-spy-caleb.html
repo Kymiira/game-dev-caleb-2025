@@ -1,0 +1,149 @@
+<h1 align="center">t2a06-full-crypto.html</h1>
+
+<div style="display:flex; gap:10px; margin-bottom:10px;">
+    <button onclick="showTab('caesarTab')">Caesar Cipher</button>
+    <button onclick="showTab('aesTab')">AES-GCM</button>
+    <button onclick="showTab('rsaTab')">RSA-OAEP</button>
+    <button onclick="showTab('hmacTab')">HMAC-SHA256</button>
+    <button onclick="showTab('pbkdf2Tab')">PBKDF2</button>
+</div>
+
+<div id="caesarTab" style="display:block;">
+    <h2>Caesar Cipher</h2>
+    <textarea id="caesarInput" rows="4" cols="70">Hello World 123!</textarea><br>
+    <button onclick="encryptCaesar()">Encrypt</button>
+    <button onclick="decryptCaesar()">Decrypt</button><br><br>
+    <textarea id="caesarOutput" rows="4" cols="70"></textarea>
+</div>
+
+<div id="aesTab" style="display:none;">
+    <h2>AES-GCM</h2>
+    <textarea id="aesInput" rows="4" cols="70">Hello AES!</textarea><br>
+    <input type="text" id="aesPassphrase" value="mypassword" size="50"><br><br>
+    <button onclick="encryptAES()">Encrypt</button>
+    <button onclick="decryptAES()">Decrypt</button><br><br>
+    <textarea id="aesOutput" rows="4" cols="70"></textarea>
+</div>
+
+<div id="rsaTab" style="display:none;">
+    <h2>RSA-OAEP</h2>
+    <textarea id="rsaInput" rows="4" cols="70">Hello RSA!</textarea><br>
+    <button onclick="generateRSAKeys()">Generate Keys</button>
+    <button onclick="encryptRSA()">Encrypt</button>
+    <button onclick="decryptRSA()">Decrypt</button><br><br>
+    <textarea id="rsaOutput" rows="4" cols="70"></textarea>
+</div>
+
+<div id="hmacTab" style="display:none;">
+    <h2>HMAC-SHA256</h2>
+    <textarea id="hmacInput" rows="4" cols="70">Hello HMAC!</textarea><br>
+    <input type="text" id="hmacKey" value="hmacsecret" size="50"><br><br>
+    <button onclick="generateHMAC()">Generate HMAC</button>
+    <button onclick="verifyHMAC()">Verify HMAC</button><br><br>
+    <textarea id="hmacOutput" rows="4" cols="70"></textarea>
+</div>
+
+<div id="pbkdf2Tab" style="display:none;">
+    <h2>PBKDF2 Key Derivation</h2>
+    <input type="text" id="pbkdf2Pass" value="mypassword" size="50"><br>
+    <input type="text" id="pbkdf2Salt" value="saltysalt" size="50"><br><br>
+    <button onclick="derivePBKDF2()">Derive Key</button><br><br>
+    <textarea id="pbkdf2Output" rows="4" cols="70"></textarea>
+</div>
+
+<script>
+function showTab(tabId){
+    ['caesarTab','aesTab','rsaTab','hmacTab','pbkdf2Tab'].forEach(id=>{
+        document.getElementById(id).style.display = (id === tabId ? 'block' : 'none');
+    });
+}
+
+function encryptCaesar(){
+    const input = document.getElementById('caesarInput').value;
+    let output = '';
+    for(let i=0;i<input.length;i++){
+        let c = input[i];
+        if(c >= 'a' && c <= 'z') output += String.fromCharCode((c.charCodeAt(0)-97+1)%26+97);
+        else if(c >= 'A' && c <= 'Z') output += String.fromCharCode((c.charCodeAt(0)-65+1)%26+65);
+        else if(c >= '0' && c <= '9') output += String.fromCharCode((c.charCodeAt(0)-48+1)%10+48);
+        else output += c;
+    }
+    document.getElementById('caesarOutput').value = output;
+}
+
+function decryptCaesar(){
+    const input = document.getElementById('caesarOutput').value;
+    let output = '';
+    for(let i=0;i<input.length;i++){
+        let c = input[i];
+        if(c >= 'a' && c <= 'z') output += String.fromCharCode((c.charCodeAt(0)-97+25)%26+97);
+        else if(c >= 'A' && c <= 'Z') output += String.fromCharCode((c.charCodeAt(0)-65+25)%26+65);
+        else if(c >= '0' && c <= '9') output += String.fromCharCode((c.charCodeAt(0)-48+9)%10+48);
+        else output += c;
+    }
+    document.getElementById('caesarOutput').value = output;
+}
+
+let aesKey, aesIv;
+async function getAESKey(pass,salt){
+    const enc = new TextEncoder();
+    const baseKey = await crypto.subtle.importKey("raw",enc.encode(pass),"PBKDF2",false,["deriveKey"]);
+    return crypto.subtle.deriveKey({name:"PBKDF2",salt:salt,iterations:100000,hash:"SHA-256"},baseKey,{name:"AES-GCM",length:256},true,["encrypt","decrypt"]);
+}
+async function encryptAES(){
+    const text = document.getElementById('aesInput').value;
+    const pass = document.getElementById('aesPassphrase').value;
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    aesIv = crypto.getRandomValues(new Uint8Array(12));
+    aesKey = await getAESKey(pass,salt);
+    const cipher = await crypto.subtle.encrypt({name:"AES-GCM",iv:aesIv},aesKey,new TextEncoder().encode(text));
+    document.getElementById('aesOutput').value = JSON.stringify({salt:Array.from(salt),iv:Array.from(aesIv),data:Array.from(new Uint8Array(cipher))});
+}
+async function decryptAES(){
+    const input = JSON.parse(document.getElementById('aesOutput').value);
+    const pass = document.getElementById('aesPassphrase').value;
+    const key = await getAESKey(pass,new Uint8Array(input.salt));
+    const decrypted = await crypto.subtle.decrypt({name:"AES-GCM",iv:new Uint8Array(input.iv)},key,new Uint8Array(input.data));
+    document.getElementById('aesOutput').value = new TextDecoder().decode(decrypted);
+}
+
+let rsaPublicKey, rsaPrivateKey;
+async function generateRSAKeys(){
+    const keyPair = await crypto.subtle.generateKey({name:"RSA-OAEP",modulusLength:2048,publicExponent:new Uint8Array([1,0,1]),hash:"SHA-256"},true,["encrypt","decrypt"]);
+    rsaPublicKey = keyPair.publicKey;
+    rsaPrivateKey = keyPair.privateKey;
+}
+async function encryptRSA(){
+    const text = document.getElementById('rsaInput').value;
+    const cipher = await crypto.subtle.encrypt({name:"RSA-OAEP"},rsaPublicKey,new TextEncoder().encode(text));
+    document.getElementById('rsaOutput').value = JSON.stringify(Array.from(new Uint8Array(cipher)));
+}
+async function decryptRSA(){
+    const input = JSON.parse(document.getElementById('rsaOutput').value);
+    const decrypted = await crypto.subtle.decrypt({name:"RSA-OAEP"},rsaPrivateKey,new Uint8Array(input));
+    document.getElementById('rsaOutput').value = new TextDecoder().decode(decrypted);
+}
+
+let lastHMAC;
+async function generateHMAC(){
+    const key = await crypto.subtle.importKey("raw",new TextEncoder().encode(document.getElementById('hmacKey').value),{name:"HMAC",hash:"SHA-256"},false,["sign"]);
+    const sig = await crypto.subtle.sign("HMAC",key,new TextEncoder().encode(document.getElementById('hmacInput').value));
+    lastHMAC = sig;
+    document.getElementById('hmacOutput').value = Array.from(new Uint8Array(sig)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function verifyHMAC(){
+    if(!lastHMAC){ document.getElementById('hmacOutput').value = "No HMAC generated yet"; return; }
+    const key = await crypto.subtle.importKey("raw",new TextEncoder().encode(document.getElementById('hmacKey').value),{name:"HMAC",hash:"SHA-256"},false,["verify"]);
+    const valid = await crypto.subtle.verify("HMAC",key,lastHMAC,new TextEncoder().encode(document.getElementById('hmacInput').value));
+    document.getElementById('hmacOutput').value = valid ? "HMAC matches input" : "HMAC does NOT match input";
+}
+
+async function derivePBKDF2(){
+    const enc = new TextEncoder();
+    const pass = document.getElementById('pbkdf2Pass').value;
+    const salt = enc.encode(document.getElementById('pbkdf2Salt').value);
+    const base = await crypto.subtle.importKey("raw",enc.encode(pass),"PBKDF2",false,["deriveBits"]);
+    const bits = await crypto.subtle.deriveBits({name:"PBKDF2",salt:salt,iterations:100000,hash:"SHA-256"},base,256);
+    document.getElementById('pbkdf2Output').value = Array.from(new Uint8Array(bits)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+</script>
