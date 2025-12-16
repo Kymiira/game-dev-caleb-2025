@@ -16,7 +16,7 @@ function myCheckHit() {
     }
 
     if (myScore <= 0) {
-        requestAnimatioFrame(() location.reload())
+        requestAnimationFrame(() location.reload())
         return
     }
 
