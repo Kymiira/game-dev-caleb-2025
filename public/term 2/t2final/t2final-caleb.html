@@ -75,11 +75,11 @@ function myCheckHit(){
    document.all.myText01.value = event.key
 
    if (event.key == 'w') { // w = go up
-    document.getElementById('myImg01').style.bottom = parseInt(document.getElementById('myImg01').style.bottom) + 10 + 'px'
+    document.getElementById('myImg01').style.top = parseInt(document.getElementById('myImg01').style.top) - 10 + 'px'
    }
 
    if (event.key == 'a') { // a = go left
-    document.getElementById('myImg01').style.right = parseInt(document.getElementById('myImg01').style.right) + 10 + 'px'
+    document.getElementById('myImg01').style.left = parseInt(document.getElementById('myImg01').style.left) - 10 + 'px'
    }
 
    if (event.key == 's') {   // s = go down
@@ -137,4 +137,5 @@ function myCheckHit(){
 <img id="myImg02" src="myImgNew.jpg"  style="position:absolute; width:100px; height:80px; left:350px; top:190px;">
 <img id="myImg03" src="myImgNew.jpg"  style="position:absolute; width:100px; height:80px; left:500px; top:190px;">
 <img id="myImg04" src="myImgNew.jpg"  style="position:absolute; width:100px; height:80px; left:500px; top:400px;">
+
 
