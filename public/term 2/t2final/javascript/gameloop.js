@@ -1,6 +1,7 @@
 console.log("gameloop loaded")
 function gameLoop() {
     const player = document.getElementById('myPlayer');
+    if (!player) return;
     let step = keys['shift'] ? 10 : 5
     let x = parseInt(player.style.left)
     let y = parseInt(player.style.top)
@@ -11,7 +12,7 @@ function gameLoop() {
     if (keys['d']) x += step
 
     x = Math.max(0, Math.min(window.innerWidth - 100, x))
-    y = Math.max(0, Math.min(window.innerWidth - 80, y))
+    y = Math.max(0, Math.min(window.innerHeight - 80, y))
 
     player.style.left = x + 'px'
     player.style.top = y + 'px'
