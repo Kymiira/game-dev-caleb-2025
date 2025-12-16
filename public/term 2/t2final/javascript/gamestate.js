@@ -16,7 +16,8 @@ function myCheckHit() {
     }
 
     if (myScore <= 0) {
-        location.reload()
+        requestAnimatioFrame(() location.reload())
+        return
     }
 
     if (myHitOther('myPlayer', 'myImg04')) {
