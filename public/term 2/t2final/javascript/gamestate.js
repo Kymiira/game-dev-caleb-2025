@@ -1,5 +1,6 @@
 console.log("gamestate loaded")
-let myScore = 10
+let myScore = 3
+myScore = Math.max(myScore, 0)
 
 function myCheckHit() {
     document.getElementById('myText01').value = 'Score: ' + myScore
