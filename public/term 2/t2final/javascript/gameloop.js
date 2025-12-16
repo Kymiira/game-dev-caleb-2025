@@ -1,3 +1,4 @@
+console.log("gameloop loaded")
 function gameLoop() {
     const player = document.getElementById('myPlayer');
     let step = keys['shift'] ? 10 : 5
@@ -18,5 +19,6 @@ function gameLoop() {
     myCheckHit()
 
     requestAnimationFrame(gameLoop)
+    console.log("gameloop ran")
 }
 requestAnimationFrame(gameLoop)

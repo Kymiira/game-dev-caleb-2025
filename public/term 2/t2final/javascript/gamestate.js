@@ -1,3 +1,4 @@
+console.log("gamestate loaded")
 let myScore = 10
 
 function myCheckHit() {
