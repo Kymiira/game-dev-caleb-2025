@@ -15,7 +15,7 @@ const player = {
   speed: 280,
 };
 
-// inputssss
+// inputs
 const keys = new Set();
 window.addEventListener("keydown", (e) => keys.add(e.code));
 window.addEventListener("keyup", (e) => keys.delete(e.code));
@@ -74,3 +74,15 @@ function loop(ts) {
 }
 
 requestAnimationFrame(loop);
+
+let hudMX = document.getElementById('mouseX')
+let hudMY = document.getElementById('mouseY')
+
+function trackMousePos(event) {
+    const clientX = event.clientX
+    const clientY = event.clientY
+
+    hudMX.textContent = clientX
+    hudMY.textContent = clientY
+}
+document.addEventListener('mousemove', trackMousePos);
