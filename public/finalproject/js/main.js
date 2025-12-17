@@ -69,20 +69,41 @@ function loop(ts) {
 
   // Render camera (move world opposite)
   world.style.transform = `translate(${-camera.x}px, ${-camera.y}px)`;
+  faceToMouse();
+  playerEl.style.transformOrigin = "50% 50%";
+  playerEl.style.transform = `rotate(${faceRad}rad)`;
 
   requestAnimationFrame(loop);
 }
 
 requestAnimationFrame(loop);
 
+let mouseWorldX = 0
+let mouseWorldY = 0
+let faceRad = 0
+
 let hudMX = document.getElementById('mouseX')
 let hudMY = document.getElementById('mouseY')
 
-function trackMousePos(event) {
-    const clientX = event.clientX
-    const clientY = event.clientY
+viewport.addEventListener("mousemove", (e) => {
+  const r = viewport.getBoundingClientRect();
 
-    hudMX.textContent = clientX
-    hudMY.textContent = clientY
+  const mxView = e.clientX - r.left;
+  const myView = e.clientY - r.top;
+
+  mouseWorldX = mxView + camera.x;
+  mouseWorldY = myView + camera.y;
+
+  hudMX.textContent = Math.floor(mouseWorldX);
+  hudMY.textContent = Math.floor(mouseWorldY);
+});
+
+function faceToMouse() {
+  const pcx = player.x + player.w / 2
+  const pcy = player.y + player.h / 2
+
+  const dx = mouseWorldX - pcx
+  const dy = mouseWorldY - pcy
+
+  faceRad = Math.atan2(dy, dx)
 }
-document.addEventListener('mousemove', trackMousePos);
