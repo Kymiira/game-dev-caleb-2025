@@ -1,6 +1,13 @@
 const viewport = document.getElementById("viewport"); // defining what the area you see is
 const world = document.getElementById("world"); // defining the world (insert jojo theme)
 const playerEl = document.getElementById("player"); // this is the player (yay!)
+const hudMX = document.getElementById("mouseX");
+const hudMY = document.getElementById("mouseY");
+
+let mxView = 0;
+let myView = 0;
+let faceRad = 0;
+let hasMouse = false;
 
 // world largeness
 const WORLD_W = 3000;
@@ -69,41 +76,43 @@ function loop(ts) {
 
   // Render camera (move world opposite)
   world.style.transform = `translate(${-camera.x}px, ${-camera.y}px)`;
-  faceToMouse();
-  playerEl.style.transformOrigin = "50% 50%";
-  playerEl.style.transform = `rotate(${faceRad}rad)`;
+
+  if (hasMouse) {
+    faceToMouseViewport();
+    hudMX.textContent = Math.floor(mxView);
+    hudMY.textContent = Math.floor(myView);
+
+    playerEl.style.transformOrigin = "50% 50%";
+    playeEl.style.transform = `rotate(${faceRad}rad)`;
+  }
 
   requestAnimationFrame(loop);
 }
 
 requestAnimationFrame(loop);
 
-let mouseWorldX = 0
-let mouseWorldY = 0
-let faceRad = 0
-
-let hudMX = document.getElementById('mouseX')
-let hudMY = document.getElementById('mouseY')
-
-viewport.addEventListener("mousemove", (e) => {
+viewport.addEventListener("pointermove", (e) => {
   const r = viewport.getBoundingClientRect();
-
-  const mxView = e.clientX - r.left;
-  const myView = e.clientY - r.top;
-
-  mouseWorldX = mxView + camera.x;
-  mouseWorldY = myView + camera.y;
-
-  hudMX.textContent = Math.floor(mouseWorldX);
-  hudMY.textContent = Math.floor(mouseWorldY);
+  mxView = e.clientX - r.left;
+  myView = e.clientY - r.top;
+  hasMouse = true;
 });
 
-function faceToMouse() {
-  const pcx = player.x + player.w / 2
-  const pcy = player.y + player.h / 2
+viewport.addEventListener("pointerenter", (e) => {
+  const r = viewport.getBoundingClientRect();
+  mxView = e.clientX - r.left;
+  myView = e.clientY - r.top;
+  hasMouse = true;
+});
 
-  const dx = mouseWorldX - pcx
-  const dy = mouseWorldY - pcy
+viewport.addEventListener("pointerleave", () => { hasMouse = false; });
 
-  faceRad = Math.atan2(dy, dx)
+function faceToMouseViewport() {
+  const pcxView = (player.x - camera.x) + player.w / 2;
+  const pcyView = (player.y - camera.y) + player.h / 2;
+
+  const dx = mxView - pcxView;
+  const dy = myView - pcyView;
+
+  faceRad = Math.atan2(dy, dx);
 }
