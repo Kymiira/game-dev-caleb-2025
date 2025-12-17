@@ -1,0 +1,8 @@
+#player{
+  position:absolute;
+  left:0;
+  top:0;
+  background:rgba(255,255,255,0.9);
+  transform-origin:center center;
+  border-radius:6px;
+}
