@@ -83,7 +83,7 @@ function loop(ts) {
     hudMY.textContent = Math.floor(myView);
 
     playerEl.style.transformOrigin = "50% 50%";
-    playeEl.style.transform = `rotate(${faceRad}rad)`;
+    playerEl.style.transform = `rotate(${faceRad}rad)`;
   }
 
   requestAnimationFrame(loop);
