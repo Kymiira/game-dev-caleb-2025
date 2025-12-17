@@ -5,6 +5,7 @@
 - Browser
 - Roguelike
 - Class-based
+- DOM-based entities, no Canvas
 ## CORE GAMEPLAY LOOP
 ### PLAYER ACTIONS
 - Ranged Attack

@@ -3,33 +3,22 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Roguelike Final - Level 1</title>
-
-  <link rel="stylesheet" href="css/reset.css" />
-  <link rel="stylesheet" href="css/variables.css" />
+  <title>Movement + Camera Test</title>
   <link rel="stylesheet" href="css/game.css" />
-  <link rel="stylesheet" href="css/entities.css" />
-  <link rel="stylesheet" href="css/ui.css" />
 </head>
+
 <body>
-  <div id="page">
-    <div id="gameRoot">
-      <div id="gameWindow">
-        <div id="entityLayer"></div>
-        <div id="projectileLayer"></div>
-        <div id="uiLayer">
-          <div id="hud">
-            <span id="hudHp">HP: --</span>
-            <span id="hudScore">Score: --</span>
-          </div>
-        </div>
-      </div>
-
-
-      <form id="levelPost" method="POST" action="level2.html">
-        <input type="hidden" name="state" id="stateField" />
-      </form>
+  <div id="viewport">
+    <div id="world">
+      <div id="player"></div>
+      <!-- optional landmarks so you can “feel” movement -->
+      <div class="mark" style="left: 50px; top: 50px;"></div>
+      <div class="mark" style="left: 2800px; top: 50px;"></div>
+      <div class="mark" style="left: 50px; top: 2800px;"></div>
+      <div class="mark" style="left: 2800px; top: 2800px;"></div>
     </div>
+
+    <div id="hud">WASD to move</div>
   </div>
 
   <script type="module" src="js/main.js"></script>
