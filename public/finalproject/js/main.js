@@ -1,12 +1,12 @@
-const viewport = document.getElementById("viewport");
-const world = document.getElementById("world");
-const playerEl = document.getElementById("player");
+const viewport = document.getElementById("viewport"); // defining what the area you see is
+const world = document.getElementById("world"); // defining the world (insert jojo theme)
+const playerEl = document.getElementById("player"); // this is the player (yay!)
 
-// WORLD SETTINGS
+// world largeness
 const WORLD_W = 3000;
 const WORLD_H = 3000;
 
-// PLAYER STATE (world coordinates)
+// playerstate
 const player = {
   x: 1500,
   y: 1500,
@@ -15,7 +15,7 @@ const player = {
   speed: 280,
 };
 
-// INPUT
+// inputssss
 const keys = new Set();
 window.addEventListener("keydown", (e) => keys.add(e.code));
 window.addEventListener("keyup", (e) => keys.delete(e.code));
@@ -27,7 +27,7 @@ function normalize(x, y) {
   return { x: x / m, y: y / m };
 }
 
-// CAMERA STATE
+// camerastate
 const camera = { x: 0, y: 0 };
 
 let last = 0;
@@ -35,7 +35,7 @@ function loop(ts) {
   const dt = Math.min(0.033, (ts - last) / 1000 || 0);
   last = ts;
 
-  // Movement axis
+  // movement axis
   const left  = keys.has("KeyA") || keys.has("ArrowLeft");
   const right = keys.has("KeyD") || keys.has("ArrowRight");
   const up    = keys.has("KeyW") || keys.has("ArrowUp");
@@ -45,15 +45,15 @@ function loop(ts) {
   const ay = (down ? 1 : 0) - (up ? 1 : 0);
   const n = normalize(ax, ay);
 
-  // Update player world pos
+  // the player's position in the world because WHY NOT!!!
   player.x += n.x * player.speed * dt;
   player.y += n.y * player.speed * dt;
 
-  // Clamp player to world bounds
+  // the player will be stuck to the world bnecuase of ths code
   player.x = clamp(player.x, 0, WORLD_W - player.w);
   player.y = clamp(player.y, 0, WORLD_H - player.h);
 
-  // Camera follows player center
+  // camera will follow the player because of this special code
   const vw = viewport.clientWidth;
   const vh = viewport.clientHeight;
 
@@ -63,7 +63,7 @@ function loop(ts) {
   camera.x = clamp(targetX, 0, WORLD_W - vw);
   camera.y = clamp(targetY, 0, WORLD_H - vh);
 
-  // Render player in world space
+  // rendering the player because WHY NOT
   playerEl.style.left = `${player.x}px`;
   playerEl.style.top = `${player.y}px`;
 
