@@ -1,6 +1,6 @@
-const viewport = document.getElementById("viewport"); // defining what the area you see is
-const world = document.getElementById("world"); // defining the world (insert jojo theme)
-const playerEl = document.getElementById("player"); // this is the player (yay!)
+const viewport = document.getElementById("viewport");
+const world = document.getElementById("world");
+const playerEl = document.getElementById("player");
 const hudMX = document.getElementById("mouseX");
 const hudMY = document.getElementById("mouseY");
 
@@ -9,11 +9,8 @@ let myView = 0;
 let faceRad = 0;
 let hasMouse = false;
 
-// world largeness
 const WORLD_W = 3000;
 const WORLD_H = 3000;
-
-// playerstate
 const player = {
   x: 1500,
   y: 1500,
@@ -26,6 +23,9 @@ const player = {
 const keys = new Set();
 window.addEventListener("keydown", (e) => keys.add(e.code));
 window.addEventListener("keyup", (e) => keys.delete(e.code));
+document.addEventListener('mousedown', function(e) {
+  console.log('leftclickdetected');
+});
 
 function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 function normalize(x, y) {
@@ -70,13 +70,14 @@ function loop(ts) {
   camera.x = clamp(targetX, 0, WORLD_W - vw);
   camera.y = clamp(targetY, 0, WORLD_H - vh);
 
-  // rendering the player because WHY NOT
+  // rendering the player
   playerEl.style.left = `${player.x}px`;
   playerEl.style.top = `${player.y}px`;
 
   // Render camera (move world opposite)
   world.style.transform = `translate(${-camera.x}px, ${-camera.y}px)`;
 
+  // if statement for the mouseface function
   if (hasMouse) {
     faceToMouseViewport();
     hudMX.textContent = Math.floor(mxView);
@@ -85,28 +86,28 @@ function loop(ts) {
     playerEl.style.transformOrigin = "50% 50%";
     playerEl.style.transform = `rotate(${faceRad}rad)`;
   }
-
+  // continuation of gameloop
   requestAnimationFrame(loop);
 }
-
+// this is the initial gameloop trigger
 requestAnimationFrame(loop);
-
+// catching the mouses movement on the viewport (visible game map, different than the world map plane)
 viewport.addEventListener("pointermove", (e) => {
   const r = viewport.getBoundingClientRect();
   mxView = e.clientX - r.left;
   myView = e.clientY - r.top;
   hasMouse = true;
 });
-
+// catching the mouse entering
 viewport.addEventListener("pointerenter", (e) => {
   const r = viewport.getBoundingClientRect();
   mxView = e.clientX - r.left;
   myView = e.clientY - r.top;
   hasMouse = true;
 });
-
+// disables mouse tracking 
 viewport.addEventListener("pointerleave", () => { hasMouse = false; });
-
+// mouse tracking code
 function faceToMouseViewport() {
   const pcxView = (player.x - camera.x) + player.w / 2;
   const pcyView = (player.y - camera.y) + player.h / 2;
