@@ -1,6 +1,7 @@
 const viewport = document.getElementById("viewport");
 const world = document.getElementById("world");
 const playerEl = document.getElementById("player");
+const bulletEl = document.getElementById("bullet");
 const hudMX = document.getElementById("mouseX");
 const hudMY = document.getElementById("mouseY");
 
@@ -19,7 +20,6 @@ const player = {
   speed: 280,
 };
 
-// inputs
 const keys = new Set();
 window.addEventListener("keydown", (e) => keys.add(e.code));
 window.addEventListener("keyup", (e) => keys.delete(e.code));
@@ -34,7 +34,6 @@ function normalize(x, y) {
   return { x: x / m, y: y / m };
 }
 
-// camerastate
 const camera = { x: 0, y: 0 };
 
 let last = 0;
@@ -42,7 +41,6 @@ function loop(ts) {
   const dt = Math.min(0.033, (ts - last) / 1000 || 0);
   last = ts;
 
-  // movement axis
   const left  = keys.has("KeyA") || keys.has("ArrowLeft");
   const right = keys.has("KeyD") || keys.has("ArrowRight");
   const up    = keys.has("KeyW") || keys.has("ArrowUp");
@@ -52,15 +50,12 @@ function loop(ts) {
   const ay = (down ? 1 : 0) - (up ? 1 : 0);
   const n = normalize(ax, ay);
 
-  // the player's position in the world because WHY NOT!!!
   player.x += n.x * player.speed * dt;
   player.y += n.y * player.speed * dt;
 
-  // the player will be stuck to the world bnecuase of ths code
   player.x = clamp(player.x, 0, WORLD_W - player.w);
   player.y = clamp(player.y, 0, WORLD_H - player.h);
 
-  // camera will follow the player because of this special code
   const vw = viewport.clientWidth;
   const vh = viewport.clientHeight;
 
@@ -70,11 +65,9 @@ function loop(ts) {
   camera.x = clamp(targetX, 0, WORLD_W - vw);
   camera.y = clamp(targetY, 0, WORLD_H - vh);
 
-  // rendering the player
   playerEl.style.left = `${player.x}px`;
   playerEl.style.top = `${player.y}px`;
 
-  // Render camera (move world opposite)
   world.style.transform = `translate(${-camera.x}px, ${-camera.y}px)`;
 
   // if statement for the mouseface function
@@ -86,28 +79,27 @@ function loop(ts) {
     playerEl.style.transformOrigin = "50% 50%";
     playerEl.style.transform = `rotate(${faceRad}rad)`;
   }
-  // continuation of gameloop
   requestAnimationFrame(loop);
 }
-// this is the initial gameloop trigger
 requestAnimationFrame(loop);
-// catching the mouses movement on the viewport (visible game map, different than the world map plane)
+
+
 viewport.addEventListener("pointermove", (e) => {
   const r = viewport.getBoundingClientRect();
   mxView = e.clientX - r.left;
   myView = e.clientY - r.top;
   hasMouse = true;
 });
-// catching the mouse entering
+
 viewport.addEventListener("pointerenter", (e) => {
   const r = viewport.getBoundingClientRect();
   mxView = e.clientX - r.left;
   myView = e.clientY - r.top;
   hasMouse = true;
 });
-// disables mouse tracking 
+
 viewport.addEventListener("pointerleave", () => { hasMouse = false; });
-// mouse tracking code
+
 function faceToMouseViewport() {
   const pcxView = (player.x - camera.x) + player.w / 2;
   const pcyView = (player.y - camera.y) + player.h / 2;
