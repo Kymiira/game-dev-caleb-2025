@@ -35,7 +35,7 @@ function normalize(x, y) {
 const camera = { x: 0, y: 0 };
 
 const bullets = [];
-const bullet_speed = 900; // pixels per second
+const bullet_speed = 900;
 const bullet_ttl = 1.2;
 const fire_cooldown = 0.12;
 
@@ -49,6 +49,7 @@ function makeBulletElement() {
     el = bulletEl.cloneNode(true);
     el.removeAttribute("id");
     el.style.display = "";
+    el.style.position = "absolute";
   } else {
     el = document.createElement("div");
     el.className = "bullet";
@@ -58,14 +59,12 @@ function makeBulletElement() {
     el.style.borderRadius = "999px";
   }
 
-  // CRITICAL: bullet must exist inside #world to be visible
   world.appendChild(el);
 
-  // If template has no size until styled, fall back to default
   const w = el.offsetWidth || 6;
   const h = el.offsetHeight || 6;
 
-  return { el, w, h };
+  return { el: el, w: w, h: h };
 }
 
 function spawnBullet() {
@@ -75,7 +74,7 @@ function spawnBullet() {
   const vx = Math.cos(faceRad) * bullet_speed;
   const vy = Math.sin(faceRad) * bullet_speed;
 
-  const { el, w, h } = makeBulletElement();
+  const made = makeBulletElement();
 
   bullets.push({
     x: x,
@@ -83,9 +82,9 @@ function spawnBullet() {
     vx: vx,
     vy: vy,
     life: bullet_ttl,
-    w: w,
-    h: h,
-    el: el,
+    w: made.w,
+    h: made.h,
+    el: made.el,
   });
 }
 
@@ -97,8 +96,7 @@ function updateBullets(dt) {
     b.y += b.vy * dt;
     b.life -= dt;
 
-    const outOfBounds =
-      (b.x < 0 || b.y < 0 || b.x > WORLD_W || b.y > WORLD_H);
+    const outOfBounds = (b.x < 0 || b.y < 0 || b.x > WORLD_W || b.y > WORLD_H);
 
     if (b.life <= 0 || outOfBounds) {
       b.el.remove();
@@ -106,8 +104,8 @@ function updateBullets(dt) {
       continue;
     }
 
-    b.el.style.left = `${b.x - b.w / 2}px`;
-    b.el.style.top = `${b.y - b.h / 2}px`;
+    b.el.style.left = (b.x - b.w / 2) + "px";
+    b.el.style.top  = (b.y - b.h / 2) + "px";
   }
 }
 

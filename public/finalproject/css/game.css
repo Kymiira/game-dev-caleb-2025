@@ -48,12 +48,3 @@ html, body { height: 100%; margin: 0; }
   opacity: 0.9;
   pointer-events: none;
 }
-
-#bullet{
-  position: absolute;
-  background: #f5f5f5;
-  width: 8px;
-  height: 8px;
-  left: 100000;
-  top: 100000;
-}
