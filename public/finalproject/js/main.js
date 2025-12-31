@@ -39,7 +39,6 @@ const bullet_speed = 900;
 const bullet_ttl = 1.2;
 const fire_cooldown = 0.12;
 
-let firing = false;
 let fireCd = 0;
 
 function makeBulletElement() {
@@ -114,12 +113,16 @@ function updateBullets(dt) {
 
 viewport.addEventListener("pointerdown", (e) => {
   if (e.button !== 0) return;
-  firing = true;
-});
 
-window.addEventListener("pointerup", (e) => {
-  if (e.button !== 0) return;
-  firing = false;
+  const r = viewport.getBoundingClientRect();
+  mxView = e.clientX - r.left;
+  myView = e.clientY - r.top;
+  hasMouse = true;
+
+  if (fireCd <= 0) {
+    spawnBullet();
+    fireCd = fire_cooldown;
+  }
 });
 
 let last = 0;
@@ -165,10 +168,6 @@ function loop(ts) {
   }
 
   fireCd = Math.max(0, fireCd - dt);
-  if (firing && hasMouse && fireCd === 0) {
-    spawnBullet();
-    fireCd = fire_cooldown;
-  }
 
   updateBullets(dt);
 
