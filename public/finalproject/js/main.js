@@ -25,7 +25,6 @@ const keys = new Set();
 window.addEventListener("keydown", (e) => keys.add(e.code));
 window.addEventListener("keyup", (e) => keys.delete(e.code));
 
-
 function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 function normalize(x, y) {
   const m = Math.hypot(x, y);
@@ -53,11 +52,16 @@ function makeBulletElement() {
   } else {
     el = document.createElement("div");
     el.className = "bullet";
+    el.style.position = "absolute";
     el.style.width = "6px";
     el.style.height = "6px";
     el.style.borderRadius = "999px";
   }
 
+  // CRITICAL: bullet must exist inside #world to be visible
+  world.appendChild(el);
+
+  // If template has no size until styled, fall back to default
   const w = el.offsetWidth || 6;
   const h = el.offsetHeight || 6;
 
@@ -69,7 +73,7 @@ function spawnBullet() {
   const y = player.y + player.h / 2;
 
   const vx = Math.cos(faceRad) * bullet_speed;
-  const vy = Math.cos(faceRad) * bullet_speed;
+  const vy = Math.sin(faceRad) * bullet_speed; // FIXED
 
   const { el, w, h } = makeBulletElement();
 
@@ -90,16 +94,16 @@ function updateBullets(dt) {
     b.y += b.vy * dt;
     b.life -= dt;
 
-    const outOfBounds = 
+    const outOfBounds =
       (b.x < 0 || b.y < 0 || b.x > WORLD_W || b.y > WORLD_H);
-    
+
     if (b.life <= 0 || outOfBounds) {
       b.el.remove();
       bullets.splice(i, 1);
       continue;
     }
 
-    b.el.style.left =  `${b.x - b.w / 2}px`;
+    b.el.style.left = `${b.x - b.w / 2}px`;
     b.el.style.top = `${b.y - b.h / 2}px`;
   }
 }
@@ -161,13 +165,12 @@ function loop(ts) {
     spawnBullet();
     fireCd = fire_cooldown;
   }
-  
+
   updateBullets(dt);
 
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
-
 
 viewport.addEventListener("pointermove", (e) => {
   const r = viewport.getBoundingClientRect();
