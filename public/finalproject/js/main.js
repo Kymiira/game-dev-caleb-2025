@@ -12,6 +12,7 @@ let hasMouse = false;
 
 const WORLD_W = 3000;
 const WORLD_H = 3000;
+
 const player = {
   x: 1500,
   y: 1500,
@@ -23,9 +24,7 @@ const player = {
 const keys = new Set();
 window.addEventListener("keydown", (e) => keys.add(e.code));
 window.addEventListener("keyup", (e) => keys.delete(e.code));
-document.addEventListener('mousedown', function(e) {
-  console.log('leftclickdetected');
-});
+
 
 function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 function normalize(x, y) {
@@ -35,6 +34,85 @@ function normalize(x, y) {
 }
 
 const camera = { x: 0, y: 0 };
+
+const bullets = [];
+const bullet_speed = 900; // pixels per second
+const bullet_ttl = 1.2;
+const fire_cooldown = 0.12;
+
+let firing = false;
+let fireCd = 0;
+
+function makeBulletElement() {
+  let el = null;
+
+  if (bulletEl) {
+    el = bulletEl.cloneNode(true);
+    el.removeAttribute("id");
+    el.style.display = "";
+  } else {
+    el = document.createElement("div");
+    el.className = "bullet";
+    el.style.width = "6px";
+    el.style.height = "6px";
+    el.style.borderRadius = "999px";
+  }
+
+  const w = el.offsetWidth || 6;
+  const h = el.offsetHeight || 6;
+
+  return { el, w, h };
+}
+
+function spawnBullet() {
+  constt x = player.x + player.w / 2;
+  const y = player.y + player.h / 2;
+
+  const vx = Math.cos(faceRad) * bullet_speed;
+  const vy = Math.cos(faceRad) * bullet_speed;
+
+  const { el, w, h } = makeBulletElement();
+
+  bullets.push({
+    x, y,
+    vx, vy,
+    life: bullet_ttl,
+    w, h,
+    el,
+  });
+}
+
+function updateBullets(dt) {
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    const b = bullets[i];
+
+    b.x += b.vx * dt;
+    b.y += b.vy * dt;
+    b.life -= dt;
+
+    const outOfBounds = 
+      (b.x < 0 || b.y < 0 || b.x > WORLD_W || b.y > WORLD_H);
+    
+    if (b.life <= 0 || outOfBounds) {
+      b.el.remove();
+      bullets.splice(i, 1);
+      continue;
+    }
+
+    b.el.style.left =  `${b.x - b.w / 2}px`;
+    b.el.style.top = `${b.y - b.h / 2}px`;
+  }
+}
+
+viewport.addEventListener("pointerdown", (e) => {
+  if (e.button !== 0) return;
+  firing = true;
+});
+
+window.addEventListener("pointerup", (e) => {
+  if (e.button !== 0) return;
+  firing = false;
+});
 
 let last = 0;
 function loop(ts) {
@@ -67,10 +145,8 @@ function loop(ts) {
 
   playerEl.style.left = `${player.x}px`;
   playerEl.style.top = `${player.y}px`;
-
   world.style.transform = `translate(${-camera.x}px, ${-camera.y}px)`;
 
-  // if statement for the mouseface function
   if (hasMouse) {
     faceToMouseViewport();
     hudMX.textContent = Math.floor(mxView);
@@ -79,6 +155,15 @@ function loop(ts) {
     playerEl.style.transformOrigin = "50% 50%";
     playerEl.style.transform = `rotate(${faceRad}rad)`;
   }
+
+  fireCd = Math.max(0, fireCd - dt);
+  if (firing && hasMouse && fireCd === 0) {
+    spawnBullet();
+    fireCd = fire_cooldown;
+  }
+  
+  updateBullets(dt);
+  
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
