@@ -57,6 +57,7 @@ function makeBulletElement() {
     el.style.width = "6px";
     el.style.height = "6px";
     el.style.borderRadius = "999px";
+    el.style.background = "#f5f5f5"
   }
 
   world.appendChild(el);
