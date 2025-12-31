@@ -35,7 +35,7 @@ function normalize(x, y) {
 const camera = { x: 0, y: 0 };
 
 const bullets = [];
-// const bullet_speed = 900;
+const bullet_speed = 900;
 const bullet_ttl = 1.2;
 const fire_cooldown = 0.12;
 
@@ -105,8 +105,8 @@ function updateBullets(dt) {
       continue;
     }
 
-    b.el.style.left = (b.x - b.w / 2) + "px";
-    b.el.style.top  = (b.y - b.h / 2) + "px";
+    // b.el.style.left = (b.x - b.w / 2) + "px";
+    // b.el.style.top  = (b.y - b.h / 2) + "px";
   }
 }
 
