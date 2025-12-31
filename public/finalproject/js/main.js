@@ -57,7 +57,9 @@ function makeBulletElement() {
     el.style.width = "6px";
     el.style.height = "6px";
     el.style.borderRadius = "999px";
-    el.style.background = "#f5f5f5"
+    el.style.background = "#fff";
+    el.style.zIndex = "10";
+    el.style.boxShadow = "0 0 6px rgba(255,255,255,0.8)";
   }
 
   world.appendChild(el);
@@ -105,8 +107,8 @@ function updateBullets(dt) {
       continue;
     }
 
-    // b.el.style.left = (b.x - b.w / 2) + "px";
-    // b.el.style.top  = (b.y - b.h / 2) + "px";
+    b.el.style.left = (b.x - b.w / 2) + "px";
+    b.el.style.top  = (b.y - b.h / 2) + "px";
   }
 }
 

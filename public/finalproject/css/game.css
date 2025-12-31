@@ -48,3 +48,13 @@ html, body { height: 100%; margin: 0; }
   opacity: 0.9;
   pointer-events: none;
 }
+
+.bullet{
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #fff;
+  z-index: 10;
+  box-shadow: 0 0 6px rgba(255,255,255,0.8);
+}
