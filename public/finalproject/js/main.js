@@ -65,7 +65,7 @@ function makeBulletElement() {
 }
 
 function spawnBullet() {
-  constt x = player.x + player.w / 2;
+  const x = player.x + player.w / 2;
   const y = player.y + player.h / 2;
 
   const vx = Math.cos(faceRad) * bullet_speed;
@@ -163,7 +163,7 @@ function loop(ts) {
   }
   
   updateBullets(dt);
-  
+
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
