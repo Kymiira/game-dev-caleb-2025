@@ -73,16 +73,19 @@ function spawnBullet() {
   const y = player.y + player.h / 2;
 
   const vx = Math.cos(faceRad) * bullet_speed;
-  const vy = Math.sin(faceRad) * bullet_speed; // FIXED
+  const vy = Math.sin(faceRad) * bullet_speed;
 
   const { el, w, h } = makeBulletElement();
 
   bullets.push({
-    x, y,
-    vx, vy,
+    x: x,
+    y: y,
+    vx: vx,
+    vy: vy,
     life: bullet_ttl,
-    w, h,
-    el,
+    w: w,
+    h: h,
+    el: el,
   });
 }
 
