@@ -65,3 +65,33 @@
     - enemy combinations punish weak build<br>
     - POWER fantasy or DEATH<br>
 </details>
+<details>
+    <summary>todo</summary>
+    <details>
+        <summary>not started</summary>
+        <ul>
+            <li>implement either localstorage or sessionstorage for data transfer locally<li>
+        </ul>
+    </details>
+    <details>
+        <summary>working on</summary>
+        <ul>
+            <li>hostile systems (spawning, health, movement, score)</li>
+        </ul>
+    </details>
+    <details>
+        <summary>finished</summary>
+        <ul>
+            <li>created level 1 base</li>
+            <li>set up world vs viewport</li>
+            <li>created player state object</li>
+            <li>camera function tracking player movement around world</li>
+            <li>set up a game loop function based on delta time (different ingame tick system dealing with higher/slower fps--tick time issues)</li>
+            <li>set up wasd movement for player</li>
+            <li>set up mouse tracking and facetomouse function</li>
+            <li>set up simple gun - bullet system</li>
+            <li>find a way to locally transfer variables from one web page to another</li>
+        </ul>
+    </details>
+</details>
+
