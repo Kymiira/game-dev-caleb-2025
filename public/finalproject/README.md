@@ -70,7 +70,7 @@
     <details>
         <summary>not started</summary>
         <ul>
-            <li>implement either localstorage or sessionstorage for data transfer locally<li>
+            <li>implement either localstorage or sessionstorage for data transfer locally</li>
         </ul>
     </details>
     <details>
