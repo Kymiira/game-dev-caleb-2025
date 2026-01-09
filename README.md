@@ -7,6 +7,7 @@
       <ul>
         <li><a href="https://github.com/hpssjellis/high-school-javascript-game-dev-assignment-images">Mr Ellis' Class Repo</a></li>
         <li><a href="https://github.com/Kymiira/game-dev-caleb-2025">Game Dev Repo (here)</a></li>
+        <li><a href="https://github.com/Kymiira/gamedev-finalproject-testing">Game Dev Final Proj. Testing Repo</li>
       </ul>
       </details>
     </td>
