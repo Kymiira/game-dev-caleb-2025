@@ -37,6 +37,8 @@ img { position:absolute; }
 </div>
 
 <script>
+let myGlobalX = 0;
+let myClock;
 class GameObject {
     constructor(id, x, y, width, height) {
         this.id = id;
@@ -162,6 +164,14 @@ function gameLoop(){
     const offset = Math.max(player.x - 400,0);
     [...hazards,...platforms,...grounds,goal].forEach(obj => { obj.el.style.left = (obj.x - offset) + 'px'; });
     player.el.style.left = Math.min(400,player.x)+'px';
+
+    clearInterval(myClock)
+    myClock = setInterval(function(){
+        myTemp = '100px 0px'
+        myGlobalX -= 5
+        myTemp =  myGlobalX + 'px 0px'
+        document.getElementById('myBody').style.backgroundPosition =myTemp
+    }, 100)
 
     requestAnimationFrame(gameLoop);
 }
