@@ -5,12 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Background Scroll Simulator</title>
   <style>
-    :root{
-      --w: 900px;
-      --h: 520px;
-    }
-
-    * { box-sizing: border-box; }
+    :root{--w:900px;--h:520px}
+    *{box-sizing:border-box}
     body{
       margin:0;
       min-height:100vh;
@@ -18,19 +14,16 @@
       place-items:center;
       background:#0b0f1a;
       color:#fff;
-      font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif
     }
-
     #frame{
-      width:min(var(--w), calc(100vw - 32px));
-      height:min(var(--h), calc(100vh - 32px));
+      width:min(var(--w),calc(100vw - 32px));
+      height:min(var(--h),calc(100vh - 32px));
       position:relative;
       overflow:hidden;
       border:2px solid #000;
-      background:#87ceeb;
+      background:#87ceeb
     }
-
-    /* Moving background */
     #bg{
       position:absolute;
       inset:0;
@@ -38,9 +31,8 @@
       background-repeat:repeat-x;
       background-position:0 0;
       background-size:auto 100%;
-      will-change:background-position;
+      will-change:background-position
     }
-
     #hud{
       position:absolute;
       left:10px;
@@ -50,9 +42,8 @@
       border-radius:10px;
       background:rgba(0,0,0,.45);
       font-size:14px;
-      user-select:none;
+      user-select:none
     }
-
     #hint{
       position:absolute;
       right:10px;
@@ -65,52 +56,37 @@
       user-select:none;
       opacity:.95;
       text-align:right;
-      line-height:1.3;
+      line-height:1.3
     }
   </style>
 </head>
 <body>
   <div id="frame">
     <div id="bg" aria-hidden="true"></div>
-
-    <div id="hud">
-      Speed: <span id="ppx">5</span> px/tick
-    </div>
-
-    <div id="hint">
-      ↑ / ↓ : speed<br>
-      Space : pause<br>
-      R : reset
-    </div>
+    <div id="hud">Speed: <span id="ppx">5</span> px/tick</div>
+    <div id="hint">↑ / ↓ : speed<br>Space : pause<br>R : reset</div>
   </div>
 
   <script>
-    // Minimal logic: a single timer updates backgroundPositionX.
-    const bg = document.getElementById("bg");
-    const ppxEl = document.getElementById("ppx");
-
-    let x = 0;           // background X offset
-    let ppx = 5;         // pixels per tick (what you called ppx)
-    let paused = false;
-
+    const bg=document.getElementById("bg");
+    const ppxEl=document.getElementById("ppx");
+    let x=0,ppx=5,paused=false;
     function render(){
-      bg.style.backgroundPosition = `${x}px 0px`;
-      ppxEl.textContent = ppx;
+      bg.style.backgroundPosition=`${x}px 0px`;
+      ppxEl.textContent=ppx;
     }
-
-    // fixed tick (simple + predictable ppx counter)
-    const TICK_MS = 16; // ~60 ticks/sec
-    setInterval(() => {
-      if (paused) return;
-      x -= ppx;
+    const TICK_MS=16;
+    setInterval(()=>{
+      if(paused) return;
+      x-=ppx;
       render();
-    }, TICK_MS);
+    },TICK_MS);
 
-    addEventListener("keydown", (e) => {
-      if (e.key === "ArrowUp")  { ppx = Math.min(60, ppx + 1); render(); }
-      if (e.key === "ArrowDown"){ ppx = Math.max(0,  ppx - 1); render(); }
-      if (e.code === "Space")   { paused = !paused; e.preventDefault(); }
-      if (e.key.toLowerCase() === "r"){ x = 0; render(); }
+    addEventListener("keydown",(e)=>{
+      if(e.key==="ArrowUp"){ppx=Math.min(60,ppx+1);render();}
+      if(e.key==="ArrowDown"){ppx=Math.max(0,ppx-1);render();}
+      if(e.code==="Space"){paused=!paused;e.preventDefault();}
+      if(e.key.toLowerCase()==="r"){x=0;render();}
     });
 
     render();
