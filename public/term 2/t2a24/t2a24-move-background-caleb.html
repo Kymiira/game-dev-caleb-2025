@@ -1,1007 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Massively Improved Side-Scroller Demo</title>
-<style>
-  :root{
-    --sky:#87ceeb;
-    --hud-bg: rgba(0,0,0,.55);
-    --hud-border: rgba(255,255,255,.18);
-    --ground:#7a3b10;
-    --ground-top:#56270a;
-    --plat:#2ecc71;
-    --plat-edge:#27ae60;
-    --danger:#e74c3c;
-    --danger-edge:#b8372c;
-    --coin:#f1c40f;
-    --text:#ffffff;
-    --shadow: rgba(0,0,0,.35);
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Minimal CSS Scroller Demo</title>
+  <style>
+    :root{
+      --w: 900px;
+      --h: 520px;
 
-  html,body{
-    width:100%;
-    height:100%;
-    margin:0;
-    overflow:hidden;
-    background:#16212a;
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    user-select:none;
-  }
+      /* Core: background scroll speed + distance */
+      --scroll-speed: 12s;       /* lower = faster */
+      --scroll-distance: 1024px; /* how far one loop moves */
+    }
 
-  /* Outer viewport (screen) */
-  #viewport{
-    position:relative;
-    width:100vw;
-    height:100vh;
-    overflow:hidden;
-    background: var(--sky);
-  }
+    * { box-sizing: border-box; }
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      background:#0b0f1a;
+      color:#fff;
+      font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
 
-  /* Parallax background layers */
-  .parallax{
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-    background-repeat: repeat-x;
-    background-position: 0 0;
-    background-size: auto 100%;
-    will-change: transform;
-  }
-  /* Replace these with your images if desired */
-  #bgFar{
-    opacity:.55;
-    filter: saturate(.95);
-    background-image: linear-gradient(to bottom, rgba(255,255,255,.35), rgba(255,255,255,0));
-  }
-  #bgMid{
-    opacity:.35;
-    background-image: radial-gradient(circle at 25% 35%, rgba(255,255,255,.55), transparent 45%),
-                      radial-gradient(circle at 70% 25%, rgba(255,255,255,.45), transparent 48%);
-  }
-  #bgNear{
-    opacity:.18;
-    background-image: linear-gradient(to bottom, transparent, rgba(0,0,0,.18));
-  }
+    /* Centered game frame */
+    .game{
+      width: min(var(--w), calc(100vw - 32px));
+      height: min(var(--h), calc(100vh - 32px));
+      border:2px solid #000;
+      overflow:hidden;
+      position:relative;
+      background:#87ceeb;
+    }
 
-  /* World layer (everything in world coords) */
-  #world{
-    position:absolute;
-    left:0; top:0;
-    width:1px; height:1px;
-    will-change: transform;
-  }
+    /* Moving background layer (CSS-only) */
+    .bg{
+      position:absolute;
+      inset:0;
+      z-index:0;
 
-  /* Entities */
-  .entity{
-    position:absolute;
-    border-radius:10px;
-    box-sizing:border-box;
-    image-rendering: pixelated;
-  }
+      /* Use your image here; keep repeat-x for endless scroll */
+      background-image: url("../t2a25/BackgroundImg.png");
+      background-repeat: repeat-x;
+      background-position: 0 0;
+      background-size: auto 100%;
 
-  /* Player as a div for future CSS sprite work */
-  #player{
-    width:46px;
-    height:54px;
-    z-index:50;
-    border-radius:12px;
-    background:
-      radial-gradient(circle at 30% 28%, rgba(255,255,255,.95), rgba(255,255,255,0) 45%),
-      linear-gradient(to bottom, #2b9cff, #1663b8);
-    box-shadow: 0 10px 18px var(--shadow);
-    transform-origin: 50% 90%;
-  }
-  #player.face-left{ transform: scaleX(-1); }
-  #player.hurt{ filter: brightness(1.2) saturate(1.2); }
+      /* If your image path isn’t available, comment out the line above and
+         uncomment this gradient fallback:
+      background-image:
+        linear-gradient(#87ceeb 0 60%, #9fe0ff 60% 61%, #87ceeb 61% 100%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.22) 0 20px, rgba(255,255,255,0) 20px 60px);
+      */
 
-  .platform{
-    background: var(--plat);
-    border-bottom: 6px solid var(--plat-edge);
-    border-radius: 12px;
-    box-shadow: 0 10px 0 rgba(0,0,0,.10);
-  }
-  .ground{
-    background: var(--ground);
-    border-top: 7px solid var(--ground-top);
-    border-radius: 0;
-  }
+      animation: bgScroll var(--scroll-speed) linear infinite;
+      will-change: background-position;
+    }
 
-  .enemy{
-    width:44px;
-    height:44px;
-    background: var(--danger);
-    border: 3px solid var(--danger-edge);
-    border-radius: 12px;
-    box-shadow: 0 10px 0 rgba(0,0,0,.18);
-  }
-  .enemy::after{
-    content:"";
-    position:absolute;
-    width:10px; height:10px;
-    border-radius:50%;
-    left:10px; top:12px;
-    background: rgba(255,255,255,.9);
-    box-shadow: 16px 0 0 rgba(255,255,255,.9);
-  }
+    /* Optional second layer for a subtle parallax feel (also CSS-only) */
+    .bg::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background-repeat: repeat-x;
+      background-position: 0 0;
+      background-size: auto 100%;
+      opacity:.35;
 
-  .coin{
-    width:22px;
-    height:22px;
-    border-radius:50%;
-    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.9), rgba(255,255,255,0) 45%),
-                linear-gradient(to bottom, #ffd54a, #d9a400);
-    box-shadow: 0 8px 12px rgba(0,0,0,.25);
-    border: 2px solid rgba(0,0,0,.12);
-  }
+      /* Same image, slower to simulate depth */
+      background-image: url("../t2a25/BackgroundImg.png");
+      animation: bgScroll calc(var(--scroll-speed) * 1.8) linear infinite;
+      filter: blur(0.2px);
+    }
 
-  #goal{
-    width:70px;
-    height:92px;
-    border-radius:16px;
-    background: linear-gradient(to bottom, #00ff88, #00b85f);
-    border: 4px solid rgba(255,255,255,.8);
-    box-shadow: 0 14px 20px rgba(0,0,0,.25);
-  }
-  #goal::before{
-    content:"🏁";
-    position:absolute;
-    inset:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:48px;
-    filter: drop-shadow(0 6px 6px rgba(0,0,0,.25));
-  }
+    @keyframes bgScroll{
+      from { background-position: 0 0; }
+      to   { background-position: calc(-1 * var(--scroll-distance)) 0; }
+    }
 
-  /* HUD */
-  #hud{
-    position:absolute;
-    left:18px; top:18px;
-    display:flex;
-    gap:12px;
-    align-items:center;
-    padding:12px 16px;
-    background: var(--hud-bg);
-    border:1px solid var(--hud-border);
-    border-radius:999px;
-    color:var(--text);
-    backdrop-filter: blur(8px);
-    z-index:1000;
-    box-shadow: 0 16px 28px rgba(0,0,0,.22);
-    font-weight:700;
-  }
-  .pill{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:8px 12px;
-    border-radius:999px;
-    background: rgba(255,255,255,.10);
-    border: 1px solid rgba(255,255,255,.10);
-  }
-  .bar{
-    width:120px;
-    height:10px;
-    border-radius:999px;
-    background: rgba(255,255,255,.15);
-    overflow:hidden;
-  }
-  .bar > div{
-    height:100%;
-    width:100%;
-    background: linear-gradient(to right, #4cff7a, #09c2ff);
-  }
+    /* Foreground playfield */
+    .hud{
+      position:absolute;
+      inset:0 auto auto 0;
+      padding:8px 10px;
+      z-index:3;
+      font-size:14px;
+      background:rgba(0,0,0,.35);
+      border-bottom-right-radius:10px;
+      user-select:none;
+    }
 
-  /* Center overlay message */
-  #overlay{
-    position:absolute;
-    inset:0;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    z-index:1100;
-    background: rgba(0,0,0,.55);
-    backdrop-filter: blur(4px);
-  }
-  #panel{
-    width:min(720px, calc(100vw - 36px));
-    border-radius:18px;
-    padding:22px 24px;
-    background: rgba(10,15,20,.92);
-    border: 1px solid rgba(255,255,255,.18);
-    color:#fff;
-    box-shadow: 0 30px 60px rgba(0,0,0,.40);
-  }
-  #panel h1{
-    margin:0 0 10px 0;
-    font-size:28px;
-    letter-spacing:.2px;
-  }
-  #panel p{
-    margin:8px 0;
-    opacity:.95;
-    line-height:1.35;
-  }
-  #panel .kbd{
-    display:inline-block;
-    padding:3px 8px;
-    border-radius:8px;
-    border:1px solid rgba(255,255,255,.22);
-    background: rgba(255,255,255,.10);
-    font-weight:800;
-  }
-  #panel .row{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    margin-top:14px;
-  }
-  .btn{
-    cursor:pointer;
-    border:0;
-    padding:10px 14px;
-    border-radius:12px;
-    font-weight:800;
-    color:#0a0f14;
-    background: linear-gradient(to bottom, #ffffff, #dfe7f2);
-  }
-  .btn.secondary{
-    color:#fff;
-    background: rgba(255,255,255,.12);
-    border:1px solid rgba(255,255,255,.18);
-  }
+    .hint{
+      position:absolute;
+      right:10px;
+      top:10px;
+      z-index:3;
+      font-size:12px;
+      opacity:.9;
+      background:rgba(0,0,0,.35);
+      padding:8px 10px;
+      border-radius:10px;
+      user-select:none;
+    }
 
-  /* Small help bottom right */
-  #help{
-    position:absolute;
-    right:18px;
-    bottom:18px;
-    z-index:1000;
-    padding:10px 12px;
-    border-radius:14px;
-    background: rgba(0,0,0,.40);
-    border:1px solid rgba(255,255,255,.12);
-    color:#fff;
-    font-size:13px;
-    line-height:1.35;
-    max-width: 320px;
-    backdrop-filter: blur(6px);
-  }
+    .ground{
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
+      height:64px;
+      z-index:2;
+      background:linear-gradient(#2b2b2b, #121212);
+      border-top:2px solid rgba(0,0,0,.6);
+    }
 
-  /* Reduce motion */
-  @media (prefers-reduced-motion: reduce){
-    *{ transition:none !important; animation:none !important; }
-  }
-</style>
+    .player{
+      position:absolute;
+      width:42px;
+      height:42px;
+      left:80px;
+      bottom:64px;
+      z-index:2;
+      background:linear-gradient(#ffd34d, #f29b1a);
+      border:2px solid rgba(0,0,0,.6);
+      border-radius:10px;
+      box-shadow:0 6px 0 rgba(0,0,0,.25);
+      transform: translateX(var(--px, 0px));
+      transition: transform 80ms linear;
+    }
+
+    /* Pause animation when user toggles */
+    .paused .bg,
+    .paused .bg::after{
+      animation-play-state: paused;
+    }
+  </style>
 </head>
 <body>
+  <div class="game" id="game">
+    <div class="bg" aria-hidden="true"></div>
 
-<div id="viewport">
-  <div id="bgFar" class="parallax"></div>
-  <div id="bgMid" class="parallax"></div>
-  <div id="bgNear" class="parallax"></div>
+    <div class="hud" id="hud">BG speed: <span id="speedLabel">12s</span> (space = pause)</div>
+    <div class="hint">← / → to move box<br>↑ / ↓ to change speed</div>
 
-  <div id="hud">
-    <div class="pill">Score: <span id="score">0</span></div>
-    <div class="pill">Coins: <span id="coins">0</span></div>
-    <div class="pill">
-      HP
-      <div class="bar"><div id="hpFill"></div></div>
-      <span id="hpText">3</span>
-    </div>
+    <div class="player" id="player"></div>
+    <div class="ground"></div>
   </div>
 
-  <div id="help">
-    Move: <b>A/D</b> or <b>←/→</b><br/>
-    Jump: <b>W</b> or <b>Space</b> (hold = higher jump)<br/>
-    Pause: <b>P</b> &nbsp; Restart: <b>R</b>
-  </div>
+  <script>
+    // Minimal JS: optional player movement + live control of CSS background speed.
+    const game = document.getElementById("game");
+    const player = document.getElementById("player");
+    const speedLabel = document.getElementById("speedLabel");
 
-  <div id="world">
-    <div id="player" class="entity"></div>
-  </div>
+    const keys = Object.create(null);
+    let px = 0;
 
-  <div id="overlay">
-    <div id="panel">
-      <h1 id="title">Paused</h1>
-      <p id="subtitle">Press <span class="kbd">P</span> to resume, <span class="kbd">R</span> to restart.</p>
-      <div class="row">
-        <button class="btn" id="resumeBtn">Resume</button>
-        <button class="btn secondary" id="restartBtn">Restart</button>
-      </div>
-    </div>
-  </div>
-</div>
+    // Match the CSS default
+    let speedSeconds = 12;
 
-<script>
-(() => {
-  /* -------------------------------------------------------
-     Massively improved demo engine (single-file, no libs)
-     - World coordinates + camera
-     - Parallax
-     - Robust platformer controls: coyote time, jump buffer, variable jump
-     - Coins, score, HP
-     - Enemies (patrol) + stomp vs. damage
-     - Moving platforms
-     - Simple boss-gate trigger (demo)
-     ------------------------------------------------------- */
-
-  const viewport = document.getElementById("viewport");
-  const worldEl  = document.getElementById("world");
-  const playerEl = document.getElementById("player");
-
-  const bgFar  = document.getElementById("bgFar");
-  const bgMid  = document.getElementById("bgMid");
-  const bgNear = document.getElementById("bgNear");
-
-  const uiScore = document.getElementById("score");
-  const uiCoins = document.getElementById("coins");
-  const uiHpFill = document.getElementById("hpFill");
-  const uiHpText = document.getElementById("hpText");
-
-  const overlay = document.getElementById("overlay");
-  const titleEl = document.getElementById("title");
-  const subtitleEl = document.getElementById("subtitle");
-  const resumeBtn = document.getElementById("resumeBtn");
-  const restartBtn = document.getElementById("restartBtn");
-
-  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-  const lerp = (a,b,t) => a + (b-a)*t;
-
-  /* ----------------- Config ----------------- */
-  const CONFIG = {
-    gravity: 2600,          // px/s^2
-    moveAccel: 5200,        // px/s^2
-    moveMax: 340,           // px/s
-    friction: 4200,         // px/s^2
-    airControl: 0.62,       // multiplier in air
-    jumpSpeed: 760,         // px/s initial impulse
-    jumpHoldBoost: 1150,    // additional upward accel while holding jump (variable jump)
-    jumpHoldMaxTime: 0.14,  // seconds
-    coyoteTime: 0.10,       // seconds after leaving ground you can still jump
-    jumpBuffer: 0.10,       // seconds before landing you can queue jump
-    stompBounce: 520,       // px/s bounce when stomping enemy
-    hurtIFrames: 0.85,      // seconds
-    cameraLerp: 0.12,       // smoothing for camera
-    fallKillY: 1500,        // if player falls below this => death
-  };
-
-  /* ----------------- Level data ----------------- */
-  // Edit this to expand the demo. Everything is in WORLD coordinates.
-  const LEVEL = {
-    width: 3400,
-    height: 1200,
-    playerSpawn: { x: 140, y: 520 },
-
-    ground: [
-      { x: 0, y: 860, w: 3400, h: 140 },
-    ],
-
-    platforms: [
-      { x: 360, y: 700, w: 240, h: 34 },
-      { x: 720, y: 620, w: 220, h: 34 },
-      { x: 1040, y: 540, w: 260, h: 34 },
-      { x: 1440, y: 660, w: 240, h: 34 },
-      { x: 1820, y: 560, w: 260, h: 34 },
-      { x: 2160, y: 480, w: 240, h: 34 },
-      { x: 2480, y: 610, w: 260, h: 34 },
-    ],
-
-    movingPlatforms: [
-      // A moving platform that oscillates between two x points
-      { x: 1260, y: 740, w: 220, h: 34, range: 220, speed: 120, axis: "x" },
-      // A vertical moving platform
-      { x: 2720, y: 720, w: 220, h: 34, range: 180, speed: 90, axis: "y" },
-    ],
-
-    coins: [
-      { x: 410, y: 660 }, { x: 450, y: 640 }, { x: 490, y: 620 },
-      { x: 760, y: 580 }, { x: 800, y: 560 },
-      { x: 1100, y: 500 }, { x: 1140, y: 480 }, { x: 1180, y: 460 },
-      { x: 1460, y: 620 }, { x: 1500, y: 600 },
-      { x: 1840, y: 520 }, { x: 1880, y: 500 },
-      { x: 2180, y: 440 }, { x: 2220, y: 420 },
-      { x: 2520, y: 570 }, { x: 2560, y: 550 },
-      { x: 2760, y: 680 }, { x: 2800, y: 660 },
-    ],
-
-    enemies: [
-      { x: 900, y: 0, w: 44, h: 44, patrolMin: 760, patrolMax: 980, speed: 90 },
-      { x: 1660, y: 0, w: 44, h: 44, patrolMin: 1500, patrolMax: 1860, speed: 110 },
-      { x: 2380, y: 0, w: 44, h: 44, patrolMin: 2260, patrolMax: 2560, speed: 120 },
-    ],
-
-    goal: { x: 3240, y: 768, w: 70, h: 92 },
-
-    // Boss gate trigger zone (demo mechanic)
-    bossGate: { x: 3000, y: 0, w: 220, h: 1000 }
-  };
-
-  /* ----------------- Minimal ECS-ish objects ----------------- */
-  class Rect {
-    constructor(x,y,w,h){ this.x=x; this.y=y; this.w=w; this.h=h; }
-  }
-  const intersects = (a,b) =>
-    !(a.x + a.w <= b.x || a.x >= b.x + b.w || a.y + a.h <= b.y || a.y >= b.y + b.h);
-
-  function makeDiv(className){
-    const el = document.createElement("div");
-    el.className = `entity ${className}`;
-    worldEl.appendChild(el);
-    return el;
-  }
-
-  const staticSolids = [];
-  const platformEls = [];
-  const movingPlatforms = [];
-  const enemies = [];
-  const coins = [];
-  let goal = null;
-  let bossGate = null;
-
-  function buildLevel(){
-    // Cleanup
-    while(worldEl.children.length > 1) worldEl.removeChild(worldEl.lastChild);
-
-    staticSolids.length = 0;
-    platformEls.length = 0;
-    movingPlatforms.length = 0;
-    enemies.length = 0;
-    coins.length = 0;
-    goal = null;
-    bossGate = null;
-
-    // Ground
-    for(const g of LEVEL.ground){
-      const el = makeDiv("ground");
-      el.style.width = g.w+"px";
-      el.style.height = g.h+"px";
-      staticSolids.push({ type:"ground", rect: new Rect(g.x,g.y,g.w,g.h), el });
+    function setSpeed(seconds){
+      speedSeconds = Math.max(2, Math.min(40, seconds));
+      game.style.setProperty("--scroll-speed", speedSeconds + "s");
+      speedLabel.textContent = speedSeconds + "s";
     }
 
-    // Platforms
-    for(const p of LEVEL.platforms){
-      const el = makeDiv("platform");
-      el.style.width = p.w+"px";
-      el.style.height = p.h+"px";
-      staticSolids.push({ type:"platform", rect: new Rect(p.x,p.y,p.w,p.h), el });
-      platformEls.push(el);
-    }
+    addEventListener("keydown", (e) => {
+      const k = e.key.toLowerCase();
+      keys[k] = true;
 
-    // Moving platforms
-    for(const mp of LEVEL.movingPlatforms){
-      const el = makeDiv("platform");
-      el.style.width = mp.w+"px";
-      el.style.height = mp.h+"px";
-      const obj = {
-        type:"moving",
-        baseX: mp.x, baseY: mp.y,
-        rect: new Rect(mp.x, mp.y, mp.w, mp.h),
-        axis: mp.axis,
-        range: mp.range,
-        speed: mp.speed,
-        t: 0,
-        el,
-        dx: 0, dy: 0
-      };
-      movingPlatforms.push(obj);
-    }
-
-    // Coins
-    for(const c of LEVEL.coins){
-      const el = makeDiv("coin");
-      const obj = {
-        rect: new Rect(c.x, c.y, 22, 22),
-        el,
-        taken:false,
-        bob: Math.random()*Math.PI*2
-      };
-      coins.push(obj);
-    }
-
-    // Enemies
-    for(const e of LEVEL.enemies){
-      const el = makeDiv("enemy");
-      const obj = {
-        rect: new Rect(e.x, e.y, e.w, e.h),
-        vx: e.speed,
-        vy: 0,
-        patrolMin: e.patrolMin,
-        patrolMax: e.patrolMax,
-        speed: e.speed,
-        alive: true,
-        el
-      };
-      enemies.push(obj);
-    }
-
-    // Goal
-    {
-      const el = makeDiv("");
-      el.id = "goal";
-      const g = LEVEL.goal;
-      el.style.width = g.w+"px";
-      el.style.height = g.h+"px";
-      goal = { rect: new Rect(g.x, g.y - g.h, g.w, g.h), el };
-    }
-
-    // Boss gate (invisible trigger zone)
-    bossGate = { rect: new Rect(LEVEL.bossGate.x, LEVEL.bossGate.y, LEVEL.bossGate.w, LEVEL.bossGate.h), active:true };
-
-    // Apply initial positioning
-    syncWorldTransforms();
-  }
-
-  function syncWorldTransforms(){
-    // Update DOM positions for all objects based on rects
-    for(const s of staticSolids){
-      s.el.style.left = s.rect.x+"px";
-      s.el.style.top  = s.rect.y+"px";
-    }
-    for(const mp of movingPlatforms){
-      mp.el.style.left = mp.rect.x+"px";
-      mp.el.style.top  = mp.rect.y+"px";
-    }
-    for(const c of coins){
-      c.el.style.left = c.rect.x+"px";
-      c.el.style.top  = c.rect.y+"px";
-    }
-    for(const e of enemies){
-      e.el.style.left = e.rect.x+"px";
-      e.el.style.top  = e.rect.y+"px";
-    }
-    if(goal){
-      goal.el.style.left = goal.rect.x+"px";
-      goal.el.style.top  = goal.rect.y+"px";
-    }
-  }
-
-  /* ----------------- Player state ----------------- */
-  const player = {
-    rect: new Rect(LEVEL.playerSpawn.x, LEVEL.playerSpawn.y, 46, 54),
-    vx: 0,
-    vy: 0,
-    onGround: false,
-    groundTimer: 0,   // for coyote time
-    jumpBuffer: 0,    // for buffered jump
-    jumpHold: 0,      // for variable jump
-    facing: 1,
-    hp: 3,
-    iframes: 0,
-    score: 0,
-    coinCount: 0
-  };
-
-  /* ----------------- Input ----------------- */
-  const keys = new Map();
-  const pressed = new Map(); // edge-trigger
-  window.addEventListener("keydown", (e) => {
-    const k = e.key.toLowerCase();
-    if(!keys.get(k)) pressed.set(k, true);
-    keys.set(k, true);
-
-    // Prevent page scroll on space
-    if(k === " " || k === "arrowup" || k === "arrowdown") e.preventDefault();
-  });
-  window.addEventListener("keyup", (e) => {
-    keys.set(e.key.toLowerCase(), false);
-  });
-
-  const isDown = (k) => !!keys.get(k);
-  const wasPressed = (k) => !!pressed.get(k);
-
-  /* ----------------- Camera ----------------- */
-  const camera = { x: 0, y: 0 };
-  function updateCamera(dt){
-    const vw = viewport.clientWidth;
-    const vh = viewport.clientHeight;
-
-    const targetX = clamp(player.rect.x + player.rect.w/2 - vw/2, 0, Math.max(0, LEVEL.width - vw));
-    const targetY = clamp(player.rect.y + player.rect.h/2 - vh/2, 0, Math.max(0, LEVEL.height - vh));
-
-    camera.x = lerp(camera.x, targetX, 1 - Math.pow(1 - CONFIG.cameraLerp, dt*60));
-    camera.y = lerp(camera.y, targetY, 1 - Math.pow(1 - CONFIG.cameraLerp, dt*60));
-
-    // Apply world transform
-    worldEl.style.transform = `translate(${-camera.x}px, ${-camera.y}px)`;
-
-    // Parallax (slower than camera)
-    bgFar.style.transform  = `translate(${-camera.x*0.18}px, ${-camera.y*0.05}px)`;
-    bgMid.style.transform  = `translate(${-camera.x*0.30}px, ${-camera.y*0.08}px)`;
-    bgNear.style.transform = `translate(${-camera.x*0.45}px, ${-camera.y*0.12}px)`;
-  }
-
-  /* ----------------- Collision resolution ----------------- */
-  const allSolids = () => {
-    // moving platforms are solids too
-    const solids = staticSolids.map(s => s.rect).concat(movingPlatforms.map(m => m.rect));
-    return solids;
-  };
-
-  function resolveCollisions(entityRect, vx, vy){
-    // Axis-separated resolution
-    let rect = entityRect;
-
-    // Move X
-    rect.x += vx;
-    for(const s of allSolids()){
-      if(intersects(rect, s)){
-        if(vx > 0) rect.x = s.x - rect.w;
-        else if(vx < 0) rect.x = s.x + s.w;
-        vx = 0;
+      if (k === " "){ // pause toggle
+        game.classList.toggle("paused");
+        e.preventDefault();
       }
+      if (k === "arrowup") setSpeed(speedSeconds - 1);
+      if (k === "arrowdown") setSpeed(speedSeconds + 1);
+    });
+
+    addEventListener("keyup", (e) => {
+      keys[e.key.toLowerCase()] = false;
+    });
+
+    function loop(){
+      const left = keys["arrowleft"];
+      const right = keys["arrowright"];
+
+      if (left) px -= 6;
+      if (right) px += 6;
+
+      // clamp inside frame
+      const max = game.clientWidth - 42 - 20;
+      px = Math.max(0, Math.min(max, px));
+      player.style.setProperty("--px", px + "px");
+
+      requestAnimationFrame(loop);
     }
 
-    // Move Y
-    rect.y += vy;
-    let onGround = false;
-    let groundDy = 0; // track if standing on moving platform
-    for(const s of allSolids()){
-      if(intersects(rect, s)){
-        if(vy > 0){
-          rect.y = s.y - rect.h;
-          onGround = true;
-          vy = 0;
-          // If solid is a moving platform, apply its delta next frame
-          const mp = movingPlatforms.find(m => m.rect === s);
-          if(mp) groundDy = mp.dy; // (for completeness; we apply dx/dy separately)
-        } else if(vy < 0){
-          rect.y = s.y + s.h;
-          vy = 0;
-        }
-      }
-    }
-
-    return { vx, vy, onGround, groundDy };
-  }
-
-  function getStandingPlatform(){
-    // Detect the moving platform directly beneath player (tight check)
-    const feet = new Rect(player.rect.x, player.rect.y + player.rect.h, player.rect.w, 2);
-    for(const mp of movingPlatforms){
-      if(intersects(feet, mp.rect)) return mp;
-    }
-    return null;
-  }
-
-  /* ----------------- Game flow ----------------- */
-  let paused = false;
-  let gameOver = false;
-  let victory = false;
-  let bossGateTriggered = false;
-
-  function setOverlay(show, title, subtitle){
-    if(show){
-      overlay.style.display = "flex";
-      titleEl.textContent = title;
-      subtitleEl.innerHTML = subtitle;
-    }else{
-      overlay.style.display = "none";
-    }
-  }
-
-  resumeBtn.addEventListener("click", () => togglePause(false));
-  restartBtn.addEventListener("click", () => restart());
-
-  function togglePause(force){
-    if(gameOver || victory) return;
-    paused = (typeof force === "boolean") ? force : !paused;
-    if(paused){
-      setOverlay(true, "Paused", `Press <span class="kbd">P</span> to resume, <span class="kbd">R</span> to restart.`);
-    }else{
-      setOverlay(false, "", "");
-    }
-  }
-
-  function restart(){
-    gameOver = false;
-    victory = false;
-    bossGateTriggered = false;
-    paused = false;
-    setOverlay(false,"","");
-
-    player.rect.x = LEVEL.playerSpawn.x;
-    player.rect.y = LEVEL.playerSpawn.y;
-    player.vx = 0;
-    player.vy = 0;
-    player.onGround = false;
-    player.groundTimer = 0;
-    player.jumpBuffer = 0;
-    player.jumpHold = 0;
-    player.facing = 1;
-    player.hp = 3;
-    player.iframes = 0;
-    player.score = 0;
-    player.coinCount = 0;
-
-    buildLevel();
-    updateHUD();
-  }
-
-  function die(){
-    gameOver = true;
-    setOverlay(true, "Game Over", `Press <span class="kbd">R</span> to restart.`);
-  }
-
-  function win(){
-    victory = true;
-    setOverlay(true, "Level Clear", `Score: <b>${player.score}</b> &nbsp; Coins: <b>${player.coinCount}</b><br/>Press <span class="kbd">R</span> to play again.`);
-  }
-
-  /* ----------------- HUD ----------------- */
-  function updateHUD(){
-    uiScore.textContent = String(player.score);
-    uiCoins.textContent = String(player.coinCount);
-    uiHpText.textContent = String(player.hp);
-    uiHpFill.style.width = `${(player.hp/3)*100}%`;
-  }
-
-  /* ----------------- Loop ----------------- */
-  let last = performance.now();
-
-  function loop(now){
-    const dt = Math.min(0.033, (now - last) / 1000);
-    last = now;
-
-    // Handle edge-press keys
-    if(wasPressed("p")) togglePause();
-    if(wasPressed("r")) restart();
-
-    pressed.clear();
-
-    if(!paused && !gameOver && !victory){
-      update(dt);
-    }
-
-    render(dt);
-    requestAnimationFrame(loop);
-  }
-
-  function update(dt){
-    // Moving platforms update (before player collision so standing works cleanly)
-    for(const mp of movingPlatforms){
-      const prevX = mp.rect.x;
-      const prevY = mp.rect.y;
-
-      mp.t += dt;
-      const phase = (Math.sin(mp.t * (mp.speed / mp.range)) + 1) / 2; // 0..1
-      if(mp.axis === "x"){
-        mp.rect.x = mp.baseX + phase * mp.range;
-      }else{
-        mp.rect.y = mp.baseY + phase * mp.range;
-      }
-      mp.dx = mp.rect.x - prevX;
-      mp.dy = mp.rect.y - prevY;
-
-      mp.el.style.left = mp.rect.x+"px";
-      mp.el.style.top  = mp.rect.y+"px";
-    }
-
-    // Timers
-    if(player.onGround) player.groundTimer = CONFIG.coyoteTime;
-    else player.groundTimer = Math.max(0, player.groundTimer - dt);
-
-    player.jumpBuffer = Math.max(0, player.jumpBuffer - dt);
-    player.iframes = Math.max(0, player.iframes - dt);
-
-    // Input
-    const left  = isDown("a") || isDown("arrowleft");
-    const right = isDown("d") || isDown("arrowright");
-    const jumpPressed = wasPressed("w") || wasPressed(" ") || wasPressed("arrowup");
-    const jumpHeld = isDown("w") || isDown(" ") || isDown("arrowup");
-
-    if(jumpPressed) player.jumpBuffer = CONFIG.jumpBuffer;
-
-    // Horizontal accel
-    const accel = player.onGround ? CONFIG.moveAccel : CONFIG.moveAccel * CONFIG.airControl;
-    if(left && !right){
-      player.vx -= accel * dt;
-      player.facing = -1;
-    } else if(right && !left){
-      player.vx += accel * dt;
-      player.facing = 1;
-    } else {
-      // Friction
-      const fr = (player.onGround ? CONFIG.friction : CONFIG.friction * 0.25) * dt;
-      if(Math.abs(player.vx) <= fr) player.vx = 0;
-      else player.vx -= Math.sign(player.vx) * fr;
-    }
-    player.vx = clamp(player.vx, -CONFIG.moveMax, CONFIG.moveMax);
-
-    // Jump resolve (buffer + coyote)
-    if(player.jumpBuffer > 0 && player.groundTimer > 0){
-      player.jumpBuffer = 0;
-      player.groundTimer = 0;
-      player.vy = -CONFIG.jumpSpeed;
-      player.jumpHold = CONFIG.jumpHoldMaxTime;
-      player.onGround = false;
-    }
-
-    // Variable jump (hold)
-    if(player.jumpHold > 0 && jumpHeld){
-      player.vy -= CONFIG.jumpHoldBoost * dt;
-      player.jumpHold -= dt;
-    } else {
-      player.jumpHold = 0;
-    }
-
-    // Gravity
-    player.vy += CONFIG.gravity * dt;
-
-    // Clamp extreme fall speed (optional comfort)
-    player.vy = Math.min(player.vy, 1400);
-
-    // If standing on moving platform, carry player with it (pre-collision)
-    const stand = player.onGround ? getStandingPlatform() : null;
-    if(stand){
-      player.rect.x += stand.dx;
-      player.rect.y += stand.dy;
-    }
-
-    // Resolve collisions with solids
-    const res = resolveCollisions(player.rect, player.vx * dt, player.vy * dt);
-    player.vx = res.vx / dt;
-    player.vy = res.vy / dt;
-    player.onGround = res.onGround;
-
-    // World bounds
-    player.rect.x = clamp(player.rect.x, 0, LEVEL.width - player.rect.w);
-
-    // Coins
-    for(const c of coins){
-      if(c.taken) continue;
-      if(intersects(player.rect, c.rect)){
-        c.taken = true;
-        c.el.style.display = "none";
-        player.coinCount += 1;
-        player.score += 50;
-        updateHUD();
-      }
-    }
-
-    // Enemies
-    for(const e of enemies){
-      if(!e.alive) continue;
-
-      // simple patrol
-      e.vy += CONFIG.gravity * dt;
-      e.rect.x += e.vx * dt;
-      if(e.rect.x <= e.patrolMin){ e.rect.x = e.patrolMin; e.vx = Math.abs(e.speed); }
-      if(e.rect.x + e.rect.w >= e.patrolMax){ e.rect.x = e.patrolMax - e.rect.w; e.vx = -Math.abs(e.speed); }
-
-      // collide vs solids
-      const er = resolveCollisions(e.rect, 0, e.vy * dt);
-      e.vy = er.vy / dt;
-
-      // player interaction
-      if(intersects(player.rect, e.rect)){
-        const playerBottom = player.rect.y + player.rect.h;
-        const enemyTop = e.rect.y;
-        const falling = player.vy > 0;
-
-        // Stomp if coming from above and falling
-        if(falling && playerBottom - enemyTop < 18){
-          e.alive = false;
-          e.el.style.display = "none";
-          player.vy = -CONFIG.stompBounce;
-          player.score += 150;
-          updateHUD();
-        } else {
-          // Damage if not stomping and not in i-frames
-          if(player.iframes <= 0){
-            player.hp -= 1;
-            player.iframes = CONFIG.hurtIFrames;
-            player.vx = -player.facing * 420;
-            player.vy = -520;
-            updateHUD();
-            if(player.hp <= 0) die();
-          }
-        }
-      }
-
-      e.el.style.left = e.rect.x+"px";
-      e.el.style.top  = e.rect.y+"px";
-    }
-
-    // Boss gate trigger (demo only)
-    if(bossGate && bossGate.active && intersects(player.rect, bossGate.rect) && !bossGateTriggered){
-      bossGateTriggered = true;
-      bossGate.active = false;
-      // Demo: spawn a "mini-boss" enemy as a chunky version
-      const el = makeDiv("enemy");
-      el.style.width = "78px";
-      el.style.height = "78px";
-      const boss = {
-        rect: new Rect(LEVEL.bossGate.x + 90, 0, 78, 78),
-        vx: 160,
-        vy: 0,
-        patrolMin: LEVEL.bossGate.x + 40,
-        patrolMax: LEVEL.bossGate.x + LEVEL.bossGate.w - 40,
-        speed: 160,
-        alive: true,
-        el,
-        boss: true,
-        hp: 3
-      };
-      enemies.push(boss);
-      // Small score bump so player notices
-      player.score += 200;
-      updateHUD();
-    }
-
-    // Goal
-    if(goal && intersects(player.rect, goal.rect)){
-      win();
-    }
-
-    // Fall death
-    if(player.rect.y > CONFIG.fallKillY){
-      die();
-    }
-  }
-
-  function render(dt){
-    // Player visuals
-    playerEl.style.left = player.rect.x + "px";
-    playerEl.style.top  = player.rect.y + "px";
-
-    if(player.facing < 0) playerEl.classList.add("face-left");
-    else playerEl.classList.remove("face-left");
-
-    if(player.iframes > 0){
-      playerEl.classList.add("hurt");
-      // cheap blink effect
-      playerEl.style.opacity = (Math.floor(performance.now()/80) % 2) ? "0.55" : "1";
-    } else {
-      playerEl.classList.remove("hurt");
-      playerEl.style.opacity = "1";
-    }
-
-    // Coin bob animation
-    for(const c of coins){
-      if(c.taken) continue;
-      c.bob += dt * 5.5;
-      const y = c.rect.y + Math.sin(c.bob) * 4;
-      c.el.style.top = y + "px";
-      c.el.style.left = c.rect.x + "px";
-    }
-
-    // Camera last (after movement)
-    updateCamera(dt);
-  }
-
-  /* ----------------- Start ----------------- */
-  function start(){
-    // Set world bounds (for clarity; worldEl is transformed anyway)
-    worldEl.style.width = LEVEL.width + "px";
-    worldEl.style.height = LEVEL.height + "px";
-
-    buildLevel();
-    updateHUD();
-
-    // Start overlay (quick start instructions)
-    setOverlay(true, "Demo Ready", `
-      Reach the flag, collect coins, stomp enemies.<br/>
-      Variable jump: hold <span class="kbd">W</span>/<span class="kbd">Space</span> for higher jumps.<br/>
-      Press <span class="kbd">P</span> to pause, <span class="kbd">R</span> to restart.
-    `);
-    paused = true;
-
-    requestAnimationFrame((t) => { last = t; requestAnimationFrame(loop); });
-  }
-
-  // Resize handling: camera clamps automatically from viewport size each frame.
-  window.addEventListener("resize", () => { /* no-op, uses clientWidth/Height */ });
-
-  // Click to resume if paused
-  overlay.addEventListener("click", (e) => {
-    if(e.target === overlay && paused && !gameOver && !victory) togglePause(false);
-  });
-
-  start();
-})();
-</script>
+    setSpeed(speedSeconds);
+    loop();
+  </script>
 </body>
 </html>
