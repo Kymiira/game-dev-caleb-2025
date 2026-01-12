@@ -6,28 +6,30 @@
 <style>
     body { 
         margin: 0; 
+        padding: 0;
         overflow: hidden; 
-        background-image: url('../t2a25/BackgroundImg.png'); 
-        background-repeat: repeat-x; 
-        background-attachment: fixed;
-        background-color: #87ceeb;
-        background-size: auto 100%; 
+        background-color: #d3d3d3; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
     }
     #gameContainer { 
         position: relative; 
-        width: 800px; 
-        height: 500px; 
-        margin: auto; 
+        width: 100vw; 
+        height: 100vh; 
         overflow: hidden; 
-        border: 4px solid #333;
-        background: rgba(135, 206, 235, 0.5);
+        background-image: url('../t2a25/BackgroundImg.png'); 
+        background-repeat: repeat-x;
+        background-size: auto 100%;
+        background-color: #87ceeb;
     }
     img { position: absolute; }
     #ui { 
         position: absolute; 
         top: 0; 
         left: 0; 
-        padding: 10px; 
+        padding: 20px; 
         color: #fff; 
         font-family: sans-serif; 
         font-weight: bold;
@@ -36,20 +38,20 @@
     }
     #message { 
         position: absolute; 
-        top: 200px; 
+        top: 40%; 
         left: 50%; 
-        transform: translateX(-50%); 
-        font-size: 24px; 
+        transform: translate(-50%, -50%); 
+        font-size: 32px; 
         color: #fff; 
         background: rgba(0,0,0,0.8); 
-        padding: 15px 30px; 
+        padding: 20px 40px; 
         border-radius: 10px; 
         display: none; 
         z-index: 1001; 
     }
 </style>
 </head>
-<body id="myBody">
+<body>
 
 <div id="gameContainer">
   <div id="ui">Lives: 3 | Score: 0</div>
@@ -58,11 +60,11 @@
   <img id="player" src="../t2a25/MoveImg.png" style="width:50px; height:50px; top:300px; left:50px;">
   <img id="hazard1" src="../t2a25/StillImg.png" style="width:50px; height:50px; top:350px; left:300px;">
   <img id="hazard2" src="../t2a25/StillImg.png" style="width:50px; height:50px; top:350px; left:500px;">
-  <img id="ground" src="../t2a25/GroundImg.png" style="width:2000px; height:50px; top:450px; left:0;">
-  <img id="platform1" src="../t2a25/GroundImg.png" style="width:100px; height:20px; top:350px; left:200px;">
-  <img id="platform2" src="../t2a25/GroundImg.png" style="width:100px; height:20px; top:300px; left:400px;">
-  <img id="platform3" src="../t2a25/GroundImg.png" style="width:100px; height:20px; top:250px; left:600px;">
-  <img id="goal" src="https://placehold.co/50x50/00FF00/FFFFFF?text=FLAG" style="width:50px; height:50px; top:350px; left:1800px;">
+  <img id="ground" src="../t2a25/GroundImg.png" style="width:5000px; height:50px; top:90%; left:0;">
+  <img id="platform1" src="../t2a25/GroundImg.png" style="width:150px; height:30px; top:70%; left:300px;">
+  <img id="platform2" src="../t2a25/GroundImg.png" style="width:150px; height:30px; top:55%; left:600px;">
+  <img id="platform3" src="../t2a25/GroundImg.png" style="width:150px; height:30px; top:40%; left:900px;">
+  <img id="goal" src="https://placehold.co/50x50/00FF00/FFFFFF?text=FLAG" style="width:60px; height:80px; top:80%; left:4800px;">
 </div>
 
 <script>
@@ -93,7 +95,7 @@ class Player extends GameObject {
 }
 
 class Hazard extends GameObject {
-    constructor(id, x, y, width, height) { super(id,x,y,width,height); this.vx=1.5; }
+    constructor(id, x, y, width, height) { super(id,x,y,width,height); this.vx=2; }
     move() { this.x += this.vx; this.y += this.vy; }
 }
 
@@ -101,25 +103,27 @@ class Ground extends GameObject {}
 class Platform extends GameObject {}
 class Goal extends GameObject {}
 
-const player = new Player('player',50,300,50,50);
+const player = new Player('player',100,100,50,50);
 const hazards = [
-    new Hazard('hazard1',300,350,50,50),
-    new Hazard('hazard2',500,350,50,50)
+    new Hazard('hazard1',600,300,50,50),
+    new Hazard('hazard2',1200,300,50,50)
 ];
-const grounds = [ new Ground('ground',0,450,2000,50) ];
+
+const grounds = [ new Ground('ground',0,window.innerHeight * 0.9, 5000, 100) ];
 const platforms = [
-    new Platform('platform1',200,350,100,20),
-    new Platform('platform2',400,300,100,20),
-    new Platform('platform3',600,250,100,20)
+    new Platform('platform1',400, window.innerHeight * 0.7, 150, 30),
+    new Platform('platform2',800, window.innerHeight * 0.55, 150, 30),
+    new Platform('platform3',1200, window.innerHeight * 0.4, 150, 30)
 ];
-const goal = new Goal('goal',1800,350,50,50);
+const goal = new Goal('goal',4800, window.innerHeight * 0.8, 60, 80);
 
 const keys = {};
 document.addEventListener('keydown', e => keys[e.key.toLowerCase()]=true);
 document.addEventListener('keyup', e => keys[e.key.toLowerCase()]=false);
 
-const gravity=0.8, moveSpeed=5, jumpPower=-15;
+const gravity=0.8, moveSpeed=7, jumpPower=-18;
 const messageDiv = document.getElementById('message');
+const container = document.getElementById('gameContainer');
 
 function showMessage(text, duration=1500){
     messageDiv.innerText = text;
@@ -128,7 +132,7 @@ function showMessage(text, duration=1500){
 }
 
 function checkCollision(obj) {
-    obj.onGround=false;
+    obj.onGround = false;
     const targets = grounds.concat(platforms);
     for(let p of targets){
         if(obj.y + obj.height <= p.y &&
@@ -147,7 +151,7 @@ function updateHazards(){
         h.vy += gravity;
         checkCollision(h);
         h.move();
-        if(h.x <= 0 || h.x >= 1950) h.vx *= -1;
+        if(h.x <= 0 || h.x >= 4950) h.vx *= -1;
         h.updatePosition();
     }
 }
@@ -166,28 +170,27 @@ function gameLoop(){
     
     for(let h of hazards){
         if(player.collidesWith(h)){
-            showMessage('Oops! Try Again.');
-            player.x = 50; player.y = 300;
+            showMessage('Hit Hazard!');
+            player.x = 100; player.y = 100;
         }
     }
 
     if(player.collidesWith(goal)){
-        showMessage('LEVEL COMPLETE!', 3000);
-        player.vx = 0; player.vy = 0;
+        showMessage('YOU WIN!', 5000);
         return;
     }
 
-    const offset = Math.max(player.x - 400, 0);
+    const screenMid = window.innerWidth / 2;
+    const offset = Math.max(player.x - screenMid, 0);
 
     [...hazards, ...platforms, ...grounds, goal].forEach(obj => { 
         obj.el.style.left = (obj.x - offset) + 'px'; 
     });
 
-    player.el.style.left = (player.x < 400) ? player.x + 'px' : '400px';
+    player.el.style.left = (player.x < screenMid) ? player.x + 'px' : screenMid + 'px';
     player.el.style.top = player.y + 'px';
 
-    let bgPos = -(offset * 0.5);
-    document.body.style.backgroundPosition = bgPos + "px 0px";
+    container.style.backgroundPosition = -(offset * 0.5) + "px 0px";
 
     requestAnimationFrame(gameLoop);
 }
