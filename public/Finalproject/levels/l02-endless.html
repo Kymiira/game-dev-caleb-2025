@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>L02 · Endless · gen1.9</title>
+  <link rel="stylesheet" href="../styles/game.css" />
+</head>
+
+<body>
+  <div id="viewport">
+    <div id="world">
+      <div id="player"></div>
+    </div>
+
+    <div id="crosshair" class="crosshair crosshair--dot" aria-hidden="true"></div>
+
+    <div id="hud">
+      <div id="positionsGroup">
+        <span id="hudMouseX"></span>
+        <span id="hudMouseY"></span>
+        <span id="hudPlayerX"></span>
+        <span id="hudPlayerY"></span>
+      </div>
+
+      <div id="statsGroup">
+        <div id="hudKills">Kills: 0</div>
+        <button id="openShopBtn" class="uiBtn" type="button" aria-haspopup="dialog" aria-controls="shopOverlay">Shop (B)</button>
+      </div>
+
+      <div id="weaponGroup" aria-label="Weapons HUD">
+        <div id="hudPrimaryWeapon" class="hudWeapon"></div>
+        <div id="hudSecondaryWeapon" class="hudWeapon"></div>
+      </div>
+
+      <div id="bottomGroup" aria-label="Core HUD">
+        <div id="hudCoins" class="hudMetric hudMetricLeft">Coins: 0</div>
+        <div id="healthContainer">
+          <div id="healthBar"></div>
+        </div>
+        <div id="hudThreat" class="hudMetric hudMetricRight">Threat: 1.0</div>
+      </div>
+
+      <div id="informationGroup">
+        <span>WASD to move</span>
+        <span>Hold left click to shoot</span>
+        <span>Q to swap weapons</span>
+        <span>R to reload</span>
+        <span>Hostiles scale with Threat (time + kills)</span>
+      </div>
+
+      <div id="statusMessage"></div>
+    </div>
+
+    
+    <div id="startOverlay" class="overlay" role="dialog" aria-modal="true" aria-label="Choose your loadout">
+      <div class="panel startPanel">
+        <div class="panelHeader">
+          <div class="panelHeaderLeft">
+            <div class="panelTitle">Choose Your Loadout</div>
+            <div class="panelSub">Pick 1 Primary and 1 Secondary. This is free and resets every run.</div>
+          </div>
+        </div>
+
+        <div class="startBody">
+          <div class="startColumns">
+            <div class="startColumn">
+              <div class="startSectionTitle">Primary (choose one)</div>
+              <div id="startPrimaryChoices" class="choiceGrid" aria-label="Primary weapon choices"></div>
+            </div>
+
+            <div class="startColumn">
+              <div class="startSectionTitle">Secondary (choose one)</div>
+              <div id="startSecondaryChoices" class="choiceGrid" aria-label="Secondary weapon choices"></div>
+            </div>
+          </div>
+
+          <div class="startFooter">
+            <div id="startHint" class="panelSub">Tip: You gain a Refit Token every 25 Threat and a Reset Token every 100 Threat.</div>
+            <button id="startBeginBtn" class="uiBtn" type="button" disabled>Begin Run</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="shopOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Shop">
+      <div class="panel">
+        <div class="panelHeader">
+          <div class="panelHeaderLeft">
+            <div class="panelTitle">Shop</div>
+            <div id="shopCoinsLabel" class="panelSub">Coins: 0</div>
+          </div>
+          <button id="shopCloseBtn" class="uiBtn" type="button">Close (Esc)</button>
+        </div>
+
+        <div id="shopTabs" class="panelTabs" role="tablist" aria-label="Shop sections">
+          <button class="tabBtn isActive" type="button" data-tab="stats" role="tab" aria-selected="true">Stat Upgrades</button>
+          <button class="tabBtn" type="button" data-tab="weapons" role="tab" aria-selected="false">Weapon Workshop</button>
+          <button class="tabBtn" type="button" data-tab="cosmetics" role="tab" aria-selected="false">Cosmetics</button>
+        </div>
+
+        <div class="panelTools">
+          <input id="shopSearch" class="uiInput" type="text" placeholder="Search items…" autocomplete="off" />
+          <button id="shopOwnedOnly" class="uiBtn" type="button" aria-pressed="false" title="Show owned items only">Owned Only: Off</button>
+        </div>
+
+        <div id="shopHint" class="panelHint"></div>
+        <div id="shopItems" class="shopGrid" aria-label="Shop items"></div>
+
+        <div class="panelFooter">
+          <div class="hint">Tip: Press <b>B</b> to open/close the shop.</div>
+          <button id="shopResetBtn" class="uiBtn uiBtnDanger" type="button" title="Resets this run’s coins and purchases">Reset Run</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="endOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Run ended">
+      <div class="panel endPanel">
+        <div class="panelHeader">
+          <div class="panelHeaderLeft">
+            <div class="panelTitle">Run Ended</div>
+            <div class="panelSub" id="endReason">You were defeated.</div>
+          </div>
+        </div>
+
+        <div class="endBody">
+          <div class="endStats" aria-label="Run stats">
+            <div class="endStat"><span class="endKey">Time</span><span id="endTime" class="endVal">0:00</span></div>
+            <div class="endStat"><span class="endKey">Kills</span><span id="endKills" class="endVal">0</span></div>
+            <div class="endStat"><span class="endKey">Coins</span><span id="endCoins" class="endVal">0</span></div>
+            <div class="endStat"><span class="endKey">Threat</span><span id="endThreat" class="endVal">1.0</span>
+          <div class="endLoadout" aria-label="Loadout summary">
+            <div class="endLoadoutCol">
+              <div class="endLoadoutTitle">Primary</div>
+              <div id="endPrimaryWeapon" class="endLoadoutWeapon"></div>
+              <div id="endPrimaryNodes" class="endLoadoutNodes"></div>
+            </div>
+
+            <div class="endLoadoutCol">
+              <div class="endLoadoutTitle">Secondary</div>
+              <div id="endSecondaryWeapon" class="endLoadoutWeapon"></div>
+              <div id="endSecondaryNodes" class="endLoadoutNodes"></div>
+            </div>
+          </div>
+
+</div>
+          </div>
+
+          <div class="endActions">
+            <button id="endRestartBtn" class="uiBtn" type="button">New Run</button>
+            <button id="endMenuBtn" class="uiBtn" type="button">Back to Menu</button>
+          </div>
+
+          <div class="endHint">Tip: Press <b>Enter</b> to start a new run.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../src/utils.js"></script>
+  <script src="../src/sprites.js"></script>
+  <script src="../src/enemy_catalog.js"></script>
+  <script src="../src/weapons_catalog.js"></script>
+  <script src="../src/weapon_trees.js"></script>
+  <script src="../src/engine.js"></script>
+  <script src="../src/input.js"></script>
+  <script src="../src/shop_catalog.js"></script>
+  <script src="../src/shop.js"></script>
+  <script src="../src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<head>
+   <style>
+      body {
+         background: linear-gradient(-45deg, #ffffff, #000000, #ffffff, #000000);
+         background-size: 400% 400%;
+
+         animation: gradient 15s ease infinite;
+      }
+
+      @keyframes gradient {
+      /* Start position */
+         0% {
+            background-position: 0% 50%;
+         }
+      /* Midpoint position */
+         50% {
+            background-position: 100% 50%;
+         }
+      /* Return to start position */
+         100% {
+            background-position: 0% 50%;
+         }
+      }
+
+      #myPlayer {
+         background-color: #025050;
+         position: absolute;
+         width: 80px;
+         height: 80px;
+         border-radius: 20px;
+      }
+
+      .myHostile {
+         background-color: #500202;
+         position: absolute;
+         width: 80px;
+         height: 80px;
+         border-radius: 20px;
+      }
+
+      .myBullet {
+         position: absolute;
+         width: 20px;
+         height: 20px;
+         background-color: #00ff0d;
+         border-radius: 10px;
+      }
+   </style>
+   <script>
+      addEventListener('DOMContentLoaded', (event) => {
+         window.addEventListener('keydown', myInput);
+         window.addEventListener('click', myShoot);
+         
+         // global variables here
+
+         const level2 = "./levels/l02-endless.html"
+         let myGlobalX = 0
+         let myClock
+         let myScore = 10
+         let myGun
+         let myShooting = false;
+         let mySpawn = 0;
+         let gameEnd = false;
+
+         function myHit(myA, myB) {
+            if (gameEnd) return false;
+            if (!myA || !myB) return false;
+
+            const ar = myA.getBoundingClientRect();
+            const br = myB.getBoundingClientRect();
+
+            return !(ar.top > br.bottom ||
+                     ar.right < br.left ||
+                     ar.bottom < br.top ||
+                     ar.left > br.right);
+         }
+
+
+
+         function myCheckHit(){
+            if (gameEnd) return;
+
+
+            document.getElementById('myText01').value = myScore
+
+            const bullet = document.getElementById('myBullet')
+            const player = document.getElementById('myPlayer')
+            const hostiles = document.querySelectorAll('.myHostile')
+            if (bullet) {
+               hostiles.forEach(h => {
+                  if (myHit(bullet, h)) {
+                     myScore += 1;
+                     h.remove();
+                     bullet.remove();
+                     clearInterval(myGun);
+                     myShooting = false;
+                  }
+               })
+            }
+
+            hostiles.forEach(h => {
+               if (myHit(player, h)) {
+                  myScore -= 1;
+                  h.remove();
+               }
+            })
+         }
+         
+
+
+         function myInput(event) {
+            if (gameEnd) return;
+            switch (event.key) {
+               case 'd':
+                  document.getElementById('myPlayer').style.left = parseInt(document.getElementById('myPlayer').style.left) + 10 + 'px'
+                  break;
+
+               case 's':
+                  document.getElementById('myPlayer').style.top = parseInt(document.getElementById('myPlayer').style.top) + 10 + 'px'
+                  break;
+
+               case 'a':
+                  document.getElementById('myPlayer').style.left = parseInt(document.getElementById('myPlayer').style.left) - 10 + 'px'
+                  break;
+
+               case 'w':
+                  document.getElementById('myPlayer').style.top = parseInt(document.getElementById('myPlayer').style.top) - 10 + 'px'
+                  break;
+
+            }
+            if (parseInt(document.getElementById('myPlayer').style.left) < 0 || 
+                parseInt(document.getElementById('myPlayer').style.top) < 0 ||
+                parseInt(document.getElementById('myPlayer').style.left) > window.innerWidth - 80 ||
+                parseInt(document.getElementById('myPlayer').style.top) > window.innerHeight - 80) {
+               document.getElementById('myPlayer').style.left = '10px';
+               document.getElementById('myPlayer').style.top = '190px';
+            }
+         }
+
+         function myCheckScore() {
+            switch (myScore) {
+               case 0:
+                  setTimeout(function(){
+                     console.log('game over');
+                     window.location.reload();
+                  }, 120);
+                  break;
+               
+               case 20:
+                  setTimeout(function(){
+                     gameEnd = true;
+                     console.log('you win');
+                     window.location.replace("Level2");
+                  }, 120);
+                  break;
+
+
+
+
+            }
+         }
+         
+         function mySpawnHostile() {
+            if (gameEnd) return;
+            console.log(`Hostile spawn: ${mySpawn}`);
+            mySpawn = 0;
+            const h = document.createElement('div');
+            h.className = 'myHostile';
+            h.style.left = window.innerWidth - 80 + 'px'
+            h.style.top  = getRandomInt(0, window.innerHeight - 80) + 'px'
+            document.body.appendChild(h);
+         }
+
+         function myUpdateHostile() {
+            if (gameEnd) return;
+            const hostiles = document.querySelectorAll('.myHostile');
+            hostiles.forEach(h => {
+               h.style.left = parseInt(h.style.left) - 10 + 'px'
+               if (parseInt(h.style.left) <= -80) {
+                  h.remove();
+               }
+            })
+         }
+
+         function myShoot() {
+            if (gameEnd) return;
+            if (myShooting) return;
+            myShooting = true;
+
+            const b = document.createElement('div');
+            b.className = 'myBullet';
+            b.style.left = document.getElementById('myPlayer').style.left
+            b.style.top  = document.getElementById('myPlayer').style.top
+            b.id = 'myBullet'
+            document.body.appendChild(b);
+
+            clearInterval(myGun)
+            myGun = setInterval(function(){
+               b.style.left = parseInt(b.style.left) + 10 + 'px'
+
+               if (parseInt(b.style.left) > window.innerWidth) {
+                  b.remove();
+                  clearInterval(myGun);
+                  myShooting = false;
+                  return;
+               }
+
+               myCheckHit()
+            }, 5);
+         }
+
+         function  getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min)) + min;
+         }
+         
+   
+         function loop() {
+            if (gameEnd) return;
+            myCheckHit();
+            myCheckScore();
+            mySpawn += 1;
+            if (mySpawn > 20) {
+               mySpawnHostile();
+            }
+            if (document.getElementById('myPlayer').style.left += window.innerwidth )
+            myUpdateHostile();
+
+
+            requestAnimationFrame(loop);
+         }
+         requestAnimationFrame(loop);
+      });
+   </script>
+</head>
+<body id="myBody"> <!-- i converted the inline code from the body to proper callable functions so it looked cleaner -->
+   <span id="myText02">WASD to move, left click to Shoot. Get 20 score to Win!</span>
+   <input id="myText01" type=text value="" size=50 placeholder="Feedback here"><br>
+
+   <div id="myPlayer" class="myEntity" style="left: 10px; top:190px;"></div>
+</body>
