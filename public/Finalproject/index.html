@@ -1,8 +1,68 @@
+<head>
+  <style>
+    body {
+      font-family: "Century Gothic", CenturyGothic, Geneva, AppleGothic, sans-serif;
+      background-color: linear-gradient(to left, black, rgb(122, 117, 117))
+    }
+    header {
+      background-image: linear-gradient(to bottom, #1f1f1f, #0d0d0d);
+      padding: 20px 0;
+      border-bottom: 2px solid #333;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+    .header-content {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .header-title h1 {
+      margin: 0;
+      font-size: 2em;
+      background-image: linear-gradient(45deg, #e0e0e0, #80cbc4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .index-box {
+      width: 90%;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 30px;
+      min-height: 500px; 
+    
+      background-color: #1f1f1f; 
+      background-image: linear-gradient(
+          to bottom right,
+          rgba(31, 31, 31, 0.8), 
+          rgba(50, 50, 50, 0.8) 
+      );
+    
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.7);
+      border: 1px solid #333; 
+    }
+  </style>
+</head>
 <body>
-  <h1 align="center">LevelSelect</h1>
-  <ul>
-    <li><a href="./levels/l01-TemplateExact.html">Level 1</a>(Almost Strict to Given Template.)</li>
-    <li><a href="./levels/l02-Basic.html">Level 2</a>(Basic Left to Right Topdown Shooter)</li>
-    <li><a href="./levels/l03-endless.html">Level 3</a>(Highly Advanced Endless Gamemode w/ shop, varying weapons, weapon "paths", perks, etc.) --unfinished but not enough time to finish</li>
-  </ul>
+  <header>
+    <div class="header-content">
+      <div class="header-title">
+        <h1>Level Select</h1>
+      </div>
+    </div>
+  </header>
+  <main>
+    <ul>
+      <li><a href="./levels/l01-TemplateExact.html">Level 1</a>(Almost Strict to Given Template.)</li>
+      <li><a href="./levels/l02-Basic.html">Level 2</a>(Basic Left to Right Topdown Shooter)</li>
+      <li><a href="./levels/l03-endless.html">Level 3</a>(Highly Advanced Endless Gamemode w/ shop, varying weapons, weapon "paths", perks, etc.) --unfinished but not enough time to finish</li>
+    </ul>
+  </main>
 </body>
