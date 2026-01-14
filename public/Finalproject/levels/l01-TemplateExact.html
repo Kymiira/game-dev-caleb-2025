@@ -51,14 +51,15 @@
     document.all.myText01.value = `Lives: ${myScore}`
 
     if ( myHitOther('myImg01','myImg02') ){
-        document.getElementById('myImg01').style.left = '20px'
+        document.getElementById('myImg01').style.left = '10px'
+        document.getElementById('myImg01').style.top = '190px'
         document.all.myText01.value = 'You hit myImg02'  
         myScore -= 1
     }   
     
     if ( myHitOther('myImg01','myImg03') ){
-        //alert('you lose')
-        document.getElementById('myImg01').style.left = '20px'
+        document.getElementById('myImg01').style.left = '10px'
+        document.getElementById('myImg01').style.top = '190px'
         document.all.myText01.value = 'You hit myImg03'  
         myScore -= 1
     }   
@@ -67,14 +68,12 @@
         clearInterval(myGun)
         document.getElementById('myBullet').style.left = '-200px'
         document.all.myText01.value = 'You shot myImg03'
-        document.getElementById('myImg03').remove()
         myScore += 1
     }   
     if ( myHitOther('myBullet','myImg02') ){
         clearInterval(myGun)
         document.getElementById('myBullet').style.left = '-200px'
         document.all.myText01.value = 'You shot myImg02'  
-        document.getElementById('myImg03').remove()
         myScore += 1
     }   
     
