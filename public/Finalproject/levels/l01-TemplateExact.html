@@ -1,0 +1,165 @@
+
+<head>
+    <style>
+        body {
+            background-repeat:repeat;
+             background-size: 80%;
+        }
+    </style>
+    <script>   
+
+    // global variables here
+
+    let myGlobalX = 0
+    let myClock
+    let myScore = 10
+    let myGun
+    let myShooting = 1
+
+    // global functions here
+    function myHitOther(my1,my2){
+    left1   = parseInt(document.getElementById(my1).style.left)
+    right1  = left1 + parseInt(document.getElementById(my1).style.width)
+    top1    = parseInt(document.getElementById(my1).style.top)   
+    bottom1 = top1   + parseInt(document.getElementById(my1).style.height)
+    left2   = parseInt(document.getElementById(my2).style.left)
+    right2  = left2 + parseInt(document.getElementById(my2).style.width)
+    top2    = parseInt(document.getElementById(my2).style.top)   
+    bottom2 = top2   + parseInt(document.getElementById(my2).style.height)
+    if ((right1  >=  left2  ) &&      	   
+        (bottom1 >=  top2   ) &&
+        (left1   <=  right2 ) &&
+        (top1    <=  bottom2) ){
+        return true
+    }
+    }
+
+
+    function myCheckHit(){
+    document.all.myText01.value = myScore
+
+    if ( myHitOther('myImg01','myImg02') ){
+        document.getElementById('myImg01').style.left = '20px'
+        document.all.myText01.value = 'You hit myImg02'  
+        myScore -= 1
+    }   
+    
+    if ( myHitOther('myImg01','myImg03') ){
+        //alert('you lose')
+        document.getElementById('myImg01').style.left = '20px'
+        document.all.myText01.value = 'You hit myImg03'  
+        myScore -= 1
+    }   
+
+    if ( myHitOther('myBullet','myImg03') ){
+        clearInterval(myGun)
+        document.getElementById('myBullet').style.left = '-200px'
+        document.all.myText01.value = 'You shot myImg03'  
+        myScore += 1
+    }   
+    if ( myHitOther('myBullet','myImg02') ){
+        clearInterval(myGun)
+        document.getElementById('myBullet').style.left = '-200px'
+        document.all.myText01.value = 'You shot myImg02'  
+        myScore += 1
+    }   
+    
+    if (myScore <= 0){
+        document.all.myText01.value = 'You Lose scrore at zero!'  
+        console.log('Sorry you lose')
+        location.reload()
+    }
+
+    if ( myHitOther('myImg01','myImg04') ){
+        document.all.myText01.value = 'You hit myImg04 and you win the game!'  
+        console.log('You Win, now go to the next level')
+        document.getElementById('myImg01').style.left = '20px'
+        location = './l02-Basic-html'
+    }
+    }
+
+
+    </script>
+</head>
+
+
+
+<body id="myBody" background="https://opengameart.org/sites/default/files/backgrounddetailed1.png.preview.jpg"  onkeydown="{
+    const myPlayer = document.getElementById('myImg01');
+    switch (event.key) {
+        case 'w':
+            myPlayer.style.top = parseInt(myPlayer.style.top) - 10 + 'px'
+            break;
+        case 'a':
+            myPlayer.style.left = parseInt(myPlayer.style.left) - 10 + 'px'
+            break;
+        case 's':
+            myPlayer.style.top = parseInt(myPlayer.style.top) + 10 + 'px'
+            break;
+        case 'd':
+            myPlayer.style.top = parseInt(myPlayer.style.top) + 10 + 'px'
+            break;
+    }
+  myCheckHit()
+}">
+
+
+
+
+
+<h1 align=center><font color=Yellow>Level One Final..?</font></h1>
+
+<input id="myText01" type=text value="" size=50 placeholder="Feedback here"><br>
+
+<input type=button value="Auto Background Left" onclick="{
+  clearInterval(myClock)
+  let myTemp = '100px 0px'
+  myClock = setInterval(function(){
+      myGlobalX -= 5
+      myTemp =  myGlobalX + 'px 0px'
+      document.getElementById('myBody').style.backgroundPosition = myTemp
+  }, 100)
+    
+}">
+
+
+<input type=button value="Right" onTouchStart="{this.click(); event.preventDefault();}" onclick="{
+  document.getElementById('myImg01').style.left = parseInt(document.getElementById('myImg01').style.left) + 10 + 'px'
+  myCheckHit()     // checks for all collisions
+}">
+
+<input type=button value="Down" onTouchStart="{this.click(); event.preventDefault();}" onclick="{
+  document.getElementById('myImg01').style.top = parseInt(document.getElementById('myImg01').style.top) + 10 + 'px'
+  myCheckHit()     // checks for all collisions
+}">
+
+
+
+<input type=button value="shoot" onTouchStart="{this.click(); event.preventDefault();}" onclick="{
+
+if (myShooting > 2 ){myShooting = 1}
+if (myShooting == 1){
+  myShooting += 1
+  document.getElementById('myBullet').style.left = document.getElementById('myImg01').style.left
+  document.getElementById('myBullet').style.top  = document.getElementById('myImg01').style.top
+  clearInterval(myGun)
+  myGun = setInterval(function(){
+     document.getElementById('myBullet').style.left = parseInt(document.getElementById('myBullet').style.left) + 10 + 'px'
+     myCheckHit() 
+  }, 20)
+}
+
+}"><br><br>
+
+
+
+
+
+<img id="myImg01" src="../assets/sprites/player.png"  style="position:absolute; width:100px; height:80px; left: 10px; top:190px;">
+<img id="myImg02" src="../assets/sprites/enemy_grunt.png"  style="position:absolute; width:100px; height:80px; left:350px; top:190px;">
+<img id="myImg03" src="../assets/sprites/enemy_grunt.png"  style="position:absolute; width:100px; height:80px; left:500px; top:190px;">
+<img id="myImg04" src="https://www.clipartmax.com/max/m2i8G6Z5H7d3A0G6/"  style="position:absolute; width:100px; height:80px; left:500px; top:400px;">
+
+<img id="myBullet" src="../assets/sprites/bullet_player.png"  style="position:absolute; width:10px; height:10px; left: 130px; top:190px;">
+
+
