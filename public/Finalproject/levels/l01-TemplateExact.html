@@ -137,7 +137,6 @@
 
 <input type=button value="shoot" onTouchStart="{this.click(); event.preventDefault();}" onclick="{
 
-if (myShooting > 2 ){myShooting = 1}
 if (myShooting == 1){
   myShooting += 1
   document.getElementById('myBullet').style.left = document.getElementById('myImg01').style.left
@@ -147,6 +146,7 @@ if (myShooting == 1){
      document.getElementById('myBullet').style.left = parseInt(document.getElementById('myBullet').style.left) + 10 + 'px'
      myCheckHit() 
   }, 20)
+myShooting = 1
 }
 
 }"><br><br>
