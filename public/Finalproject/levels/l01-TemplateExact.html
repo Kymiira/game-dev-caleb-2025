@@ -5,6 +5,18 @@
             background-repeat:repeat;
              background-size: 80%;
         }
+
+        #myImg04 {
+            background-color: lightgreen;
+            position: absolute;
+            height: 100px;
+            width: 100px;
+            border-radius: 25px;
+        }
+        
+        #myImg04 span {
+            color: black;
+        }
     </style>
     <script>   
 
@@ -74,7 +86,7 @@
         document.all.myText01.value = 'You hit myImg04 and you win the game!'  
         console.log('You Win, now go to the next level')
         document.getElementById('myImg01').style.left = '20px'
-        location = './l02-Basic-html'
+        location = './l02-Basic.html'
     }
     }
 
@@ -158,7 +170,9 @@ myShooting = 1
 <img id="myImg01" src="../assets/sprites/player.png"  style="position:absolute; width:100px; height:80px; left: 10px; top:190px;">
 <img id="myImg02" src="../assets/sprites/enemy_grunt.png"  style="position:absolute; width:100px; height:80px; left:350px; top:190px;">
 <img id="myImg03" src="../assets/sprites/enemy_grunt.png"  style="position:absolute; width:100px; height:80px; left:500px; top:190px;">
-<img id="myImg04" src="https://www.citypng.com/public/uploads/preview/transparent-hd-goal-red-word-icon-701751694971828kaxypvpk1h.png"  style="position:absolute; width:100px; height:80px; left:500px; top:400px;">
+<div id="myImg04" src="https://www.citypng.com/public/uploads/preview/transparent-hd-goal-red-word-icon-701751694971828kaxypvpk1h.png"  style="left:500px; top:400px;">
+    <span>GOAL</span>
+</div>
 
 <img id="myBullet" src="../assets/sprites/bullet_player.png"  style="position:absolute; width:10px; height:10px; left: 130px; top:190px;">
 
