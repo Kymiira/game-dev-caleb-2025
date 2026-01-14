@@ -94,9 +94,6 @@
 
     </script>
 </head>
-
-
-
 <body id="myBody" background="https://opengameart.org/sites/default/files/backgrounddetailed1.png.preview.jpg"  onkeydown="{
     const myPlayer = document.getElementById('myImg01');
     switch (event.key) {
@@ -133,65 +130,30 @@ onload="{
     }, 100)
 }">
 
+    <h1 align=center><font color=Yellow>Level One Final..?</font></h1>
 
+    <input id="myText01" type=text value="" size=50 placeholder="Feedback here"><br>
+    <input type=button value="shoot" onTouchStart="{this.click(); event.preventDefault();}" onclick="{
+    if (myShooting == 1){
+    myShooting += 1
+    document.getElementById('myBullet').style.left = document.getElementById('myImg01').style.left
+    document.getElementById('myBullet').style.top  = document.getElementById('myImg01').style.top
+    clearInterval(myGun)
+    myGun = setInterval(function(){
+        document.getElementById('myBullet').style.left = parseInt(document.getElementById('myBullet').style.left) + 10 + 'px'
+        myCheckHit() 
+    }, 20)
+    myShooting = 1
+    }}"><br><br>
 
+    <img id="myImg01" src="../assets/sprites/player.png" style="position:absolute; width:100px; height:80px; left: 10px; top:190px;">
+    <img id="myImg02" src="../assets/sprites/enemy_grunt.png" style="position:absolute; width:100px; height:80px; left:350px; top:190px;">
+    <img id="myImg03" src="../assets/sprites/enemy_grunt.png" style="position:absolute; width:100px; height:80px; left:500px; top:190px;">
+    <div id="myImg04" style="left:500px; top:400px;">
+        <span>GOAL</span>
+    </div>
 
-
-<h1 align=center><font color=Yellow>Level One Final..?</font></h1>
-
-<input id="myText01" type=text value="" size=50 placeholder="Feedback here"><br>
-
-<input type=button value="Auto Background Left" onclick="{
-  clearInterval(myClock)
-  let myTemp = '100px 0px'
-  myClock = setInterval(function(){
-      myGlobalX -= 5
-      myTemp =  myGlobalX + 'px 0px'
-      document.getElementById('myBody').style.backgroundPosition = myTemp
-  }, 100)
-    
-}">
-
-
-<input type=button value="Right" onTouchStart="{this.click(); event.preventDefault();}" onclick="{
-  document.getElementById('myImg01').style.left = parseInt(document.getElementById('myImg01').style.left) + 10 + 'px'
-  myCheckHit()     // checks for all collisions
-}">
-
-<input type=button value="Down" onTouchStart="{this.click(); event.preventDefault();}" onclick="{
-  document.getElementById('myImg01').style.top = parseInt(document.getElementById('myImg01').style.top) + 10 + 'px'
-  myCheckHit()     // checks for all collisions
-}">
-
-
-
-<input type=button value="shoot" onTouchStart="{this.click(); event.preventDefault();}" onclick="{
-
-if (myShooting == 1){
-  myShooting += 1
-  document.getElementById('myBullet').style.left = document.getElementById('myImg01').style.left
-  document.getElementById('myBullet').style.top  = document.getElementById('myImg01').style.top
-  clearInterval(myGun)
-  myGun = setInterval(function(){
-     document.getElementById('myBullet').style.left = parseInt(document.getElementById('myBullet').style.left) + 10 + 'px'
-     myCheckHit() 
-  }, 20)
-myShooting = 1
-}
-
-}"><br><br>
-
-
-
-
-
-<img id="myImg01" src="../assets/sprites/player.png"  style="position:absolute; width:100px; height:80px; left: 10px; top:190px;">
-<img id="myImg02" src="../assets/sprites/enemy_grunt.png"  style="position:absolute; width:100px; height:80px; left:350px; top:190px;">
-<img id="myImg03" src="../assets/sprites/enemy_grunt.png"  style="position:absolute; width:100px; height:80px; left:500px; top:190px;">
-<div id="myImg04" src="https://www.citypng.com/public/uploads/preview/transparent-hd-goal-red-word-icon-701751694971828kaxypvpk1h.png"  style="left:500px; top:400px;">
-    <span>GOAL</span>
-</div>
-
-<img id="myBullet" src="../assets/sprites/bullet_player.png"  style="position:absolute; width:25px; height:25px; left: 130px; top:190px;">
+    <img id="myBullet" src="../assets/sprites/bullet_player.png"  style="position:absolute; width:25px; height:25px; left: 130px; top:190px;">
+</body>
 
 
