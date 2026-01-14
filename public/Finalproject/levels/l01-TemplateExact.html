@@ -47,7 +47,7 @@
 
 
     function myCheckHit(){
-    document.all.myText01.value = myScore
+    document.all.myText01.value = `Lives: ${myScore}`
 
     if ( myHitOther('myImg01','myImg02') ){
         document.getElementById('myImg01').style.left = '20px'
@@ -65,18 +65,20 @@
     if ( myHitOther('myBullet','myImg03') ){
         clearInterval(myGun)
         document.getElementById('myBullet').style.left = '-200px'
-        document.all.myText01.value = 'You shot myImg03'  
+        document.all.myText01.value = 'You shot myImg03'
+        document.getElementById('myImg03').remove()
         myScore += 1
     }   
     if ( myHitOther('myBullet','myImg02') ){
         clearInterval(myGun)
         document.getElementById('myBullet').style.left = '-200px'
         document.all.myText01.value = 'You shot myImg02'  
+        document.getElementById('myImg03').remove()
         myScore += 1
     }   
     
     if (myScore <= 0){
-        document.all.myText01.value = 'You Lose scrore at zero!'  
+        document.all.myText01.value = 'You Lose score at zero!'  
         console.log('Sorry you lose')
         location.reload()
     }
