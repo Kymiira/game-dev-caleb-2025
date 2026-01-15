@@ -1,639 +1,918 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
-    <title>LiteRT.js Multi-Model Visualizer — Fixed Motion Version</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified FOMO & Classification Detector</title>
 
     <style>
-        /* Basic styles for a clean, responsive layout */
-        body {
-            margin: 0;
-            padding: 10px;
-            background: #000;
-            color: #fff;
-            font-family: sans-serif;
-            display: flex; /* Use flexbox for a better mobile/desktop experience */
-            flex-direction: column;
-            align-items: center; /* Center content horizontally */
+        body { 
+            font-family: 'Inter', sans-serif;
+            margin: 20px; 
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        /* Container for video and canvas, set to a max width for desktop */
-        #videoContainer {
-            position: relative;
-            width: 100%; /* Take full width of parent */
-            max-width: 640px; /* Optional: limit width on large screens */
+        #myMainContainer {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        h1 {
+            text-align: center;
+            color: #3c4043;
+            font-size: 2em;
             margin-bottom: 10px;
         }
-        /* Video element: always fit its container */
-        #webcam {
-            width: 100%;
-            display: block; /* Removes any extra space below the video */
-            min-height: 200px; /* Ensure video container shows up even when hidden */
-            background: #222;
+        #myInstructions {
+            text-align: center;
+            color: #5f6368;
+            margin-bottom: 20px;
+            font-size: 0.95em;
         }
-        /* Canvas overlay: must be absolutely positioned over the video */
-        #myCanvas {
+        #myVideo { 
+            display: none; 
+        }
+        .myButton {
+            background-color: #1a73e8; 
+            color: white; 
+            padding: 12px 24px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            margin: 5px;
+            transition: background-color 0.3s, transform 0.1s;
+            font-weight: 600;
+        }
+        .myButton:hover { 
+            background-color: #155cb8; 
+        }
+        .myButton:active {
+            transform: translateY(1px);
+        }
+        .myButton:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .myButton.stop {
+            background-color: #d93025;
+        }
+        .myButton.stop:hover {
+            background-color: #b02419;
+        }
+        #myControlSection {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #myStatusMessage {
+            font-size: 1em;
+            margin: 15px 0;
+            color: #3c4043;
+            font-weight: 500;
+            text-align: center;
+            padding: 12px;
+            background-color: #e6f7ff;
+            border: 1px solid #90caff;
+            border-radius: 8px;
+        }
+        #myCanvasContainer {
+            position: relative;
+            text-align: center;
+            margin-top: 20px;
+        }
+        #myCanvas { 
+            border: 3px solid #1a73e8;
+            border-radius: 8px; 
+            background-color: #333; 
+            width: 100%; 
+            height: auto;
+            max-width: 600px; 
+            aspect-ratio: 1 / 1;
+            display: block;
+            margin: 0 auto;
+            transition: border-color 0.3s;
+        }
+        #myCanvas.drag-over {
+            border-color: #0f9d58;
+            border-style: dashed;
+            border-width: 4px;
+            background-color: #e8f5e9;
+        }
+        #myDropOverlay {
             position: absolute;
             top: 0;
-            left: 0;
-            /* Its width and height will be set dynamically in JS to match video */
-        }
-        /* Style for the controls and status panel */
-        #controlsPanel {
+            left: 50%;
+            transform: translateX(-50%);
             width: 100%;
-            max-width: 640px; /* Match the max-width of the video container */
-            background: #fff;
-            color: #000;
-            padding: 10px;
+            max-width: 600px;
+            height: 100%;
+            background-color: rgba(15, 157, 88, 0.1);
+            border: 4px dashed #0f9d58;
             border-radius: 8px;
-            box-sizing: border-box; /* Include padding in the element's total width and height */
+            display: none;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
         }
-        #myModelUrlInput {
-            width: calc(100% - 12px); /* Calc to account for padding */
-            padding: 5px;
-            margin: 5px 0;
+        #myDropOverlay.active {
+            display: flex;
         }
-        select {
-            width: calc(100% - 100px); /* Adjust select width to fit next to label */
+        #myDropText {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #0f9d58;
+            background-color: white;
+            padding: 20px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        /* Color for the motion/anomaly box */
-        #myMotionOutput {
-            background:#e0ffff; /* Light blue for sensor data */
-            color: #000;
+        .myModelInfo {
+            text-align: center;
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
         }
-        /* Color for the general classification output box */
-        #myClassificationOutput {
-            background: #f0f0ff; /* Light purple/grey */
-            color: #000;
+        .myInfoLabel {
+            font-size: 0.85em;
+            color: #6c757d;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .myInfoValue {
+            font-size: 0.95em;
+            color: #212529;
+            font-family: monospace;
+        }
+        .myInputGroup {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        .myInputGroup input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        #myLabelEditor {
+            width: 100%;
+            height: 80px;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        #myResultDisplay {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #e6ffe6;
+            border: 2px solid #0f9d58;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #0f9d58;
+            display: none;
+        }
+        #myResultDisplay.active {
+            display: block;
+        }
+        #myResultLabel {
+            font-size: 1.8em;
+            color: #0c8046;
+            margin-top: 5px;
+            display: block;
+        }
+        #myResultConfidence {
+            font-size: 1em;
+            color: #3c4043;
+            display: block;
+            margin-top: 5px;
         }
     </style>
-
-
+    
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite@0.0.1-alpha.9/dist/tf-tflite.min.js"></script>
 </head>
-
 <body>
 
-    <h1 style="color:#fff; font-size:1.5em; text-align:center;">LiteRT.js Multi-Model Visualizer</h1>
-    
-    <div id="videoContainer">
-        <video id="webcam" autoplay playsinline></video>
-        <canvas id="myCanvas"></canvas>
-    </div>
+    <script>
+        // =================================================================
+        // 🚀 DEFAULT CONFIGURATION (FOMO Model)
+        // =================================================================
+        const myDefaultConfig = {
+            myDefaultUrl: 'ei-gamedev-t2a14-object-detection-tensorflow-lite-float32-model.6.lite',
+            myInputResolution: 240,
+            myGridScaleFactor: 8,
+            myConfidenceThreshold: 0.5,
+            myClassLabels: ['pencil'],
+            myInputChannels: 3,
+            myModelType: 'classification', // 'fomo' or 'classification'
+            myGithubRepoPath: 'Kymiira/game-dev-caleb-2025/main/public/term 1/t1a15' // user/repo/branch/path
+        };
 
-    <div id="controlsPanel">
-        <h3>Model Selection & Controls</h3>
-        <div><label for="cameraSelect">Camera:</label> <select id="cameraSelect"></select></div>
-        <div><label for="modelSelect">Model Preset:</label> <select id="modelSelect"></select></div>
-
-        <input id="myModelUrlInput" type="url" placeholder="or enter model URL" />
-
-        <div style="margin-top: 5px; text-align: center;">
-            <button id="loadModelButton" style="padding: 10px 20px;">**Load & Start Prediction**</button>
-        </div>
-
-        <hr>
-
-        <h4>Model Details</h4>
-        <div style="font-size:12px;">
-            Input Shape: <span id="myInputShapeStatus">N/A</span><br>
-            Input DType: <span id="myInputDtypeStatus">N/A</span><br>
-            Output Shape: <span id="myOutputDetailsStatus">N/A</span>
-        </div>
-
-        <hr>
+        // =================================================================
+        // ⚙️ GLOBAL VARIABLES 
+        // =================================================================
+        let myVideoElement = null;
+        let myIsWebcamReady = false;
+        let myAnimationFrameId = null;
+        let myStatusElement = null;
+        let myStartButton = null;
+        let myStopButton = null;
+        let myCanvas = null;
+        let myContext = null;
+        let myDropOverlay = null;
+        let myModelInfo = null;
+        let myUrlInput = null;
+        let myFileInput = null;
+        let myLabelEditor = null;
+        let myResultDisplay = null;
+        let myModelSelect = null;
         
-        <h4>Prediction Results</h4>
-        
-        <div id="myMotionOutput"
-             style="margin-top:10px; padding:5px; border:1px solid #c9f; min-height:30px; background:#f0f0ff;">
-            Motion/Anomaly Status
-        </div>
-        
-        <div id="myClassificationOutput"
-             style="margin-top:10px; padding:5px; border:1px solid #ccc; min-height:30px; color: #000; background: #fff;">
-            Model Type: N/A
-    </div>
-<!--
-        My Github at <a href="https://github.com/hpssjellis/my-examples-of-liteRTjs">github.com/hpssjellis/my-examples-of-liteRTjs</a><br>
-        My Linkedin at <a href="https://ca.linkedin.com/in/jeremy-ellis-4237a9bb">jeremy-ellis-4237a9bb</a>
--->
-</div>
-    <script type="module">
-            import * as LiteRT from 'https://cdn.jsdelivr.net/npm/@litertjs/core@0.2.1/+esm';
-            import * as LiteRTInterop from 'https://cdn.jsdelivr.net/npm/@litertjs/tfjs-interop/+esm';
-            import 'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js';
-            import 'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgpu/dist/tf-backend-webgpu.js';
+        let myModel = null;
+        let myCurrentConfig = {...myDefaultConfig};
+        let myCurrentModelName = 'Default Model';
+        let myCurrentModelSize = 0;
 
-            /*************************************************************
-             * MODEL LIST (Updated for Motion/Anomaly)
-             *************************************************************/
-            const myDepthModels = [
-                // Visual Models
-                {myName: "pencil object detection tflite calebM", myUrl: 'https://kymiira.github.io/game-dev-caleb-2025/public/term%201/t1a15/ei-gamedev-t2a14-object-detection-tensorflow-lite-float32-model.6.lite', myType: "object_detection", myLabels: Array.from({length: 10}, (_, i) => `${i}`)},
+        // =================================================================
+        // 🏠 HTML SETUP
+        // =================================================================
+        
+        function myCreateDOM() {
+            const myMainContainer = document.createElement('div');
+            myMainContainer.id = 'myMainContainer';
+            
+            const myTitle = document.createElement('h1');
+            myTitle.textContent = 'Edge Impulse Model Detector';
+            myMainContainer.appendChild(myTitle);
+
+            const myInstructions = document.createElement('div');
+            myInstructions.id = 'myInstructions';
+            myInstructions.innerHTML = 'Load FOMO or Classification models via URL, File, or Drag & Drop<br><small>Auto-detects model type and properties. Edit labels below.</small>';
+            myMainContainer.appendChild(myInstructions);
+
+            // Model Select Dropdown
+            myModelSelect = document.createElement('select');
+            myModelSelect.style.cssText = 'width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; background-color: white; margin-bottom: 15px;';
+            myModelSelect.innerHTML = '<option value="">Loading models from GitHub...</option>';
+            myModelSelect.onchange = myHandleModelSelect;
+            myMainContainer.appendChild(myModelSelect);
+
+            // URL Upload
+            const myUrlGroup = document.createElement('div');
+            myUrlGroup.className = 'myInputGroup';
+            myUrlInput = document.createElement('input');
+            myUrlInput.type = 'text';
+            myUrlInput.placeholder = 'Paste Model URL (.tflite or .lite)';
+            myUrlInput.value = myDefaultConfig.myDefaultUrl;
+            myUrlGroup.appendChild(myUrlInput);
+            const myUrlButton = document.createElement('button');
+            myUrlButton.className = 'myButton';
+            myUrlButton.textContent = 'Load from URL';
+            myUrlButton.onclick = () => myLoadModelFromUrl(myUrlInput.value);
+            myUrlGroup.appendChild(myUrlButton);
+            myMainContainer.appendChild(myUrlGroup);
+
+            // File Input
+            myFileInput = document.createElement('input');
+            myFileInput.type = 'file';
+            myFileInput.style.marginBottom = '15px';
+            myFileInput.setAttribute('accept', '.tflite,.lite');
+            myFileInput.onchange = myHandleFileInput;
+            myMainContainer.appendChild(myFileInput);
+
+            // Model info display
+            myModelInfo = document.createElement('div');
+            myModelInfo.className = 'myModelInfo';
+            myModelInfo.innerHTML = `
+                <span class="myInfoLabel">Model:</span>
+                <span class="myInfoValue" id="myModelName">No model loaded</span><br>
+                <span class="myInfoLabel">Type:</span>
+                <span class="myInfoValue" id="myModelType">Unknown</span><br>
+                <span class="myInfoLabel">Size:</span>
+                <span class="myInfoValue" id="myModelSize">N/A</span><br>
+                <span class="myInfoLabel">Config:</span>
+                <span class="myInfoValue" id="myModelConfig">N/A</span>
+            `;
+            myMainContainer.appendChild(myModelInfo);
+
+            // Labels Textarea
+            const myLabelHeader = document.createElement('div');
+            myLabelHeader.style.cssText = 'font-size: 0.9em; margin-top: 15px; margin-bottom: 5px; font-weight: bold; color: #3c4043;';
+            myLabelHeader.textContent = 'Class Labels (Comma-separated)';
+            myMainContainer.appendChild(myLabelHeader);
+            
+            myLabelEditor = document.createElement('textarea');
+            myLabelEditor.id = 'myLabelEditor';
+            myLabelEditor.placeholder = 'Enter labels here (e.g., background, pen)';
+            myLabelEditor.oninput = myUpdateConfigFromLabels;
+            myMainContainer.appendChild(myLabelEditor);
+
+            // Control section
+            const myControlSection = document.createElement('div');
+            myControlSection.id = 'myControlSection';
+            
+            myStatusElement = document.createElement('div');
+            myStatusElement.id = 'myStatusMessage';
+            myStatusElement.textContent = 'Click "Start" to begin';
+            myControlSection.appendChild(myStatusElement);
+
+            myStartButton = document.createElement('button');
+            myStartButton.className = 'myButton';
+            myStartButton.textContent = 'Start Webcam & Load Default Model';
+            myStartButton.onclick = myStartAll;
+            myControlSection.appendChild(myStartButton);
+
+            myStopButton = document.createElement('button');
+            myStopButton.className = 'myButton stop';
+            myStopButton.textContent = 'Stop Webcam';
+            myStopButton.onclick = myStopAll;
+            myStopButton.disabled = true;
+            myControlSection.appendChild(myStopButton);
+
+            myMainContainer.appendChild(myControlSection);
+
+            // Hidden video element
+            myVideoElement = document.createElement('video');
+            myVideoElement.id = 'myVideo';
+            myVideoElement.setAttribute('playsinline', '');
+            myVideoElement.setAttribute('autoplay', '');
+            myMainContainer.appendChild(myVideoElement);
+
+            // Canvas container with drop overlay
+            const myCanvasContainer = document.createElement('div');
+            myCanvasContainer.id = 'myCanvasContainer';
+
+            myCanvas = document.createElement('canvas');
+            myCanvas.id = 'myCanvas';
+            myCanvas.width = myCurrentConfig.myInputResolution;
+            myCanvas.height = myCurrentConfig.myInputResolution;
+            myContext = myCanvas.getContext('2d');
+            myCanvasContainer.appendChild(myCanvas);
+
+            myDropOverlay = document.createElement('div');
+            myDropOverlay.id = 'myDropOverlay';
+            const myDropText = document.createElement('div');
+            myDropText.id = 'myDropText';
+            myDropText.textContent = 'Drop .tflite or .lite file here';
+            myDropOverlay.appendChild(myDropText);
+            myCanvasContainer.appendChild(myDropOverlay);
+
+            myMainContainer.appendChild(myCanvasContainer);
+
+            // Classification Result Display
+            myResultDisplay = document.createElement('div');
+            myResultDisplay.id = 'myResultDisplay';
+            myResultDisplay.innerHTML = 'Classification Result:<span id="myResultLabel">Awaiting Input...</span><span id="myResultConfidence"></span>';
+            myMainContainer.appendChild(myResultDisplay);
+
+            document.body.appendChild(myMainContainer);
+
+            mySetupDragAndDrop();
+            myUpdateLabelEditor();
+            myLoadGithubModels(); // Load models from GitHub
+        }
+
+        window.onload = myCreateDOM;
+
+        // =================================================================
+        // 📦 GITHUB MODEL LOADER
+        // =================================================================
+
+        async function myLoadGithubModels() {
+            try {
+                // Parse the GitHub path
+                const myPathParts = myDefaultConfig.myGithubRepoPath.split('/');
+                const myUser = myPathParts[0];
+                const myRepo = myPathParts[1];
+                const myBranch = myPathParts[2];
+                const myFolderPath = myPathParts.slice(3).join('/');
                 
-            ];
-
-            /*************************************************************
-             * GLOBALS
-             *************************************************************/
-            let myModel;
-            let myIsPredicting = false;
-            let myInputDetails = null;
-            let myInputDtype = 'float32';
-            let myLiteRTInitializedPromise = null;
-            let myCurrentModelConfig = null;
-            let myPredictionTimerId = null;
-            const myPredictionRateMs = 200;
-
-            // 🚀 Motion Globals
-            let myIsMotionOrAnomalyModel = false;
-            let myMotionData = [];
-            let myMotionListener;
-            let myMotionSequenceLength = 0;
-            let myLastStatusUpdate = 0;
-            const mySamplingIntervalMs = 20; // 50 Hz target sampling rate
-            let myLastSampleTime = 0;
-
-            /*************************************************************
-             * ELEMENTS
-             *************************************************************/
-            const myVideoElement = document.getElementById('webcam');
-            const myCanvasElement = document.getElementById('myCanvas');
-            const myCanvasContext = myCanvasElement.getContext('2d');
-            const myLoadButton = document.getElementById('loadModelButton');
-            const myCameraSelect = document.getElementById('cameraSelect');
-            const myModelSelect = document.getElementById('modelSelect');
-            const myModelUrlInput = document.getElementById('myModelUrlInput');
-            const myInputShapeSpan = document.getElementById('myInputShapeStatus');
-            const myInputDtypeSpan = document.getElementById('myInputDtypeStatus');
-            const myOutputDetailsSpan = document.getElementById('myOutputDetailsStatus');
-            const myClassificationOutputDiv = document.getElementById('myClassificationOutput');
-            const myMotionOutputDiv = document.getElementById('myMotionOutput');
-
-            /*************************************************************
-             * INITIALIZE LiteRT
-             *************************************************************/
-            async function myInitializeLiteRT() {
-                if (myLiteRTInitializedPromise) return myLiteRTInitializedPromise;
-
-                myLiteRTInitializedPromise = (async () => {
-                    try { await tf.setBackend('webgpu'); }
-                    catch { try { await tf.setBackend('webgl'); }
-                    catch { await tf.setBackend('cpu'); }}
-
-                    await LiteRT.loadLiteRt('https://cdn.jsdelivr.net/npm/@litertjs/core@0.2.1/wasm/');
-                    LiteRT.setWebGpuDevice(tf.backend().device);
-                })();
-
-                return myLiteRTInitializedPromise;
-            }
-
-            /*************************************************************
-             * ENABLE WEBCAM
-             *************************************************************/
-            async function myEnableWebcam(myId) {
-                if (myIsMotionOrAnomalyModel) {
-                    if (myVideoElement.srcObject) {
-                        myVideoElement.srcObject.getTracks().forEach(t => t.stop());
-                    }
-                    myVideoElement.style.display = 'none';
-                    myCanvasElement.style.display = 'none';
+                // GitHub API URL
+                const myApiUrl = `https://api.github.com/repos/${myUser}/${myRepo}/contents/${myFolderPath}?ref=${myBranch}`;
+                
+                console.log('Fetching models from:', myApiUrl);
+                
+                const myResponse = await fetch(myApiUrl);
+                if (!myResponse.ok) {
+                    throw new Error(`GitHub API error: ${myResponse.status}`);
+                }
+                
+                const myFiles = await myResponse.json();
+                
+                // Filter for .tflite and .lite files
+                const myModelFiles = myFiles.filter(myFile => 
+                    myFile.name.endsWith('.tflite') || myFile.name.endsWith('.lite')
+                );
+                
+                if (myModelFiles.length === 0) {
+                    myModelSelect.innerHTML = '<option value="">No models found in repository</option>';
                     return;
                 }
+                
+                // Populate select box
+                myModelSelect.innerHTML = '<option value="">-- Select a Model --</option>';
+                
+                myModelFiles.forEach(myFile => {
+                    const myOption = document.createElement('option');
+                    
+                    // Build proper GitHub Pages URL
+                    // Format: https://username.github.io/repository/path/to/file
+                    const myGithubPagesUrl = `https://${myUser}.github.io/${myRepo}/${myFolderPath}/${myFile.name}`;
+                    
+                    myOption.value = myGithubPagesUrl;
+                    myOption.textContent = myFile.name;
+                    myModelSelect.appendChild(myOption);
+                });
+                
+                console.log(`Loaded ${myModelFiles.length} models from GitHub`);
+                
+            } catch (myError) {
+                console.error('Failed to load GitHub models:', myError);
+                myModelSelect.innerHTML = '<option value="">Failed to load models (check console)</option>';
+            }
+        }
 
-                myVideoElement.style.display = 'block';
-                myCanvasElement.style.display = 'block';
+        function myHandleModelSelect() {
+            if (myModelSelect.value) {
+                myUrlInput.value = myModelSelect.value;
+                // Automatically load the selected model
+                myLoadModelFromUrl(myModelSelect.value);
+            }
+        }
 
-                if (myVideoElement.srcObject) {
-                    myVideoElement.srcObject.getTracks().forEach(t => t.stop());
-                }
+        // =================================================================
+        // 🎯 DRAG AND DROP / FILE INPUT HANDLERS
+        // =================================================================
 
-                const myCfg = {video: {deviceId: myId ? {exact: myId} : undefined}};
-                const myStream = await navigator.mediaDevices.getUserMedia(myCfg);
-                myVideoElement.srcObject = myStream;
-                await new Promise(r => myVideoElement.onloadedmetadata = r);
-                myVideoElement.play();
+        function mySetupDragAndDrop() {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(myEventName => {
+                document.body.addEventListener(myEventName, myPreventDefaults, false);
+            });
 
-                // CRITICAL FIX: Set canvas size after video metadata is loaded
-                myCanvasElement.width = myVideoElement.videoWidth;
-                myCanvasElement.height = myVideoElement.videoHeight;
+            function myPreventDefaults(myEvent) {
+                myEvent.preventDefault();
+                myEvent.stopPropagation();
             }
 
-            /*************************************************************
-             * 🚀 MOTION LISTENER (The sensor data collector)
-             *************************************************************/
-            function myStartMotionListener() {
-                myMotionData = [];
-                myLastSampleTime = Date.now();
-                myLastStatusUpdate = 0;
+            ['dragenter', 'dragover'].forEach(myEventName => {
+                myCanvas.addEventListener(myEventName, () => {
+                    myCanvas.classList.add('drag-over');
+                    myDropOverlay.classList.add('active');
+                }, false);
+            });
 
-                myMotionListener = (event) => {
-                    if (!myIsMotionOrAnomalyModel) return;
+            ['dragleave', 'drop'].forEach(myEventName => {
+                myCanvas.addEventListener(myEventName, () => {
+                    myCanvas.classList.remove('drag-over');
+                    myDropOverlay.classList.remove('active');
+                }, false);
+            });
+
+            myCanvas.addEventListener('drop', myHandleDrop, false);
+        }
+
+        function myHandleDrop(myEvent) {
+            const myDataTransfer = myEvent.dataTransfer;
+            const myDroppedFiles = myDataTransfer.files;
+
+            if (myDroppedFiles.length > 0) {
+                const myFile = myDroppedFiles[0];
+                if (myFile.name.endsWith('.tflite') || myFile.name.endsWith('.lite')) {
+                    myLoadModelFromFile(myFile);
+                } else {
+                    myStatusElement.textContent = 'Error: Please drop a .tflite or .lite file';
+                }
+            }
+        }
+        
+        function myHandleFileInput(myEvent) {
+            const myFile = myEvent.target.files[0];
+            if (myFile) {
+                myLoadModelFromFile(myFile);
+            }
+        }
+
+        // =================================================================
+        // 🔍 CONFIGURATION AND LABEL MANAGEMENT
+        // =================================================================
+
+        function myAutoDetectConfig(myModel) {
+            try {
+                const myDetectedConfig = {...myDefaultConfig};
+                
+                // Detect Input Size and Channels
+                if (myModel.inputs && myModel.inputs.length > 0) {
+                    const myInput = myModel.inputs[0];
+                    if (myInput.shape && myInput.shape.length === 4) {
+                        const myHeight = myInput.shape[1];
+                        const myWidth = myInput.shape[2];
+                        const myChannels = myInput.shape[3];
+                        if (myHeight === myWidth && myHeight > 0) myDetectedConfig.myInputResolution = myHeight;
+                        if (myChannels === 1 || myChannels === 3) myDetectedConfig.myInputChannels = myChannels;
+                    }
+                }
+                
+                // Detect Model Type from Output Shape
+                if (myModel.outputs && myModel.outputs.length > 0) {
+                    const myOutput = myModel.outputs[0];
                     
-                    const myNow = Date.now();
-                    // Enforce sampling rate
-                    if (myNow - myLastSampleTime < mySamplingIntervalMs) {
-                        return; 
-                    }
-                    myLastSampleTime = myNow;
-
-                    const acc = event.accelerationIncludingGravity;
-                    if (!acc) return;
-
-                    let x = acc.x || 0, y = acc.y || 0, z = acc.z || 0;
-                    
-                    // Normalization (divide by g=9.81) is often required by ML models
-                    const SCALE_FACTOR = 9.81;
-                    x /= SCALE_FACTOR;
-                    y /= SCALE_FACTOR;
-                    z /= SCALE_FACTOR;
-
-                    // Push normalized values (X, Y, Z)
-                    myMotionData.push(x, y, z);
-
-                    // FIXED: keep exactly seq_len*3 values
-                    const maxLen = myMotionSequenceLength * 3;
-                    if (myMotionData.length > maxLen) {
-                        myMotionData = myMotionData.slice(myMotionData.length - maxLen);
-                    }
-
-                    // Status update only while NOT predicting (or periodically)
-                    if (myNow - myLastStatusUpdate > 500) {
-                        myLastStatusUpdate = myNow;
-                        const available = Math.floor(myMotionData.length / 3);
-                        myMotionOutputDiv.innerHTML =
-                            `**Latest Accel:** X:${x.toFixed(2)} | Y:${y.toFixed(2)} | Z:${z.toFixed(2)}` +
-                            `<br>Collecting Window: **${available}/${myMotionSequenceLength}** samples`;
-                    }
-                };
-
-                // 🔑 iOS permissions check
-                if (typeof DeviceMotionEvent.requestPermission === 'function') {
-                    DeviceMotionEvent.requestPermission().then(state => {
-                        if (state === 'granted') {
-                            window.addEventListener('devicemotion', myMotionListener);
+                    if (myOutput.shape.length === 4) {
+                        // FOMO Model: [1, gridH, gridW, numClasses]
+                        myDetectedConfig.myModelType = 'fomo';
+                        
+                        const myGridH = myOutput.shape[1];
+                        const myNumClasses = myOutput.shape[3];
+                        
+                        if (myGridH > 0 && myDetectedConfig.myInputResolution > 0) {
+                            const myCalculatedFactor = myDetectedConfig.myInputResolution / myGridH;
+                            if (myCalculatedFactor > 0 && Number.isInteger(myCalculatedFactor)) {
+                                myDetectedConfig.myGridScaleFactor = myCalculatedFactor;
+                            }
+                        }
+                        
+                        if (myNumClasses > 0 && myNumClasses !== myCurrentConfig.myClassLabels.length) {
+                            myDetectedConfig.myClassLabels = ['background'];
+                            for (let i = 1; i < myNumClasses; i++) {
+                                myDetectedConfig.myClassLabels.push(`Object${i}`);
+                            }
                         } else {
-                            myMotionOutputDiv.textContent = "Motion permission denied by user. Cannot use model.";
+                            myDetectedConfig.myClassLabels = myCurrentConfig.myClassLabels;
                         }
-                    });
-                } else {
-                    window.addEventListener('devicemotion', myMotionListener);
-                }
-
-                myMotionOutputDiv.textContent = `Waiting for motion data (Window: ${myMotionSequenceLength} samples)…`;
-                myClassificationOutputDiv.textContent = "Motion/Anomaly model active.";
-            }
-
-            function myStopMotionListener() {
-                if (myMotionListener)
-                    window.removeEventListener('devicemotion', myMotionListener);
-                myMotionData = [];
-                myMotionOutputDiv.innerHTML = 'Motion listener stopped.';
-            }
-
-            /*************************************************************
-             * PRELOAD MODEL & READ METADATA
-             *************************************************************/
-            async function myPreLoadModelMetadata() {
-                const myUrl = myModelUrlInput.value.trim();
-                if (!myUrl) return;
-
-                if (myPredictionTimerId) clearInterval(myPredictionTimerId);
-                myPredictionTimerId = null;
-                myIsPredicting = false;
-
-                myStopMotionListener();
-                myMotionOutputDiv.textContent = '';
-
-                // Read model type
-                const sel = myModelSelect.options[myModelSelect.selectedIndex];
-                const myModelType = sel.getAttribute('data-type');
-                const myLabels = JSON.parse(sel.getAttribute('data-labels') || '[]');
-                myCurrentModelConfig = { myType: myModelType, myLabels };
-
-                myIsMotionOrAnomalyModel = (myModelType === "motion" || myModelType === "anomaly");
-
-                await myInitializeLiteRT();
-
-                if (myModel) { try { myModel.delete(); } catch {} }
-                myModel = await LiteRT.loadAndCompile(myUrl, {accelerator:"webgpu"});
-
-                // INPUT DETAILS
-                myInputDetails = myModel.getInputDetails()[0];
-                const myInShape = myModel.getInputDetails()[0].shape; 
-                myInputDtype = myInputDetails.dtype || "float32";
-
-                // Fix motion input-shape detection
-                if (myIsMotionOrAnomalyModel) {
-                    // Determine sequence length from the expected total flattened input N
-                    const expectedTotalElements = myInShape.reduce((a, b) => a * b, 1);
-                    
-                    // Motion model: [1, seq, 3] or [1, seq*3] or [1, 1, 1, seq*3] -> seq = N/3
-                    if (myModelType === "motion") myMotionSequenceLength = expectedTotalElements / 3; 
-                    // Anomaly model: [1, seq, 1] or [1, seq] or [1, 1, 1, seq] -> seq = N
-                    else if (myModelType === "anomaly") myMotionSequenceLength = expectedTotalElements; 
-                    else myMotionSequenceLength = 100; // Default fallback
-
-                    myInputShapeSpan.textContent = `IMU sequence: ${myMotionSequenceLength} samples`;
-                } else {
-                    const size = myInShape[1];
-                    const channels = myInShape[3] || 1;
-                    myInputShapeSpan.textContent = `${size}×${size} (${channels} ch)`;
-                    myInputDetails.myCurrentInputShape = size;
-                    myInputDetails.myInputChannels = channels;
-                }
-
-                myInputDtypeSpan.textContent = myInputDtype;
-
-                const myOut = myModel.getOutputDetails()[0];
-                myOutputDetailsSpan.textContent = myOut.shape.join("×");
-
-                myClassificationOutputDiv.textContent = `Model Type: ${myModelType} loaded.`;
-            }
-
-            /*************************************************************
-             * LOAD MODEL & START PREDICTION
-             *************************************************************/
-            async function myLoadModel() {
-                if (myIsMotionOrAnomalyModel) myStartMotionListener();
-                await myEnableWebcam(myCameraSelect.value);
-                myIsPredicting = true;
-                // The timer drives both video frame processing AND motion inference attempts
-                myPredictionTimerId = setInterval(myPredict, myPredictionRateMs); 
-            }
-
-            /*************************************************************
-             * PREDICT — FIXED MOTION LOGIC & TENSOR SHAPING
-             *************************************************************/
-            async function myPredict() {
-                if (!myIsPredicting || !myModel || !myInputDetails) return;
-
-                /* 🚀 MOTION / ANOMALY */
-                if (myIsMotionOrAnomalyModel) {
-                    const isAnomalyModel = (myCurrentModelConfig.myType === "anomaly");
-                    const seq = myMotionSequenceLength;
-                    const available = Math.floor(myMotionData.length / 3);
-
-                    // Only run inference if we have enough data for a full window
-                    if ( (isAnomalyModel && available >= seq) || (!isAnomalyModel && available * 3 >= seq * 3) ) {
-
-                        tf.tidy(() => {
-                            let inputBuffer = null;
-                            let expectedTotalElements = 0; 
-                            
-                            if (isAnomalyModel) {
-                                // Anomaly model: requires magnitude calculation
-                                const magnitudes = [];
-                                for (let i = 0; i < seq; i++) {
-                                    // Slice the last 'seq' samples from the full buffer
-                                    const bufferIndex = myMotionData.length - (seq - i) * 3;
-                                    const x = myMotionData[bufferIndex] || 0;
-                                    const y = myMotionData[bufferIndex + 1] || 0;
-                                    const z = myMotionData[bufferIndex + 2] || 0;
-                                    magnitudes.push(Math.sqrt(x*x + y*y + z*z));
-                                }
-                                inputBuffer = magnitudes;
-                                expectedTotalElements = seq; 
-                            } else {
-                                // Motion Classification model: requires raw X,Y,Z sequence
-                                // Use the latest full sequence
-                                inputBuffer = myMotionData.slice(myMotionData.length - seq * 3);
-                                expectedTotalElements = seq * 3; 
+                        
+                    } else if (myOutput.shape.length === 2) {
+                        // Classification Model: [1, numClasses]
+                        myDetectedConfig.myModelType = 'classification';
+                        
+                        const myNumClasses = myOutput.shape[1];
+                        
+                        if (myNumClasses > 0 && myNumClasses !== myCurrentConfig.myClassLabels.length) {
+                            myDetectedConfig.myClassLabels = [];
+                            for (let i = 0; i < myNumClasses; i++) {
+                                myDetectedConfig.myClassLabels.push(`Class${i}`);
                             }
-
-                            // Create a 1D tensor and reshape it to the exact flattened format LiteRT expects: [1, 1, 1, N]
-                            let myT = tf.tensor(inputBuffer, [expectedTotalElements], myInputDtype);
-                            myT = myT.reshape([1, 1, 1, expectedTotalElements]); 
-                            
-                            const myResults = LiteRTInterop.runWithTfjsTensors(myModel, myT);
-                            myDrawModelOutput(myResults);
-                            myResults.forEach(r => r.dispose());
-                        });
+                        } else {
+                            myDetectedConfig.myClassLabels = myCurrentConfig.myClassLabels;
+                        }
                     } else {
-                        // Update status if we are still collecting, even if inference didn't run
-                        const available = Math.floor(myMotionData.length / 3);
-                        myMotionOutputDiv.innerHTML =
-                            `**Collecting:** **${available}/${myMotionSequenceLength}** samples`;
+                        console.warn('Unknown output shape:', myOutput.shape);
+                        myDetectedConfig.myModelType = 'unknown';
                     }
-
-                    return;
                 }
+                
+                myCanvas.width = myDetectedConfig.myInputResolution;
+                myCanvas.height = myDetectedConfig.myInputResolution;
+                
+                return myDetectedConfig;
+                
+            } catch (myError) {
+                console.error('Auto-detection error:', myError);
+                return {...myDefaultConfig};
+            }
+        }
 
-                /***** 🖼️ VIDEO MODELS *****/
-                requestAnimationFrame(() => {
-                    tf.tidy(() => {
-                        let myT = tf.browser.fromPixels(myVideoElement);
+        function myUpdateModelInfoDisplay() {
+            document.getElementById('myModelName').textContent = myCurrentModelName;
+            document.getElementById('myModelType').textContent = myCurrentConfig.myModelType.toUpperCase();
+            
+            // Format file size
+            let mySizeText = 'N/A';
+            if (myCurrentModelSize > 0) {
+                if (myCurrentModelSize < 1024) {
+                    mySizeText = `${myCurrentModelSize} bytes`;
+                } else if (myCurrentModelSize < 1024 * 1024) {
+                    mySizeText = `${(myCurrentModelSize / 1024).toFixed(2)} KB`;
+                } else {
+                    mySizeText = `${(myCurrentModelSize / (1024 * 1024)).toFixed(2)} MB`;
+                }
+            }
+            document.getElementById('myModelSize').textContent = mySizeText;
+            
+            let myConfigText = `${myCurrentConfig.myInputResolution}x${myCurrentConfig.myInputResolution}, ` +
+                `${myCurrentConfig.myInputChannels === 3 ? 'RGB' : 'Grayscale'}, ` +
+                `Classes:${myCurrentConfig.myClassLabels.length}`;
+            
+            if (myCurrentConfig.myModelType === 'fomo') {
+                myConfigText += `, Grid:${myCurrentConfig.myGridScaleFactor}`;
+            }
+            
+            document.getElementById('myModelConfig').textContent = myConfigText;
+            
+            // Show/hide classification result display
+            if (myCurrentConfig.myModelType === 'classification') {
+                myResultDisplay.classList.add('active');
+            } else {
+                myResultDisplay.classList.remove('active');
+            }
+            
+            myUpdateLabelEditor();
+        }
+        
+        function myUpdateLabelEditor() {
+            if (myLabelEditor) {
+                myLabelEditor.value = myCurrentConfig.myClassLabels.join(', ');
+            }
+        }
+        
+        function myUpdateConfigFromLabels() {
+            if (myLabelEditor) {
+                const myNewLabels = myLabelEditor.value
+                    .split(',')
+                    .map(myLabel => myLabel.trim())
+                    .filter(myLabel => myLabel.length > 0);
+                
+                if (myNewLabels.length === myCurrentConfig.myClassLabels.length) {
+                    myCurrentConfig.myClassLabels = myNewLabels;
+                    console.log('Labels updated manually:', myCurrentConfig.myClassLabels);
+                } else if (myModel) {
+                    myStatusElement.textContent = `Warning: Label count must be ${myCurrentConfig.myClassLabels.length}. Current: ${myNewLabels.length}`;
+                }
+            }
+        }
 
-                        const size = myInputDetails.myCurrentInputShape;
-                        const channels = myInputDetails.myInputChannels;
+        // =================================================================
+        // 💻 MODEL LOADING
+        // =================================================================
 
-                        if (channels === 1) myT = myT.mean(2, true);
-                        myT = myT.resizeBilinear([size, size]);
+        async function myLoadModel(mySource, myModelName) {
+            try {
+                myModel = await tflite.loadTFLiteModel(mySource);
+                myCurrentModelName = myModelName;
+                
+                myCurrentConfig = myAutoDetectConfig(myModel);
+                myUpdateModelInfoDisplay();
+                
+                console.log(`Model loaded: ${myModelName} (Type: ${myCurrentConfig.myModelType})`);
+                myStatusElement.textContent = `Model loaded: ${myModelName} (${myCurrentConfig.myModelType.toUpperCase()})`;
+            } catch (myError) {
+                console.error('Model loading error:', myError);
+                throw new Error(`Failed to load model: ${myError.message.substring(0, 100)}...`);
+            }
+        }
+        
+        async function myLoadModelFromUrl(myUrl) {
+            if (!myUrl.endsWith('.tflite') && !myUrl.endsWith('.lite')) {
+                 myStatusElement.textContent = 'Error: URL must end with .tflite or .lite';
+                 return;
+            }
+            myStatusElement.textContent = `Loading model from URL...`;
+            try {
+                // Fetch to get file size
+                const myResponse = await fetch(myUrl);
+                const myBlob = await myResponse.blob();
+                myCurrentModelSize = myBlob.size;
+                
+                await myLoadModel(myUrl, myUrl.substring(myUrl.lastIndexOf('/') + 1));
+                if (myIsWebcamReady) myStatusElement.textContent += ' (Inference running)';
+            } catch (myError) {
+                 myStatusElement.textContent = `Error: ${myError.message}`;
+            }
+        }
 
-                        if (myInputDtype.includes("float")) myT = myT.div(255);
-                        else myT = myT.cast(myInputDtype);
-
-                        myT = myT.expandDims();
-
-                        const myResults = LiteRTInterop.runWithTfjsTensors(myModel, myT);
-                        myDrawModelOutput(myResults);
-                        myResults.forEach(r => r.dispose());
-                    });
+        async function myLoadModelFromFile(myFile) {
+            myStatusElement.textContent = `Loading model from file: ${myFile.name}...`;
+            
+            try {
+                myCurrentModelSize = myFile.size;
+                
+                const myArrayBuffer = await new Promise((myResolve, myReject) => {
+                    const myReader = new FileReader();
+                    myReader.onload = () => myResolve(myReader.result);
+                    myReader.onerror = myReject;
+                    myReader.readAsArrayBuffer(myFile);
                 });
+
+                myModel = await tflite.loadTFLiteModel(myArrayBuffer);
+                myCurrentModelName = myFile.name;
+                
+                myCurrentConfig = myAutoDetectConfig(myModel);
+                myUpdateModelInfoDisplay();
+                
+                myStatusElement.textContent = `Model loaded: ${myFile.name} (${myCurrentConfig.myModelType.toUpperCase()})`;
+                
+                if (myIsWebcamReady) {
+                    myStatusElement.textContent += ' (Inference running)';
+                } else {
+                    myStatusElement.textContent += '. Start webcam to run inference.';
+                }
+            } catch (myError) {
+                myStatusElement.textContent = `Failed to load ${myFile.name}. Check console.`;
+                console.error('File loading error:', myError);
+            }
+        }
+
+       // =================================================================
+        // 🚀 START/STOP & INFERENCE
+        // =================================================================
+
+        async function myStartAll() {
+            myStartButton.disabled = true;
+            myStatusElement.textContent = 'Loading default model...';
+
+            try {
+                if (!myModel) {
+                     await myLoadModel(myDefaultConfig.myDefaultUrl, 'Default Model');
+                }
+                myStatusElement.textContent = 'Model loaded! Starting webcam...';
+                
+                await myStartWebcam();
+                
+                myStatusElement.textContent = `Running ${myCurrentConfig.myModelType} inference...`;
+                myStopButton.disabled = false;
+                
+            } catch (myError) {
+                myStatusElement.textContent = `Error: ${myError.message}`;
+                console.error('Startup error:', myError);
+                myStartButton.disabled = false;
+            }
+        }
+        
+        async function myStartWebcam() {
+            if (myIsWebcamReady) return;
+
+            try {
+                const myStream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: 640,
+                        height: 640,
+                        facingMode: 'user'
+                    },
+                    audio: false
+                });
+
+                myVideoElement.srcObject = myStream;
+                await new Promise(myResolve => myVideoElement.onloadedmetadata = myResolve); 
+                myVideoElement.play();
+                myIsWebcamReady = true;
+                
+                console.log('Webcam started');
+                myRunInferenceLoop();
+            } catch (myError) {
+                console.error('Webcam error:', myError);
+                throw new Error(`Webcam access failed: ${myError.message}`);
+            }
+        }
+
+        function myStopWebcam() {
+            if (myAnimationFrameId) {
+                cancelAnimationFrame(myAnimationFrameId);
+                myAnimationFrameId = null;
+            }
+            if (myVideoElement && myVideoElement.srcObject) {
+                myVideoElement.srcObject.getTracks().forEach(myTrack => myTrack.stop());
+                myVideoElement.srcObject = null;
+            }
+            myIsWebcamReady = false;
+        }
+
+        function myRunInferenceLoop() {
+            if (!myIsWebcamReady || !myModel) {
+                myAnimationFrameId = requestAnimationFrame(myRunInferenceLoop);
+                return;
             }
 
-            /*************************************************************
-             * DRAW OUTPUT (Handles all types)
-             *************************************************************/
-            async function myDrawModelOutput(myResults) {
+            tf.tidy(() => {
+                const myInputSize = myCurrentConfig.myInputResolution;
                 
-                // Clear canvas only if it's a visual model
-                if (!myIsMotionOrAnomalyModel) {
-                    myCanvasContext.clearRect(0, 0, myCanvasElement.width, myCanvasElement.height);
-                    const w = myCanvasElement.width;
-                    const h = myCanvasElement.height;
-                    myCanvasContext.fillStyle = "rgba(0,0,0,0.4)";
-                    myCanvasContext.fillRect(0, h-40, w, 40);
-                }
-
-                const myType = myCurrentModelConfig.myType;
-                const myLabels = myCurrentModelConfig.myLabels;
+                myContext.drawImage(myVideoElement, 0, 0, myInputSize, myInputSize);
                 
-                // Clear visual output when running sensor models
-                if (myIsMotionOrAnomalyModel) {
-                    myClassificationOutputDiv.textContent = "";
+                let myInputTensor = tf.browser.fromPixels(myCanvas, myCurrentConfig.myInputChannels);
+                let myNormalizedTensor = myInputTensor
+                    .resizeBilinear([myInputSize, myInputSize])
+                    .cast('float32')
+                    .div(255.0)
+                    .expandDims(0);
+
+                const myOutputTensor = myModel.predict(myNormalizedTensor);
+                
+                // Route to appropriate post-processing based on model type
+                if (myCurrentConfig.myModelType === 'fomo') {
+                    myPostProcessFomo(myOutputTensor);
+                } else if (myCurrentConfig.myModelType === 'classification') {
+                    myPostProcessClassification(myOutputTensor);
                 }
+            });
 
-                switch (myType) {
+            myAnimationFrameId = requestAnimationFrame(myRunInferenceLoop);
+        }
 
-                    /******** MOTION CLASSIFICATION ********/
-                    case "motion": {
-                        const probs = myResults[0].dataSync();
-                        const top = [...probs].map((v,i)=>({v,i}))
-                            .sort((a,b)=>b.v-a.v).slice(0,3);
+        // =================================================================
+        // 📊 POST-PROCESSING FUNCTIONS
+        // =================================================================
 
-                        let html = "<strong>Motion Classification:</strong><br>";
-                        top.forEach(t => {
-                            html += `${myLabels[t.i] || ("Class "+t.i)}: 
-                                    <strong>${(t.v*100).toFixed(1)}%</strong><br>`;
-                        });
-                        myMotionOutputDiv.innerHTML = html; // Output to the designated motion div
-                        break;
-                    }
+        function myPostProcessFomo(myOutputTensor) {
+            const myPredictionData = myOutputTensor.dataSync();
+            const myOutputShape = myOutputTensor.shape;
+            const myNumClasses = myOutputShape[3];
+            const myGridX = myOutputShape[1];
+            const myGridY = myOutputShape[2];
 
-                    /******** ANOMALY ********/
-                    case "anomaly": {
-                        // Anomaly models often output a single score, usually the last value
-                        const arr = myResults[0].dataSync();
-                        const score = arr[arr.length - 1] * 100;
+            const myInputSize = myCurrentConfig.myInputResolution;
+            const myGridSize = myInputSize / myCurrentConfig.myGridScaleFactor;
 
-                        let html = `<strong>Anomaly Score:</strong>
-                                    <strong>${score.toFixed(1)}%</strong><br>`;
-                        html += score > 50
-                            ? "<span style='color:red; font-weight:bold;'>⚠ ANOMALY DETECTED!</span>"
-                            : "<span style='color:green; font-weight:bold;'>✓ Normal Movement</span>";
-                        myMotionOutputDiv.innerHTML = html; // Output to the designated motion div
-                        break;
-                    }
+            if (myCurrentConfig.myClassLabels.length !== myNumClasses) {
+                 myStatusElement.textContent = `ERROR: Label count (${myCurrentConfig.myClassLabels.length}) != Model classes (${myNumClasses})`;
+                 return;
+            }
 
-                    /******** CLASSIFICATION ********/
-                    case "classification": {
-                        const arr = myResults[0].dataSync();
-                        const top = [...arr].map((v,i)=>({v,i}))
-                            .sort((a,b)=>b.v-a.v).slice(0,3);
-                        let html = "Classification:<br>";
-                        top.forEach(t=>{
-                            html += `${myLabels[t.i] || ("Class "+t.i)}: 
-                                    <strong>${(t.v*100).toFixed(1)}%</strong><br>`;
-                        });
-                        myClassificationOutputDiv.innerHTML = html;
-                        break;
-                    }
+            myContext.drawImage(myVideoElement, 0, 0, myInputSize, myInputSize);
 
-                    /******** OBJECT DETECTION ********/
-                    case "object_detection": {
-                        const out = myResults[0].dataSync();
-                        const dim = myResults[0].shape[1];
-                        const numCls = myResults[0].shape[3] - 1;
-                        const thresh = 0.5;
-                        let det = [];
+            for (let i = 0; i < myGridSize; i++) {
+                for (let j = 0; j < myGridSize; j++) {
+                    const myCellStartIndex = (i * myGridSize * myNumClasses) + (j * myNumClasses);
 
-                        for (let i=0; i<out.length; i += numCls+1) {
-                            const idx = Math.floor(i / (numCls+1));
-                            const cx = idx % dim;
-                            const cy = Math.floor(idx / dim);
+                    let myMaxProbability = 0;
+                    let myMaxClassIndex = 0;
 
-                            for (let c=0; c<numCls; c++) {
-                                const score = out[i+c+1];
-                                if (score > thresh) {
-                                    det.push({
-                                        score, label: myLabels[c] || "cls"+c, x:cx, y:cy
-                                    });
-                                }
-                            }
+                    for (let k = 0; k < myNumClasses; k++) {
+                        const myProbability = myPredictionData[myCellStartIndex + k];
+                        if (myProbability > myMaxProbability) {
+                            myMaxProbability = myProbability;
+                            myMaxClassIndex = k;
                         }
-
-                        let html = `Object Detection (>${thresh*100}%):<br>`;
-                        const w = myCanvasElement.width;
-                        const h = myCanvasElement.height;
-
-                        myCanvasContext.font = '14px sans-serif'; 
-                        myCanvasContext.textAlign = 'start';
-                        myCanvasContext.textBaseline = 'bottom';
-
-                        det.forEach(d=>{
-                            html += `${d.label}: ${(d.score*100).toFixed(1)}%<br>`;
-                            const X = (d.x/dim)*w;
-                            const Y = (d.y/dim)*h;
-
-                            myCanvasContext.strokeStyle = "red";
-                            myCanvasContext.lineWidth = 3;
-                            myCanvasContext.strokeRect(X-15, Y-15, 30,30);
-                            myCanvasContext.fillStyle="red";
-                            myCanvasContext.fillText(d.label, X-15, Y-20);
-                        });
-
-                        myClassificationOutputDiv.innerHTML = html;
-                        break;
                     }
 
-                    /******** DEPTH ********/
-                    case "depth": {
-                        const depthTensor = myResults[0].squeeze();
-                        tf.tidy(() => {
-                            const min = depthTensor.min();
-                            const max = depthTensor.max();
-                            const norm = depthTensor.sub(min).div(max.sub(min)).mul(255).toInt();
-                            const arr = norm.dataSync();
-
-                            const h = depthTensor.shape[0];
-                            const w = depthTensor.shape[1];
-                            const img = myCanvasContext.createImageData(w,h);
-
-                            for (let i=0;i<arr.length;i++){
-                                img.data[i*4]=arr[i];
-                                img.data[i*4+1]=arr[i];
-                                img.data[i*4+2]=arr[i];
-                                img.data[i*4+3]=255;
-                            }
-
-                            const tmp = document.createElement("canvas");
-                            tmp.width=w; tmp.height=h;
-                            tmp.getContext("2d").putImageData(img,0,0);
-                            myCanvasContext.drawImage(tmp,0,0,myCanvasElement.width,myCanvasElement.height);
-                        });
-                        break;
+                    if (myMaxClassIndex !== 0 && myMaxProbability >= myCurrentConfig.myConfidenceThreshold) {
+                        const myCentroidX = (j * myCurrentConfig.myGridScaleFactor) + (myCurrentConfig.myGridScaleFactor / 2);
+                        const myCentroidY = (i * myCurrentConfig.myGridScaleFactor) + (myCurrentConfig.myGridScaleFactor / 2);
+                        const myLabel = myCurrentConfig.myClassLabels[myMaxClassIndex] || `Class${myMaxClassIndex}`;
+                        
+                        myContext.fillStyle = myMaxClassIndex % 2 === 1 ? 'rgba(255, 69, 0, 0.8)' : 'rgba(50, 205, 50, 0.8)';
+                        myContext.fillRect(myCentroidX - 5, myCentroidY - 5, 10, 10);
+                        
+                        myContext.font = '12px Arial';
+                        myContext.fillStyle = 'white';
+                        myContext.textAlign = 'center';
+                        myContext.fillText(myLabel, myCentroidX, myCentroidY - 8);
                     }
                 }
             }
+        }
 
-            /*************************************************************
-             * UI HANDLERS
-             *************************************************************/
-            myLoadButton.onclick = myLoadModel;
-            myCameraSelect.onchange = ()=>myEnableWebcam(myCameraSelect.value);
-            myModelSelect.onchange = ()=>{
-                myModelUrlInput.value = myModelSelect.value;
-                myPreLoadModelMetadata();
-            };
-            myModelUrlInput.onchange = myPreLoadModelMetadata;
-
-            /*************************************************************
-             * POPULATE UI & START
-             *************************************************************/
-            function myPopulate() {
-                myDepthModels.forEach((m, i)=>{
-                    const o=document.createElement("option");
-                    o.value=m.myUrl;
-                    o.text=m.myName;
-                    o.setAttribute("data-type", m.myType);
-                    o.setAttribute("data-labels", JSON.stringify(m.myLabels || []));
-                    myModelSelect.appendChild(o);
-                    // Pre-select the Motion Classification model for easy testing
-                    if (m.myName.includes("Motion Classification")) {
-                        myModelSelect.selectedIndex = i;
-                        myModelUrlInput.value = m.myUrl;
-                    }
-                });
-                myPreLoadModelMetadata();
+        function myPostProcessClassification(myOutputTensor) {
+            const myNumClasses = myCurrentConfig.myClassLabels.length;
+            
+            if (myOutputTensor.shape[1] !== myNumClasses) {
+                 myStatusElement.textContent = `ERROR: Model output (${myOutputTensor.shape[1]}) != Label count (${myNumClasses})`;
+                 return;
             }
 
-            myInitializeLiteRT();
-            myGetCameras();
-            myEnableWebcam();
-            myPopulate();
-
-            async function myGetCameras() {
-                const dev = await navigator.mediaDevices.enumerateDevices();
-                const cams = dev.filter(d=>d.kind==="videoinput");
-                myCameraSelect.innerHTML="";
-                cams.forEach((d,i)=>{
-                    const o=document.createElement("option");
-                    o.value=d.deviceId;
-                    o.text=`Camera ${d.label || ("Camera "+(i+1))}`; 
-                    myCameraSelect.appendChild(o);
-                });
+            const myResult = myOutputTensor.squeeze().arraySync();
+            
+            let myMaxProbability = 0;
+            let myMaxClassIndex = 0;
+            
+            for (let i = 0; i < myResult.length; i++) {
+                if (myResult[i] > myMaxProbability) {
+                    myMaxProbability = myResult[i];
+                    myMaxClassIndex = i;
+                }
             }
+            
+            const myLabel = myCurrentConfig.myClassLabels[myMaxClassIndex];
+            const myConfidence = (myMaxProbability * 100).toFixed(2);
+            
+            document.getElementById('myResultLabel').textContent = myLabel.toUpperCase();
+            document.getElementById('myResultConfidence').textContent = `${myConfidence}% Confidence`;
+
+            console.log(`Classified: ${myLabel} (${myConfidence}%)`);
+        }
+
+        function myStopAll() {
+            myStopWebcam();
+            
+            myContext.clearRect(0, 0, myCanvas.width, myCanvas.height);
+            myContext.fillStyle = '#333';
+            myContext.fillRect(0, 0, myCanvas.width, myCanvas.height);
+            
+            if (myCurrentConfig.myModelType === 'classification') {
+                document.getElementById('myResultLabel').textContent = 'Awaiting Input...';
+                document.getElementById('myResultConfidence').textContent = '';
+            }
+            
+            myStatusElement.textContent = 'Stopped. Click "Start" or load a new model.';
+            myStartButton.disabled = false;
+            myStopButton.disabled = true;
+            
+            console.log('Stopped');
+        }
     </script>
 </body>
 </html>
+
+
+
